@@ -48,8 +48,15 @@ namespace PTK
             webBrowserForParaCood.ObjectForScripting = new ReceiveChoiceData();
 
             //フォームにグラフ用HTMLを表示
-            string curDir = Directory.GetCurrentDirectory();
-            webBrowserForParaCood.Navigate("file:///"+ curDir + "/ParaCoorFormItem/Viewer.html");
+            //string curDir = Directory.GetCurrentDirectory();
+            string curDir = Grasshopper.Folders.AppDataFolder;
+            Uri u = new Uri(curDir);
+            string path = u.AbsoluteUri + "Libraries/ParaCoorFormItem/Viewer.html";
+            //webBrowserForParaCood.Navigate(new Uri("file:///"+ curDir + "Librarues/ParaCoorFormItem/Viewer.html"));
+            webBrowserForParaCood.Navigate(path);
+
+            //Stream st = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+            //webBrowserForParaCood.DocumentStream = st;
         }
 
         //-------Disable GH's canvas (becomes a white background)
