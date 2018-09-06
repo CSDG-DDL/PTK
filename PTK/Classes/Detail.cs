@@ -167,8 +167,8 @@ namespace PTK
     }
 
 
-
-    //
+    
+    /*
     public class ElementInDetail
     {
         public Element1D Element { get; private set; }
@@ -185,7 +185,7 @@ namespace PTK
         {
 
         }
-
+ 
     }
-
+    */
 }

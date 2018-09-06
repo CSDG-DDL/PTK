@@ -259,6 +259,8 @@ namespace PTK
             BTLPart.Length = length;
             BTLPart.Width = width;
             BTLPart.Height = height;
+            BTLPart.StartOffset = 0.3;
+            BTLPart.EndOffset = 0.3;
 
             BTLPartGeometry = new BTLPartGeometry(refSides, cornerPoints, endPoints, startPoints);
             
@@ -291,6 +293,8 @@ namespace PTK
 
                     if (_mode == ManufactureMode.BTL || _mode==ManufactureMode.BOTH)
                     {
+                        
+
                         BTLPart.Processings.Items.Add(PerformedProcess.BTLProcess);
                     }
 
