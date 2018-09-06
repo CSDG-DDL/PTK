@@ -32,6 +32,8 @@ namespace PTK.Components
             pManager.AddGenericParameter("Assembly", "A", "", GH_ParamAccess.item);
             pManager.AddGenericParameter("Timber Processes", "P", "", GH_ParamAccess.list);
             pManager.AddTextParameter("Filepath", "", "", GH_ParamAccess.item);
+
+            pManager[1].Optional = true;
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace PTK.Components
             Project.Name = "PTK";
             Project.Architect = "JOHNBUNJIMarcin";
             Project.Comment = "YeaaaahhH! Finally. ";
-
+            
 
             DataTree<Brep> dataTree = GrasshopperProject.GetBreps();
 

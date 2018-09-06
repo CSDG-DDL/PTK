@@ -28,7 +28,7 @@ namespace PTK.Components
         {
             pManager.AddGenericParameter("PTK Assembly", "PTK A", "PTK Assembly", GH_ParamAccess.item);
             pManager.AddTextParameter("DetailingGroupName", "", "", GH_ParamAccess.item);  
-            pManager.AddIntegerParameter("Sorting rule", "SR", "0=Structural, 1=Alphabetical, 2=Clockvize(based on nodeplane)", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Sorting rule", "SR", "0=Structural, 1=Alphabetical, 2=ElementLength", GH_ParamAccess.item, 0);
         }
 
         /// <summary>
@@ -65,10 +65,10 @@ namespace PTK.Components
 
             assembly = ghAssembly.Value;
 
-            
-           
 
-            
+
+
+
 
 
 
@@ -81,60 +81,73 @@ namespace PTK.Components
 
 
 
-            
 
 
-            List<Detail> Details = assembly.DetailingGroups.Find(t => t.Name == Name).Details;
-
-            List<Node> Nodes = new List<Node>();
-
-            
-            DataTree<ElementInDetail> ElementTree = new DataTree<ElementInDetail>();
-            DataTree<Node> NodeTree = new DataTree<Node>();
-            
 
 
-            int branchindex = 0;
-            foreach (Detail Detail in Details)
+            if (assembly.DetailingGroups.Find(t => t.Name == Name) != null)
             {
-                Detail.GenerateUnifiedElementVectors();
-                List<ElementInDetail> ElementWrapper = new List<ElementInDetail>();
+                List<Detail> Details = assembly.DetailingGroups.Find(t => t.Name == Name).Details;
 
-                for (int i=0; i < Detail.Elements.Count; i++)
+                List<Node> Nodes = new List<Node>();
+
+
+                DataTree<ElementInDetail> ElementTree = new DataTree<ElementInDetail>();
+                DataTree<Node> NodeTree = new DataTree<Node>();
+
+
+
+                int branchindex = 0;
+                foreach (Detail Detail in Details)
                 {
-                    ElementWrapper.Add(new ElementInDetail(Detail.Elements[i], Detail.UnifiedVectors[i]));
+                    Detail.GenerateUnifiedElementVectors();
+                    List<ElementInDetail> ElementWrapper = new List<ElementInDetail>();
+
+                    for (int i = 0; i < Detail.Elements.Count; i++)
+                    {
+                        ElementWrapper.Add(new ElementInDetail(Detail.Elements[i], Detail.UnifiedVectors[i]));
+                    }
+
+
+                    //Sorting the element outputs based on 
+                    if (priorityKey == 0)  // sorts by Structural priority
+                    {
+                        ElementWrapper = ElementWrapper.OrderBy(t => t.Element.Priority).ToList();
+
+
+                    }
+
+                    if (priorityKey == 1) //Sorts alphabetically based on tag
+                    {
+                        ElementWrapper = ElementWrapper.OrderBy(t => t.Element.Tag).ToList();
+
+                    }
+
+                    if (priorityKey == 2) //Sorts by length
+                    {
+                        ElementWrapper = ElementWrapper.OrderBy(t => t.Element.BaseCurve.GetLength()).ToList();
+
+                    }
+
+
+
+
+                    ElementTree.AddRange(ElementWrapper, new Grasshopper.Kernel.Data.GH_Path(branchindex));
+                    NodeTree.Add(Detail.Node, new Grasshopper.Kernel.Data.GH_Path(branchindex));
+
+
+                    branchindex++;
+
                 }
 
 
-                //Sorting the element outputs based on 
-                if (priorityKey == 0)  // sorts by Structural priority
-                {
-                    ElementWrapper = ElementWrapper.OrderBy(t => t.Element.Priority).ToList();
 
 
-                }
-
-                if (priorityKey == 1) //Sorts alphabetically based on tag
-                {
-                    ElementWrapper = ElementWrapper.OrderBy(t => t.Element.Tag).ToList();
-
-                }
-
-
-
-                ElementTree.AddRange(ElementWrapper, new Grasshopper.Kernel.Data.GH_Path(branchindex));
-                NodeTree.Add(Detail.Node, new Grasshopper.Kernel.Data.GH_Path(branchindex));
-
-
-                branchindex++;
-
+                DA.SetDataTree(0, NodeTree);
+                DA.SetDataTree(1, ElementTree);
             }
 
-
-
-
-            DA.SetDataTree(0, NodeTree);
-            DA.SetDataTree(1, ElementTree);
+            
 
 
             #endregion
