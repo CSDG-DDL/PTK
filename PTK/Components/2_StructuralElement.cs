@@ -82,7 +82,7 @@ namespace PTK.Components
         {
             get
             {
-                return null;
+                return Properties.Resources.Element;
             }
         }
 

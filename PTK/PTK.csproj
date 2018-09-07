@@ -313,6 +313,31 @@
     <Content Include="ParaCoorFormItem\Viewer.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\ParaCoor.png" />
+    <None Include="Resources\Pareto.png" />
+    <None Include="Resources\Composite.png" />
+    <None Include="Resources\Support.png" />
+    <None Include="Resources\SearchDetail.png" />
+    <None Include="Resources\RectangleCS.png" />
+    <None Include="Resources\PSO.png" />
+    <None Include="Resources\Node.png" />
+    <None Include="Resources\Material.png" />
+    <None Include="Resources\LocalAnalysis.png" />
+    <None Include="Resources\Load.png" />
+    <None Include="Resources\Karamba.png" />
+    <None Include="Resources\GA.png" />
+    <None Include="Resources\Force.png" />
+    <None Include="Resources\Element.png" />
+    <None Include="Resources\Disassemble.png" />
+    <None Include="Resources\Detail.png" />
+    <None Include="Resources\Cut.png" />
+    <None Include="Resources\CrossSection.png" />
+    <None Include="Resources\BTL.png" />
+    <None Include="Resources\Assemble.png" />
+    <None Include="Resources\Alignment.png" />
+    <None Include="Resources\Assembly.png" />
+    <None Include="Resources\Assembly.ico" />
+    <None Include="Resources\assembly.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

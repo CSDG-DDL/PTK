@@ -147,7 +147,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ico_assemble;
+                return PTK.Properties.Resources.Assemble;
             }
         }
 

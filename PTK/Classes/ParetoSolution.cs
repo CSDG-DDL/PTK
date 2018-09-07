@@ -124,7 +124,7 @@ namespace PTK
     {
         public Param_ParetoSolution() : base(new GH_InstanceDescription("ParetoSolution", "Pareto", "A set of parameter values derived as one of the best solutions for multiobjective optimization.", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return null; } }  //クラスにアイコンを付けたい場合はここ
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Pareto; } }  //クラスにアイコンを付けたい場合はここ
 
         public override Guid ComponentGuid => new Guid("a782682d-9eaf-48c0-8275-41c9b2f0e9b2");
 

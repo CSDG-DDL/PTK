@@ -91,7 +91,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ico_exportKaramba;
+                return PTK.Properties.Resources.Karamba;
             }
         }
 

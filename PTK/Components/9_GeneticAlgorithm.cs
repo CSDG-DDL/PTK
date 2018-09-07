@@ -100,7 +100,7 @@ namespace PTK.Optimization
         {
             get
             {
-                return Properties.Resources.GA_icon;
+                return Properties.Resources.GA;
             }
         }
 

@@ -40,7 +40,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ico_force;
+                return PTK.Properties.Resources.Force;
             }
         }
 
