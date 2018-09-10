@@ -160,7 +160,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ico_support;
+                return PTK.Properties.Resources.Support;
             }
         }
 

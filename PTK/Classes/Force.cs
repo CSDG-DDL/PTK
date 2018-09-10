@@ -85,7 +85,7 @@ namespace PTK
     {
         public Param_Force() : base(new GH_InstanceDescription("Force", "Force", "Force", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return null; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Force; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("FB9C3075-220A-424E-AC7B-E515303D8A2F");
 

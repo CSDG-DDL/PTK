@@ -194,7 +194,7 @@ namespace PTK
         // properties
         /////////////////////////////////////////////////////////////////////////////////
 
-        protected override System.Drawing.Bitmap Icon { get { return null; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.CrossSection; } }
 
         public override Guid ComponentGuid => new Guid("480DDCC7-02FB-497D-BF9F-4FAE3CE0687A");
 

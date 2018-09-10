@@ -300,7 +300,7 @@ namespace PTK
     {
         public Param_Element1D() : base(new GH_InstanceDescription("Element1D", "Elem1D", "A linear Element", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return null; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Element; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("76479A6F-4C3D-43E0-B85E-FF2C6A99FEA5");
 
@@ -354,15 +354,19 @@ namespace PTK
 
     //Predefined in detail.cs
 
-    //public class ElementInDetail  //Used to output an element and its detailSpesific data
-    //{
-    //    public Element1D Element;
-    //    public Vector3d UnifiedVector;
-    //    public ElementInDetail(Element1D _element, Vector3d _UnifiedVector)
-    //    {
-    //        Element = _element;
-    //        UnifiedVector = _UnifiedVector;
-    //    }
-    //}
+    public class ElementInDetail  //Used to output an element and its detailSpesific data
+    {
+        public Element1D Element;
+        public Vector3d UnifiedVector;
+        public ElementInDetail()
+        {
+
+        }
+        public ElementInDetail(Element1D _element, Vector3d _UnifiedVector)
+        {
+            Element = _element;
+            UnifiedVector = _UnifiedVector;
+        }
+    }
 
 }

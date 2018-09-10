@@ -62,7 +62,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ico_material;
+                return PTK.Properties.Resources.Material;
             }
         }
 

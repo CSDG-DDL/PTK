@@ -168,7 +168,7 @@ namespace PTK
         /////////////////////////////////////////////////////////////////////////////////
 
         // set an icon here
-        protected override System.Drawing.Bitmap Icon { get { return null; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Composite; } }
 
         public override Guid ComponentGuid => new Guid("c075b093-0f5a-4ff0-8faf-3de8bcd6fa7a");
 

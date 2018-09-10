@@ -59,7 +59,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ico_global;
+                return PTK.Properties.Resources.Assemble;
             }
         }
 

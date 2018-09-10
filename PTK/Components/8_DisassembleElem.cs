@@ -81,7 +81,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ico_xelement;
+                return PTK.Properties.Resources.Element;
             }
         }
 

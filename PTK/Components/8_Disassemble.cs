@@ -78,7 +78,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ico_disassemble;
+                return PTK.Properties.Resources.Disassemble;
             }
         }
 

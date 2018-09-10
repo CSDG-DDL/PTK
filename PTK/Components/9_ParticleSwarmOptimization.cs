@@ -89,7 +89,7 @@ namespace PTK
         {
             get
             {
-                return null;
+                return Properties.Resources.PSO;
             }
         }
 
