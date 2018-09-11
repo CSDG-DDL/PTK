@@ -353,7 +353,7 @@ namespace PTK
     }
 
     //Predefined in detail.cs
-
+    /*
     public class ElementInDetail  //Used to output an element and its detailSpesific data
     {
         public Element1D Element;
@@ -368,5 +368,5 @@ namespace PTK
             UnifiedVector = _UnifiedVector;
         }
     }
-
+    */
 }
