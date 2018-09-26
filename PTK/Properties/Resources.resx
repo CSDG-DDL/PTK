@@ -145,9 +145,6 @@
   <data name="Detail" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Detail.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Disassemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Disassemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Element" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Element.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -189,5 +186,38 @@
   </data>
   <data name="Support" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Support.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Drill" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Drill.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtAssemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtAssemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtDetail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtDetail.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtElement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtElement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtPareto" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtPareto.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Joint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Joint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LoadMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PreAssemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PreAssemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PreElement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PreElement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StrAssemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\StrAssemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

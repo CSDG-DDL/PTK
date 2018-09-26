@@ -147,7 +147,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.Assemble;
+                return PTK.Properties.Resources.StrAssemble;
             }
         }
 
