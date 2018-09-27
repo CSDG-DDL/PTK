@@ -40,7 +40,6 @@ namespace PTK
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.RegisterParam(new Param_Assembly(), "StructuralAssembly", "SA", "StructuralAssembly", GH_ParamAccess.item);
-            // pManager.RegisterParam(new Param_Node(), "Nodes", "N", "Nodes included in the Assembly", GH_ParamAccess.list);
             pManager.AddLineParameter("Lines", "Lns", "only for V.0.3", GH_ParamAccess.list);
         }
 
@@ -52,8 +51,6 @@ namespace PTK
             
             GH_Assembly gAssembly = null;
             Assembly assembly = null;
-            List<GH_StructuralElement> gStrElems = new List<GH_StructuralElement>();
-            List<StructuralElement> strElems = null;
             List<GH_Support> gSups = new List<GH_Support>();
             List<Support> sups = null;
             List<GH_Load> gLoads = new List<GH_Load>();
@@ -104,8 +101,6 @@ namespace PTK
 
             foreach(Element1D e in assembly.Elements)
             {
-                strAssembly.AddSElement(new StructuralElement(e));
-
                 var paramList = strAssembly.Assembly.SearchNodeParamsAtElement(e);
 
                 for (int i = 0; i < paramList.Count - 1; i++)
@@ -115,12 +110,7 @@ namespace PTK
                     tempLines.Add(new Line(spt, ept));
                 }
             }
-            /*
-            foreach(StructuralElement sElem in strAssembly.SElements)
-            {
-                strAssembly.AddSElement(sElem);
-            }
-            */
+
             foreach (Support s in sups)
             {
                 strAssembly.AddSupport(s);

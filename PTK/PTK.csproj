@@ -99,7 +99,6 @@
     <Compile Include="Components\10_Rule_ElementAmount.cs" />
     <Compile Include="Components\10_Rule_ElementLength.cs" />
     <Compile Include="Components\3_GravityLoad.cs" />
-    <Compile Include="Components\2_StructuralElement.cs" />
     <Compile Include="Components\3_StructualAssembly.cs" />
     <Compile Include="Components\6_FinishedModel.cs" />
     <Compile Include="Components\2_SimpleAlignment.cs" />

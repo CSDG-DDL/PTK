@@ -31,7 +31,6 @@ namespace PTK
         public Point3d PointAtStart { get; private set; }
         public Point3d PointAtEnd { get; private set; }
         public Plane CroSecLocalPlane { get; private set; }
-        // public Sub2DElement SubElement { get; private set; }
         public List<Sub2DElement> Sub2DElements { get; private set; }
         public List<CrossSection> CrossSections { get; private set; }
         public Composite Composite { get; private set; }
@@ -68,7 +67,7 @@ namespace PTK
             Composite = new Composite();
             Sub2DElements = new List<Sub2DElement>();
             CrossSections = new List<CrossSection>();
-            Align = new Alignment(); 
+            Align = new Alignment();
             Forces = new List<Force>();
             Joints = new List<Joint>();
             Priority = int.MinValue;
@@ -91,16 +90,7 @@ namespace PTK
             SetSub2DElements();
             SetCrossSections();
             InitializeLocalPlane();
-
-
-
-
-
         }
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
 
         /////////////////////////////////////////////////////////////////////////////////
         // methods
@@ -122,8 +112,8 @@ namespace PTK
         {
             if (Composite.Sub2DElements != null)
             {
-                foreach(Sub2DElement se in Composite.Sub2DElements)
-                CrossSections.Add(se.CrossSection);
+                foreach (Sub2DElement se in Composite.Sub2DElements)
+                    CrossSections.Add(se.CrossSection);
             }
             else
             {
@@ -152,7 +142,7 @@ namespace PTK
                 // localY direction is obtained by the cross product of globalZ and localX.
 
                 Vector3d localY = Vector3d.CrossProduct(globalZ, localX);   //case B
-                if (localY.Length==0)
+                if (localY.Length == 0)
                 {
                     localY = Vector3d.YAxis;    //case A
                 }
@@ -178,11 +168,11 @@ namespace PTK
                 double offsetV = 0.0;
                 double offsetU = 0.0;
                 CrossSection.GetMaxHeightAndWidth(crossSections, out double height, out double width);
-                if(Align.AnchorVert == AlignmentAnchorVert.Top)
+                if (Align.AnchorVert == AlignmentAnchorVert.Top)
                 {
                     offsetV += height / 2;
                 }
-                else if(Align.AnchorVert == AlignmentAnchorVert.Bottom)
+                else if (Align.AnchorVert == AlignmentAnchorVert.Bottom)
                 {
                     offsetV -= height / 2;
                 }
@@ -224,65 +214,13 @@ namespace PTK
         }
     }
 
-    public class StructuralElement
-    {
-        public Element1D Element { get; private set; }
-        public List<Force> Forces { get; private set; }
-        public List<Joint> Joints { get; private set; }
 
-        public StructuralElement()
-        {
-            Element = new Element1D();
-            Forces = new List<Force>();
-            Joints = new List<Joint>();
-        }
-
-        public StructuralElement(Element1D _element)
-        {
-            Element = _element;
-            Forces = new List<Force>();
-            Joints = new List<Joint>();
-        }
-
-        public StructuralElement(Element1D _element, List<Force> _forces, List<Joint> _joints)
-        {
-            Element = _element;
-            Forces = _forces;
-            Joints = _joints;
-        }
-
-        public int AddForce(Force _force)
-        {
-            Forces.Add(_force);
-            return Forces.Count;
-        }
-        public int AddJoint(Joint _joint)
-        {
-            Joints.Add(_joint);
-            return Forces.Count;
-        }
-        public StructuralElement DeepCopy()
-        {
-            return (StructuralElement)base.MemberwiseClone();
-        }
-        public override string ToString()
-        {
-            string info;
-            info = "<StructuralElement> Element1D:" + Element.Tag +
-                " Forces:" + Forces.Count.ToString();
-            return info;
-        }
-        public bool IsValid()
-        {
-            return Element != null;
-        }
-    }
 
     public class GH_Element1D : GH_Goo<Element1D>
     {
         public GH_Element1D() { }
         public GH_Element1D(GH_Element1D other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
-        public GH_Element1D(Element1D str) : base(str) { this.Value = str; }
+        public GH_Element1D(Element1D ele) : base(ele) { this.Value = ele; }
         public override IGH_Goo Duplicate()
         {
             return new GH_Element1D(this);
@@ -314,59 +252,5 @@ namespace PTK
             return GH_GetterResult.success;
         }
     }
-
-    public class GH_StructuralElement : GH_Goo<StructuralElement>
-    {
-        public GH_StructuralElement() { }
-        public GH_StructuralElement(GH_StructuralElement other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
-        public GH_StructuralElement(StructuralElement elem) : base(elem) { this.Value = elem; }
-        public override IGH_Goo Duplicate()
-        {
-            return new GH_StructuralElement(this);
-        }
-        public override bool IsValid => base.m_value.IsValid();
-        public override string TypeName => "StructuralElement";
-        public override string TypeDescription => "Element with structural information added";
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
-    }
-
-    public class Param_StructuralElement : GH_PersistentParam<GH_StructuralElement>
-    {
-        public Param_StructuralElement() : base(new GH_InstanceDescription("StructuralElement", "SElem", "Element with structural information added", CommonProps.category, CommonProps.subcate0)) { }
-
-        protected override System.Drawing.Bitmap Icon { get { return null; } }  //Set icon image
-
-        public override Guid ComponentGuid => new Guid("B29BCA28-9108-48C1-B4F5-F808644F015A");
-
-        protected override GH_GetterResult Prompt_Plural(ref List<GH_StructuralElement> values)
-        {
-            return GH_GetterResult.success;
-        }
-
-        protected override GH_GetterResult Prompt_Singular(ref GH_StructuralElement value)
-        {
-            return GH_GetterResult.success;
-        }
-    }
-
-    //Predefined in detail.cs
-    /*
-    public class ElementInDetail  //Used to output an element and its detailSpesific data
-    {
-        public Element1D Element;
-        public Vector3d UnifiedVector;
-        public ElementInDetail()
-        {
-
-        }
-        public ElementInDetail(Element1D _element, Vector3d _UnifiedVector)
-        {
-            Element = _element;
-            UnifiedVector = _UnifiedVector;
-        }
-    }
-    */
 }
+

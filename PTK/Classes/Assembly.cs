@@ -206,34 +206,22 @@ namespace PTK
     public class StructuralAssembly : Assembly
     {
         public Assembly Assembly { get; private set; }
-        public List<StructuralElement> SElements { get; private set; }
         public List<Support> Supports { get; private set; }
         public List<Load> Loads { get; private set; }
 
         public StructuralAssembly()
         {
             Assembly = new Assembly();
-            SElements = new List<StructuralElement>();
             Supports = new List<Support>();
             Loads = new List<Load>();
         }
         public StructuralAssembly(Assembly _assembly)
         {
             Assembly = _assembly;
-            SElements = new List<StructuralElement>();
             Supports = new List<Support>();
             Loads = new List<Load>();
         }
      
-        public int AddSElement(StructuralElement _sElement)
-        {
-            if (!SElements.Contains(_sElement))
-            {
-                SElements.Add(_sElement);
-            }
-            return SElements.Count;
-        }
-
         public int AddSupport(Support _support)
         {
             if (!Supports.Contains(_support))
@@ -259,14 +247,14 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<StructuralAssembly> StructuralElements:" + SElements.Count.ToString() +
+            info = "<StructuralAssembly>"+
                 " Supports:" + Supports.Count.ToString() +
                 " Loads:" + Loads.Count.ToString();
             return info;
         }
         public new bool IsValid()
         {
-            return SElements.Count != 0;
+            return Assembly != null;
         }
     }
 

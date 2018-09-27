@@ -58,15 +58,15 @@ namespace PTK
                 }
             }
 
-            foreach(StructuralElement e in _strAssembly.SElements)
+            foreach(Element1D e in _strAssembly.Assembly.Elements)
             {
-                var paramList = _strAssembly.Assembly.SearchNodeParamsAtElement(e.Element);
+                var paramList = _strAssembly.Assembly.SearchNodeParamsAtElement(e);
                 for (int i = 0; i <= paramList.Count-2; i++ )
                 {
-                    var elem = new Karamba.Elements.GrassBeam(e.Element.BaseCurve.PointAt(paramList[i]), e.Element.BaseCurve.PointAt(paramList[i + 1]));
+                    var elem = new Karamba.Elements.GrassBeam(e.BaseCurve.PointAt(paramList[i]), e.BaseCurve.PointAt(paramList[i + 1]));
                     //var s = crosecMap[e.Element.Sections[0]];
                     //s.ecce_loc = new Vector3d(e.Element.Align.OffsetY, e.Element.Align.OffsetZ,0);
-                    elem.crosec = crosecMap[e.Element.CrossSections[0]]; 
+                    elem.crosec = crosecMap[e.CrossSections[0]]; 
                     //At present it is supposed to be one section material
                     //elem.z_ori
                     elems.Add(elem);
