@@ -116,9 +116,9 @@ namespace PTK
                     "Country",
                     null/*color*/,
                     _mat,
-                    rectSec.GetHeight() * CommonProps.ConversionUnit(Rhino.UnitSystem.Centimeters),
-                    rectSec.GetWidth() * CommonProps.ConversionUnit(Rhino.UnitSystem.Centimeters),
-                    rectSec.GetWidth() * CommonProps.ConversionUnit(Rhino.UnitSystem.Centimeters)
+                    rectSec.GetHeight() * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters),
+                    rectSec.GetWidth() * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters),
+                    rectSec.GetWidth() * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters)
                     );
                 //Karamba.Utilities.UnitsConversionFactory unitsConversionFactory = Karamba.Utilities.UnitsConversionFactories.Conv();
                 //sec.ecce_loc = unitsConversionFactory.cm();

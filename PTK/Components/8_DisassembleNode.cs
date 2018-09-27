@@ -29,7 +29,7 @@ namespace PTK
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddPointParameter("Point", "P", "Node point", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Displacement Vectors", "V", "Displacement", GH_ParamAccess.list);
+            //pManager.AddVectorParameter("Displacement Vectors", "V", "Displacement", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -45,12 +45,12 @@ namespace PTK
 
             #region solve
             Point3d p = node.Point;
-            List<Vector3d> vs = node.DisplacementVectors;
+            //List<Vector3d> vs = node.DisplacementVectors;
             #endregion
 
             #region output
             DA.SetData(0, p);
-            DA.SetDataList(1, vs);
+            //DA.SetDataList(1, vs);
             #endregion
         }
 

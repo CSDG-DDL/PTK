@@ -78,7 +78,7 @@ namespace PTK
 
             #region solve
             // check locale: "comma" or "period"
-            DecimalSeparator envDs = CommonProps.FindDecimalSeparator();
+            DecimalSeparator envDs = CommonFunctions.FindDecimalSeparator();
             DecimalSeparator csvDs = DecimalSeparator.error;
              
             // registering materials
@@ -109,12 +109,12 @@ namespace PTK
                 if (envDs == DecimalSeparator.comma && csvDs == DecimalSeparator.period)
                 {
                     // if csv includes "period", it needs treatment
-                    convertedTxt = Functions.ConvertCommaToPeriodDecimal(nlist[i], true);
+                    convertedTxt = CommonFunctions.ConvertCommaToPeriodDecimal(nlist[i], true);
                 }
                 else if (envDs == DecimalSeparator.period && csvDs == DecimalSeparator.comma)
                 {
                     // if csv includes "comma", it needs treatment
-                    convertedTxt = Functions.ConvertCommaToPeriodDecimal(nlist[i], false);
+                    convertedTxt = CommonFunctions.ConvertCommaToPeriodDecimal(nlist[i], false);
                 }
                 else
                 {
