@@ -81,7 +81,7 @@
     <Compile Include="Classes\DetailingGroupRules.cs" />
     <Compile Include="Classes\DetailingGroupRulesDefinition.cs" />
     <Compile Include="Classes\Element.cs" />
-    <Compile Include="Classes\Functions.cs" />
+    <Compile Include="Classes\CommonFunctions.cs" />
     <Compile Include="Classes\BuildingProject.cs" />
     <Compile Include="Classes\Joint.cs" />
     <Compile Include="Classes\KarambaConversion.cs" />
