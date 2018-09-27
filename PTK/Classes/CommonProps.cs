@@ -10,7 +10,7 @@ namespace PTK
     {
         public static double tolerances = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
         public static readonly string category = "PTK";
-        public static readonly string subcate0 = "Param";
+        public static readonly string subcate0 = " Param";
         public static readonly string subcate1 = "Material";
         public static readonly string subcate2 = "MakeElement";
         public static readonly string subcate3 = "MakeAssembly";

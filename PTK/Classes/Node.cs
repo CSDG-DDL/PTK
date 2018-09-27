@@ -11,8 +11,6 @@ namespace PTK
     public class Node : IEquatable<Node>
     {
         public Point3d Point { get; private set; }
-        public List<Vector3d> DisplacementVectors { get; private set; } = new List<Vector3d>();
-        
 
         public Node()
         {
@@ -25,34 +23,12 @@ namespace PTK
 
         public bool Equals(Node _other)
         {
-            //It is necessary to consider a minute error
-            if (Point == _other.Point)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return Equals(_other.Point);
         }
-
-        
 
         public bool Equals(Point3d _point)
         {
-            if(Point == _point)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public int AddDisplacementVector(Vector3d _vector)
-        {
-            DisplacementVectors.Add(_vector);
-            return DisplacementVectors.Count;
+            return Point.EpsilonEquals(_point, CommonProps.tolerances);
         }
 
         public Node DeepCopy()
@@ -62,13 +38,12 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Node> Point:" + Point.ToString() +
-                " DisplacementVectors:" + DisplacementVectors.ToString();
+            info = "<Node> Point:" + Point.ToString();
             return info;
         }
         public bool IsValid()
         {
-            return true;
+            return Point != null;
         }
     }
 
@@ -76,12 +51,12 @@ namespace PTK
     {
         public GH_Node() { }
         public GH_Node(GH_Node other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
-        public GH_Node(Node sec) : base(sec) { this.Value = sec; }
+        public GH_Node(Node node) : base(node) { this.Value = node; }
         public override bool IsValid => base.m_value.IsValid();
 
         public override string TypeName => "Node";
 
-        public override string TypeDescription => "Description";
+        public override string TypeDescription => "At the intersection of Elements, or the end point";
 
         public override IGH_Goo Duplicate()
         {
@@ -96,7 +71,7 @@ namespace PTK
 
     public class Param_Node : GH_PersistentParam<GH_Node>
     {
-        public Param_Node() : base(new GH_InstanceDescription("Node", "Node", "Description", CommonProps.category, CommonProps.subcate0)) { }
+        public Param_Node() : base(new GH_InstanceDescription("Node", "Node", "At the intersection of Elements, or the end point", CommonProps.category, CommonProps.subcate0)) { }
 
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Node; } }  //Set icon image
 

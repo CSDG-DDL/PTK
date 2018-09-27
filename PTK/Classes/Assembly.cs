@@ -24,9 +24,6 @@ namespace PTK
         public List<Detail> Details { get; private set; }
         public List<DetailingGroup> DetailingGroups { get; private set; }
 
-        RTree rTreeNodes = new RTree();
-
-
 
         public Assembly()
         {
@@ -39,10 +36,6 @@ namespace PTK
             CrossSectionMap = new Dictionary<CrossSection, MaterialProperty>();
             Details = new List<Detail>();
             DetailingGroups = new List<DetailingGroup>();
-            
-
-            
-
         }
 
         
@@ -51,27 +44,17 @@ namespace PTK
             //Making Detail
             foreach(Node node in Nodes)
             {
-                ;
-
                 int ind = Nodes.IndexOf(node);
                 List<Element1D> Elements = NodeMap.Where(p => p.Value.Contains(ind)).ToList().ConvertAll(p => p.Key);
-
-
                 Details.Add(new Detail(node, Elements));
-
             }
-
-            
         }
-
 
         public int AddElement(Element1D _element)
         {
             if (!Elements.Contains(_element))
             {
                 // SearchNodes:
-                //
-                // 
                 SearchNodes(_element);
 
                 Elements.Add(_element);
@@ -152,64 +135,23 @@ namespace PTK
 
         private void AddPointToNodeMap(Element1D _element, Point3d _pt)
         {
-
-            bool nodeExists = false;
-            int nodeIndex = new int();
-            //bool nodeExists = NodeExists(Nodes, ref rTreeNodes, _point);
-            // "nodeExisting" will be performed, when items are found.
-            EventHandler<RTreeEventArgs> nodeExisting =
-                (object sender, RTreeEventArgs args) =>
-                {
-                    nodeExists = true;
-                    nodeIndex = args.Id;
-                };
-
-            double tol = CommonProps.tolerances;
-            // bounding box of a node considering the tolerance
-            BoundingBox spotBBox = new BoundingBox
-                (_pt.X - tol, _pt.Y - tol, _pt.Z - tol, _pt.X + tol, _pt.Y + tol, _pt.Z + tol);
-
-            // performs node search, making nodeExists to true when an existent node is detected.
-            rTreeNodes.Search(spotBBox, nodeExisting);
-
-            // in case node doesn't exist:
-            if (!nodeExists)
-            {
-                Nodes.Add(new Node(_pt));
-                nodeIndex = Nodes.Count - 1;
-                NodeMap[_element].Add(nodeIndex);
-                rTreeNodes.Insert(new BoundingBox(_pt, _pt), nodeIndex);
-            }
-            else
-            {
-                NodeMap[_element].Add(nodeIndex);
-            }
-
-            /*
             // When there is no node found at the position
-            // if (!Nodes.Exists(n => n.Equals(_point)))
-            if (!Nodes.Exists(n => n.Point == _pt))
+            if (!Nodes.Exists(n => n.Equals(_pt)))
             {
-                //Here i make a new detail. and add the element to the detail
                 // node location less than the tolerance
                 Nodes.Add(new Node(_pt));
                 NodeMap[_element].Add(Nodes.Count-1);
             }
             else // when there's an existent node
             {
-                //Here i add an element to the detail
-                // int ind = Nodes.FindIndex(n => n.Equals(_point));
-                int ind = Nodes.FindIndex(n => n.Point.Equals(_pt));
                 //If there is already a node, map its index
+                int ind = Nodes.FindIndex(n => n.Point.Equals(_pt));
                 if (!NodeMap[_element].Contains(ind))
                 {
                     NodeMap[_element].Add(ind);
                 }
             }
-            */
-
         }
-
 
         public List<double> SearchNodeParamsAtElement(Element1D _element)
         {
@@ -218,8 +160,7 @@ namespace PTK
             {
                 foreach(int i in NodeMap[_element])
                 {
-                    double p;
-                    _element.BaseCurve.ClosestPoint(Nodes[i].Point, out p);
+                    _element.BaseCurve.ClosestPoint(Nodes[i].Point, out double p);
                     // remove same values
                     if (param.Count == 0)
                     {
@@ -238,7 +179,6 @@ namespace PTK
                 }
                 param.Sort();
             }
-
             return param;
         }
 
