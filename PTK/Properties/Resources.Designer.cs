@@ -133,9 +133,9 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap Disassemble {
+        internal static System.Drawing.Bitmap Drill {
             get {
-                object obj = ResourceManager.GetObject("Disassemble", resourceCulture);
+                object obj = ResourceManager.GetObject("Drill", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -146,6 +146,56 @@ namespace PTK.Properties {
         internal static System.Drawing.Bitmap Element {
             get {
                 object obj = ResourceManager.GetObject("Element", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap ExtAssemble {
+            get {
+                object obj = ResourceManager.GetObject("ExtAssemble", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap ExtDetail {
+            get {
+                object obj = ResourceManager.GetObject("ExtDetail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap ExtElement {
+            get {
+                object obj = ResourceManager.GetObject("ExtElement", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap ExtNode {
+            get {
+                object obj = ResourceManager.GetObject("ExtNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap ExtPareto {
+            get {
+                object obj = ResourceManager.GetObject("ExtPareto", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -193,6 +243,16 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap Joint {
+            get {
+                object obj = ResourceManager.GetObject("Joint", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap Karamba {
             get {
                 object obj = ResourceManager.GetObject("Karamba", resourceCulture);
@@ -206,6 +266,16 @@ namespace PTK.Properties {
         internal static System.Drawing.Bitmap Load {
             get {
                 object obj = ResourceManager.GetObject("Load", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap LoadMaterial {
+            get {
+                object obj = ResourceManager.GetObject("LoadMaterial", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -263,6 +333,26 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap PreAssemble {
+            get {
+                object obj = ResourceManager.GetObject("PreAssemble", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap PreElement {
+            get {
+                object obj = ResourceManager.GetObject("PreElement", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap PSO {
             get {
                 object obj = ResourceManager.GetObject("PSO", resourceCulture);
@@ -286,6 +376,16 @@ namespace PTK.Properties {
         internal static System.Drawing.Bitmap SearchDetail {
             get {
                 object obj = ResourceManager.GetObject("SearchDetail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap StrAssemble {
+            get {
+                object obj = ResourceManager.GetObject("StrAssemble", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
