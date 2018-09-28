@@ -37,20 +37,24 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            // --- variables ---
             GH_Assembly gAssembly = null;
             //PriorityModel priorityModel = new PriorityModel();
             string priority = "";
 
+            // --- input --- 
             if (!DA.GetData(0, ref gAssembly)) { return; }
             PriorityModel priorityModel = new PriorityModel(gAssembly.Value);
             DA.GetData(1, ref priority);
 
+            // --- solve ---
             priorityModel.SetPriority(priority);
             if (!priorityModel.SearchDetails())
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "The condition of the priority is insufficient");
             }
 
+            // --- output ---
             DA.SetData(0, new GH_PriorityModel(priorityModel));
         }
 

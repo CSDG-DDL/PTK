@@ -37,15 +37,14 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string name = "N/A";
             double width = new double();
             double height = new double();
             // GH_MaterialProperty gMaterialProperty = null;
             // MaterialProperty materialProperty = null;
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref width)) { return; }
             if (!DA.GetData(2, ref height)) { return; }
@@ -58,15 +57,12 @@ namespace PTK
                 materialProperty = gMaterialProperty.Value;
             }
             */
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, height, width));
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, sec);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

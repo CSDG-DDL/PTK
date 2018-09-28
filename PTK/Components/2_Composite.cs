@@ -12,9 +12,6 @@ namespace PTK.Components
 {
     public class PTK_2_Composite : GH_Component
     {
-        /// <summary>
-        /// Initializes a new instance of the _2_SubElement class.
-        /// </summary>
         public PTK_2_Composite()
           : base("Composite Cross-section", "Composite",
               "creates a sub element",
@@ -23,9 +20,6 @@ namespace PTK.Components
             Message = CommonProps.initialMessage;
         }
 
-        /// <summary>
-        /// Registers all the input parameters for this component.
-        /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item);
@@ -38,26 +32,14 @@ namespace PTK.Components
             pManager[4].Optional = true;
         }
 
-        /// <summary>
-        /// Registers all the output parameters for this component.
-        /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.RegisterParam(new Param_Composite(), "Composite Cross-section", "Composite", "PTK Sub-elements", GH_ParamAccess.item);
-
         }
 
-        /// <summary>
-        /// This is the method that actually does the work.
-        /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
-            /////////////////////////////////////////////////////////////////////////////////
-            // variables
-            /////////////////////////////////////////////////////////////////////////////////
-
+            // --- variables ---
             string name = null;
             List<GH_MaterialProperty> gMaterialProperties = new List<GH_MaterialProperty>();
             List<MaterialProperty> materialProperties = null;
@@ -67,14 +49,10 @@ namespace PTK.Components
             List<Alignment> alignments = null;
             GH_Alignment gGlobalAlignment = null;
             Alignment globalAlignment = null;
-
             List<Sub2DElement> sub2dElements = new List<Sub2DElement>();
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // input
-            /////////////////////////////////////////////////////////////////////////////////
-
-            if(!DA.GetData(0, ref name)) { return; }
+            // --- input --- 
+            if (!DA.GetData(0, ref name)) { return; }
         
             if (!DA.GetDataList(1, gMaterialProperties))
             {
@@ -113,9 +91,7 @@ namespace PTK.Components
             }
 
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // solve
-            /////////////////////////////////////////////////////////////////////////////////
+            // --- solve ---
 
             // we have materialProperties, crossSections, alignments, 
 
@@ -140,28 +116,18 @@ namespace PTK.Components
             
             */
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // output
-            /////////////////////////////////////////////////////////////////////////////////
+            // --- output ---
             DA.SetData(0, gComposite);
         }
 
-        /// <summary>
-        /// Provides an Icon for the component.
-        /// </summary>
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
                 return Properties.Resources.Composite;
             }
         }
 
-        /// <summary>
-        /// Gets the unique ID for this component. Do not change this ID after release.
-        /// </summary>
         public override Guid ComponentGuid
         {
             get { return new Guid("9c4880e6-f925-484b-9ec1-cf5cf466d417"); }

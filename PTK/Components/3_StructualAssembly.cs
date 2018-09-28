@@ -45,10 +45,7 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            /////////////////////////////////////////////////////////////////////////////////
-            // variables
-            /////////////////////////////////////////////////////////////////////////////////
-            
+            // --- variables ---
             GH_Assembly gAssembly = null;
             Assembly assembly = null;
             List<GH_Support> gSups = new List<GH_Support>();
@@ -58,13 +55,9 @@ namespace PTK
 
             // below: tempLines will be removed after V.0.3
             // just a temporal line element exporter to connect to Karamba
-            List<Line> tempLines = new List<Line>(); 
+            List<Line> tempLines = new List<Line>();
 
-
-            /////////////////////////////////////////////////////////////////////////////////
-            // input
-            /////////////////////////////////////////////////////////////////////////////////
-
+            // --- input --- 
             if (!DA.GetData(0, ref gAssembly))
             {
                 assembly = new Assembly();
@@ -93,10 +86,7 @@ namespace PTK
             }
 
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // solve
-            /////////////////////////////////////////////////////////////////////////////////
-
+            // --- solve ---
             StructuralAssembly strAssembly = new StructuralAssembly(assembly);
 
             foreach(Element1D e in assembly.Elements)
@@ -122,15 +112,11 @@ namespace PTK
 
             Assembly upcastedAssembly = strAssembly;
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // output
-            /////////////////////////////////////////////////////////////////////////////////
-
+            // --- output ---
             DA.SetData(0, new GH_Assembly(upcastedAssembly));
 
             // below: temporal output at V.0.3
             DA.SetDataList(1, tempLines);
-
         }
 
         protected override System.Drawing.Bitmap Icon

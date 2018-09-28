@@ -38,16 +38,15 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             GH_Assembly gAssembly = null;
             StructuralAssembly structuralAssembly = null;
             List<double> maxDisps;
             List<double> gravityForces;
             List<double> elasticEnergy;
             string warning;
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref gAssembly)) { return; }
             if (gAssembly.Value is StructuralAssembly)
             {
@@ -57,9 +56,8 @@ namespace PTK
             {
                 return;
             }
-            #endregion
 
-            #region solve
+            // --- solve ---
             var karambaModel = PTK.KarambaConversion.BuildModel(structuralAssembly);
 
             Karamba.Algorithms.Component_ThIAnalyze.solve(
@@ -76,14 +74,12 @@ namespace PTK
 
             //response.updateNodalDisplacements();
             //response.updateMemberForces();
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, new Karamba.Models.GH_Model(karambaModel));
             DA.SetDataList(1, maxDisps);
             DA.SetDataList(2, gravityForces);
             DA.SetDataList(3, elasticEnergy);
-            #endregion
         }
 
         

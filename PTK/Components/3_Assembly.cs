@@ -45,14 +45,13 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             Assembly assembly = new Assembly();
             List<GH_Element1D> gElems = new List<GH_Element1D>();
             List<Element1D> elems = null;
             List<DetailingGroupRulesDefinition> DetailinGroupDefinitions = new List<DetailingGroupRulesDefinition>();
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetDataList(0, gElems))
             {
                 elems = new List<Element1D>();
@@ -61,10 +60,9 @@ namespace PTK
             {
                 elems = gElems.ConvertAll(e => e.Value);
             }
-            #endregion
 
-            #region solve
-            foreach(Element1D elem in elems)
+            // --- solve ---
+            foreach (Element1D elem in elems)
             {
                 assembly.AddElement(elem);
             }
@@ -78,9 +76,8 @@ namespace PTK
                 }
                 
             }
-            
-            #endregion
-            #region output
+
+            // --- output ---
             List<GH_Node> nodes = assembly.Nodes.ConvertAll(n => new GH_Node(n));
             List<string> tags = assembly.Tags;
             List<GH_MaterialProperty> materialProperties = assembly.MaterialProperties.ConvertAll(m => new GH_MaterialProperty(m));
@@ -91,8 +88,6 @@ namespace PTK
             DA.SetDataList(2, tags);
             DA.SetDataList(3, materialProperties);
             DA.SetDataList(4, sections);
-            #endregion
-
         }
 
         protected override System.Drawing.Bitmap Icon

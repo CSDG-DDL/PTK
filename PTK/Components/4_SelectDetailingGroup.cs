@@ -11,9 +11,6 @@ namespace PTK.Components
 {
     public class SelectDetailingGroup : GH_Component
     {
-        /// <summary>
-        /// Initializes a new instance of the MyComponent1 class.
-        /// </summary>
         public SelectDetailingGroup()
           : base("SelectDetailingGroup", "DG",
               "Use the group name to select a detailing group",
@@ -21,9 +18,6 @@ namespace PTK.Components
         {
         }
 
-        /// <summary>
-        /// Registers all the input parameters for this component.
-        /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("PTK Assembly", "PTK A", "PTK Assembly", GH_ParamAccess.item);
@@ -31,43 +25,26 @@ namespace PTK.Components
             pManager.AddIntegerParameter("Sorting rule", "SR", "0=Structural, 1=Alphabetical, 2=ElementLength", GH_ParamAccess.item, 0);
         }
 
-        /// <summary>
-        /// Registers all the output parameters for this component.
-        /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("N", "NodeTree", "", GH_ParamAccess.tree);
             pManager.AddGenericParameter("ElementTree", "", "", GH_ParamAccess.tree);
         }
 
-        /// <summary>
-        /// This is the method that actually does the work.
-        /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
-
+            // --- variables ---
             Assembly assembly = new Assembly();
             GH_Assembly ghAssembly = new GH_Assembly();
-
-            
 
             string Name = "";
             int priorityKey = 0;
 
-
-
-
+            // --- input --- 
             DA.GetData(0, ref ghAssembly);
             DA.GetData(1, ref Name);
             DA.GetData(2, ref priorityKey);
-
             assembly = ghAssembly.Value;
-
-
-
-
 
 
 
@@ -79,11 +56,7 @@ namespace PTK.Components
 
 
 
-
-
-
-
-
+            // --- solve ---
 
             if (assembly.DetailingGroups.Find(t => t.Name == Name) != null)
             {
@@ -142,44 +115,23 @@ namespace PTK.Components
 
 
 
+                // --- output ---
 
                 DA.SetDataTree(0, NodeTree);
                 DA.SetDataTree(1, ElementTree);
             }
 
-            
-
-
-            #endregion
-
-
-
-            #region solve
-
-
-            #endregion
-
-            #region output
-            #endregion
 
         }
 
-        /// <summary>
-        /// Provides an Icon for the component.
-        /// </summary>
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
                 return Properties.Resources.SearchDetail;
             }
         }
 
-        /// <summary>
-        /// Gets the unique ID for this component. Do not change this ID after release.
-        /// </summary>
         public override Guid ComponentGuid
         {
             get { return new Guid("018213a3-efa0-45b0-b444-33259ad18f81"); }

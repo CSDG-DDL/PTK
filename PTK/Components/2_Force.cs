@@ -34,6 +34,13 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            // --- variables ---
+
+            // --- input --- 
+
+            // --- solve ---
+
+            // --- output ---
         }
 
         protected override System.Drawing.Bitmap Icon

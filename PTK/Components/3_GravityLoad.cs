@@ -35,25 +35,21 @@ namespace PTK.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string Tag = null;
             int lcase = 0;
             Vector3d gvector = new Vector3d();
-            #endregion
 
-            #region input
+            // --- input --- 
             DA.GetData(0, ref Tag);
             if (!DA.GetData(1, ref lcase)) { return; }
             if (!DA.GetData(2, ref gvector)) { return; }
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_Load load = new GH_Load(new GravityLoad(Tag, lcase, gvector));
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, load);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

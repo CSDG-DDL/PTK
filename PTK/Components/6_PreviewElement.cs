@@ -28,17 +28,15 @@ namespace PTK.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             GH_Element1D gElement = null;
             List<Brep> models = new List<Brep>();
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref gElement)) { return; }
             Element1D element = gElement.Value;
-            #endregion
 
-            #region solve
+            // --- solve ---
             List<Curve> sectionCurves = new List<Curve>();
             
             List<CrossSection> crossSections = new List<CrossSection>();
@@ -65,11 +63,9 @@ namespace PTK.Components
                 Brep[] breps = Brep.CreateFromSweep(element.BaseCurve, s, true, Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
                 models.AddRange(breps);
             }
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetDataList(0, models);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

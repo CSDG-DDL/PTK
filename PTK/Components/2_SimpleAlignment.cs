@@ -38,24 +38,21 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string name = null;
             double offsetY = new double();
             double offsetZ = new double();
             double rotationAngle = new double();
             Vector3d alongVector = new Vector3d();
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref offsetY)) { return; }
             if (!DA.GetData(2, ref offsetZ)) { return; }
             if (!DA.GetData(3, ref rotationAngle)) { return; }
             if (!DA.GetData(4, ref alongVector)) { return; }
 
-            #endregion
-
-            #region solve
+            // --- solve ---
             GH_Alignment ali;
             if (alongVector.Length <= 0)
             {
@@ -65,11 +62,9 @@ namespace PTK
             {
                 ali = new GH_Alignment(new Alignment(name, offsetY, offsetZ, rotationAngle, alongVector));
             }
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, ali);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

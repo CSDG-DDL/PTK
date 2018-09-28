@@ -37,19 +37,16 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             GH_Assembly gAssembly = null;
             Assembly assembly = null;
-
             DataTree<int> nodeMap = new DataTree<int>();
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref gAssembly)) { return; }
             assembly = gAssembly.Value;
-            #endregion
 
-            #region solve
+            // --- solve ---
             List<GH_Element1D> elems = assembly.Elements.ConvertAll(e => new GH_Element1D(e));
             List<GH_Node> nodes = assembly.Nodes.ConvertAll(n => new GH_Node(n));
             List<string> tags = assembly.Tags;
@@ -62,16 +59,14 @@ namespace PTK
                 nodeMap.AddRange(ids,new GH_Path(path));
                 path++;
             }
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetDataList(0, elems);
             DA.SetDataList(1, nodes);
             DA.SetDataList(2, tags);
             DA.SetDataList(3, materialProperties);
             DA.SetDataList(4, sections);
             DA.SetDataTree(5, nodeMap);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

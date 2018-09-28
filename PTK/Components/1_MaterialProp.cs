@@ -51,7 +51,7 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string Name = null;
 
             // for glulam according LIMTREBOKA
@@ -77,9 +77,8 @@ namespace PTK
 
             double Rhogk = new double();
             double Rhogmean = new double();
-            #endregion
 
-            #region input
+            // --- input --- 
             DA.GetData(0, ref Name);
             if (!DA.GetData(1, ref fmgk)) { return; }
             if (!DA.GetData(2, ref ft0gk)) { return; }
@@ -101,9 +100,8 @@ namespace PTK
 
             if (!DA.GetData(16, ref Rhogk)) { return; }
             if (!DA.GetData(17, ref Rhogmean)) { return; }
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_MaterialProperty prop = new GH_MaterialProperty(
                 new MaterialProperty(
                     Name,
@@ -132,14 +130,9 @@ namespace PTK
                     Rhogmean
                 )
             );
-            
 
-            #endregion
-
-            #region output
+            // --- output ---
             DA.SetData(0, prop);
-            #endregion
-
         }
 
         protected override System.Drawing.Bitmap Icon

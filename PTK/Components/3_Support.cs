@@ -45,28 +45,24 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string tag = null;
             int lCase = 0;
             // List<Plane> supPlns = new List<Plane>();
             Plane supPln = new Plane();
             List<Support> sups = new List<Support>();
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
             if (!DA.GetData(1, ref lCase)) { return; }
             if (!DA.GetData(2, ref supPln)) { return; }
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_Support sup = new GH_Support(new Support(tag, lCase, supPln, new List<bool>(boolSupArray)));
-            #endregion
 
-            #region output
+            // --- output ---
             Message = boolSupString;
             DA.SetData(0, sup);
-            #endregion
         }
 
         public override void CreateAttributes()

@@ -42,16 +42,14 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             GH_Element1D gElem = null;
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref gElem)) { return; }
             Element1D elem = gElem.Value;
-            #endregion
 
-            #region solve
+            // --- solve ---
             string tag = elem.Tag;
             Curve curve = elem.BaseCurve;
             Point3d ps = elem.PointAtStart;
@@ -62,9 +60,8 @@ namespace PTK
             List<GH_CroSec> secs = elem.CrossSections.ConvertAll(s => new GH_CroSec(s));
             GH_Alignment align = new GH_Alignment(elem.Align);
             bool intersect = elem.IsIntersectWithOther;
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, tag);
             DA.SetData(1, curve);
             DA.SetData(2, ps);
@@ -73,7 +70,6 @@ namespace PTK
             DA.SetDataList(5, secs);
             DA.SetData(6, align);
             DA.SetData(7, intersect);
-            #endregion
         }
 
 

@@ -10,8 +10,6 @@ namespace PTK
 {
     public class PTK_1_Material : GH_Component
     {
-        //change yuto
-
         public PTK_1_Material()
           : base("Material", "Mat","Create a Material",
               CommonProps.category, CommonProps.subcate1)
@@ -32,13 +30,12 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string name = null;
             GH_MaterialProperty gProp = null;
             MaterialProperty prop = null;
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref gProp)) {
                 prop = new MaterialProperty();
@@ -47,15 +44,12 @@ namespace PTK
             {
                 prop = gProp.Value;
             }
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_Material material = new GH_Material(new Material(name, prop));
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, material);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

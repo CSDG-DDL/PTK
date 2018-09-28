@@ -35,7 +35,7 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string MaterialName = "N/A";
 
             // for glulam according LIMTREBOKA
@@ -68,15 +68,14 @@ namespace PTK
             GH_Structure<GH_String> Tree = new GH_Structure<GH_String>();
 
             List<string> nlist = new List<string>();
-            #endregion
 
-            #region input
+            // --- input --- 
             DA.GetData(0, ref MaterialName) ;
             DA.GetDataTree(1, out Tree ) ;
-            #endregion
 
 
-            #region solve
+            // --- solve ---
+
             // check locale: "comma" or "period"
             DecimalSeparator envDs = CommonFunctions.FindDecimalSeparator();
             DecimalSeparator csvDs = DecimalSeparator.error;
@@ -179,13 +178,9 @@ namespace PTK
             ));
 
 
-            #endregion
-            
-            #region output
+            // --- output ---
             DA.SetData(0, prop);
             //DA.SetDataList(1, nlist);
-            #endregion
-
         }
 
         protected override System.Drawing.Bitmap Icon

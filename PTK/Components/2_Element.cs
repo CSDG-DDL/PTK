@@ -43,9 +43,7 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            /////////////////////////////////////////////////////////////////////////////////
-            // variables
-            /////////////////////////////////////////////////////////////////////////////////
+            // --- variables ---
             string tag = null;
             Curve curve = null;
 
@@ -65,10 +63,8 @@ namespace PTK
 
             int priority = new int();
             bool intersect = true;
-            
-            /////////////////////////////////////////////////////////////////////////////////
-            // input
-            /////////////////////////////////////////////////////////////////////////////////
+
+            // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
 
             if (!DA.GetData(1, ref curve)) { return; }
@@ -110,16 +106,11 @@ namespace PTK
                 return;
             }
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // solve
-            /////////////////////////////////////////////////////////////////////////////////
+            // --- solve ---
             GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, forces, joints, composite, priority, intersect));
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // output
-            /////////////////////////////////////////////////////////////////////////////////
+            // --- output ---
             DA.SetData(0, elem);
-
         }
 
         protected override System.Drawing.Bitmap Icon

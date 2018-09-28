@@ -34,24 +34,18 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             GH_Node gNode = null;
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref gNode)) { return; }
             Node node = gNode.Value;
-            #endregion
 
-            #region solve
+            // --- solve ---
             Point3d p = node.Point;
-            //List<Vector3d> vs = node.DisplacementVectors;
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, p);
-            //DA.SetDataList(1, vs);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon
