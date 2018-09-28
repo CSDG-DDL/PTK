@@ -105,16 +105,6 @@ namespace PTK.Components
 
             GH_Composite gComposite = new GH_Composite(new Composite(name, sub2dElements, globalAlignment));
 
-            /*
-            GH_SubElement subElement = new GH_SubElement(
-                                            new SubElement(
-                                                            name, 
-                                                            materialProperties,
-                                                            crossSections,
-                                                            alignments
-                                                           ));
-            
-            */
 
             // --- output ---
             DA.SetData(0, gComposite);

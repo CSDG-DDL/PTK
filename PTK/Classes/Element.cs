@@ -30,10 +30,11 @@ namespace PTK
         public Point3d PointAtStart { get; private set; }
         public Point3d PointAtEnd { get; private set; }
         public Plane CroSecLocalPlane { get; private set; }
+        public Composite Composite { get; private set; }
         public List<Sub2DElement> Sub2DElements { get; private set; }
         public List<CrossSection> CrossSections { get; private set; }
-        public Composite Composite { get; private set; }
-        public Alignment Align { get; private set; }
+        public List<MaterialProperty> Materials { get; private set; }
+        public Alignment Alignment { get; private set; }
         public List<Force> Forces { get; private set; }
         public List<Joint> Joints { get; private set; }
         public bool IsIntersectWithOther { get; private set; } = true;
@@ -48,7 +49,8 @@ namespace PTK
             Composite = new Composite();
             Sub2DElements = new List<Sub2DElement>();
             CrossSections = new List<CrossSection>();
-            Align = new Alignment();
+            Materials = new List<MaterialProperty>();
+            Alignment = new Alignment();
             Forces = new List<Force>();
             Joints = new List<Joint>();
             Priority = int.MinValue;
@@ -62,7 +64,8 @@ namespace PTK
             Composite = new Composite();
             Sub2DElements = new List<Sub2DElement>();
             CrossSections = new List<CrossSection>();
-            Align = new Alignment();
+            Materials = new List<MaterialProperty>();
+            Alignment = new Alignment();
             Forces = new List<Force>();
             Joints = new List<Joint>();
             Priority = int.MinValue;
@@ -74,16 +77,16 @@ namespace PTK
             BaseCurve = _curve;
             PointAtStart = _curve.PointAtStart;
             PointAtEnd = _curve.PointAtEnd;
-            // SubElement = _subElement;
             CrossSections = new List<CrossSection>();
             Composite = _composite;
-            Align = new Alignment(); // should not be a new instance 
+            SetSub2DElements();
+            SetCrossSections();
+            SetMaterial();
+            Alignment = _composite.Alignment;
             Forces = _forces;
             Joints = _joints;
             IsIntersectWithOther = _intersect;
             Priority = _priority;
-            SetSub2DElements();
-            SetCrossSections();
             InitializeLocalPlane();
         }
 
@@ -110,6 +113,21 @@ namespace PTK
             else
             {
                 CrossSections = new List<CrossSection>();
+            }
+        }
+
+        private void SetMaterial()
+        {
+            if(Composite.Sub2DElements != null)
+            {
+                foreach(Sub2DElement se in Composite.Sub2DElements)
+                {
+                    Materials.Add(se.MaterialProperty);
+                }
+            }
+            else
+            {
+                Materials = new List<MaterialProperty>();
             }
         }
 
@@ -143,16 +161,16 @@ namespace PTK
                 Plane localYZ = new Plane(BaseCurve.PointAtStart, localY, localZ);
 
                 //AlongVector
-                if (Align.AlongVector.Length != 0)
+                if (Alignment.AlongVector.Length != 0)
                 {
-                    double rot = Vector3d.VectorAngle(localYZ.YAxis, Align.AlongVector, localYZ);
+                    double rot = Vector3d.VectorAngle(localYZ.YAxis, Alignment.AlongVector, localYZ);
                     localYZ.Rotate(rot, localYZ.ZAxis);
                 }
 
                 // rotation
-                if (Align.RotationAngle != 0.0)
+                if (Alignment.RotationAngle != 0.0)
                 {
-                    double rot = Align.RotationAngle * Math.PI / 180; // degree to radian
+                    double rot = Alignment.RotationAngle * Math.PI / 180; // degree to radian
                     localYZ.Rotate(rot, localYZ.ZAxis);
                 }
 
@@ -160,24 +178,24 @@ namespace PTK
                 double offsetV = 0.0;
                 double offsetU = 0.0;
                 CrossSection.GetMaxHeightAndWidth(crossSections, out double height, out double width);
-                if (Align.AnchorVert == AlignmentAnchorVert.Top)
+                if (Alignment.AnchorVert == AlignmentAnchorVert.Top)
                 {
                     offsetV += height / 2;
                 }
-                else if (Align.AnchorVert == AlignmentAnchorVert.Bottom)
+                else if (Alignment.AnchorVert == AlignmentAnchorVert.Bottom)
                 {
                     offsetV -= height / 2;
                 }
-                if (Align.AnchorHori == AlignmentAnchorHori.Right)
+                if (Alignment.AnchorHori == AlignmentAnchorHori.Right)
                 {
                     offsetV += width / 2;
                 }
-                else if (Align.AnchorHori == AlignmentAnchorHori.Left)
+                else if (Alignment.AnchorHori == AlignmentAnchorHori.Left)
                 {
                     offsetV -= width / 2;
                 }
-                offsetV += Align.OffsetZ;
-                offsetU += Align.OffsetY;
+                offsetV += Alignment.OffsetZ;
+                offsetU += Alignment.OffsetY;
                 localYZ.Origin = localYZ.PointAt(offsetU, offsetV);
 
                 CroSecLocalPlane = localYZ;

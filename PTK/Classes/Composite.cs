@@ -40,8 +40,7 @@ namespace PTK
             double maxWidth = double.MinValue;
             double minHeight = double.MaxValue;
             double minWidth = double.MaxValue;
-            List<Sub2DElement> sub2DElements = this.Sub2DElements;
-            foreach (Sub2DElement s in sub2DElements)
+            foreach (Sub2DElement s in Sub2DElements)
             {
                 double tempVal;
 

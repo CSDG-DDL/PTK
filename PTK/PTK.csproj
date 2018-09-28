@@ -108,9 +108,7 @@
     <Compile Include="Classes\DetailModel.cs" />
     <Compile Include="Components\6_PreviewGeometry.cs" />
     <Compile Include="Components\6_PreviewPriority.cs" />
-    <Compile Include="Components\4_ExtractElement.cs" />
     <Compile Include="Components\4_SelectDetailingGroup.cs" />
-    <Compile Include="Components\4_ExtractNode.cs" />
     <Compile Include="Components\BuildModel.cs" />
     <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
     <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
@@ -161,9 +159,9 @@
     <Compile Include="Components\5_FeasibleCheck.cs" />
     <Compile Include="Components\7_BtlExport.cs" />
     <Compile Include="Components\8_DisassembleMaterial.cs" />
-    <Compile Include="Components\8_DisassembleElem.cs" />
+    <Compile Include="Components\8_ExtractElement.cs" />
     <Compile Include="Classes\CrossSection.cs" />
-    <Compile Include="Components\8_DisassembleNode.cs" />
+    <Compile Include="Components\8_ExtractNode.cs" />
     <Compile Include="Classes\Support.cs" />
     <Compile Include="Components\8_ExtractAssembly.cs" />
     <Compile Include="Components\8_DisassembleSection.cs" />
