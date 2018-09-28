@@ -318,7 +318,7 @@ namespace PTK
     {
         public Param_StructuralAssembly() : base(new GH_InstanceDescription("StructuralAssembly", "StructuralAssembly", "A model that gathers elements and has intersection points", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Assemble; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.StrAssemble; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("4B468C32-EC87-47F8-A995-0832EDADEBA0");
 

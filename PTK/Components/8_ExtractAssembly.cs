@@ -66,7 +66,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.Disassemble;
+                return PTK.Properties.Resources.ExtAssemble;
             }
         }
 

@@ -186,7 +186,7 @@ namespace PTK
         {
             get
             {
-                return null;
+                return Properties.Resources.ExtPareto;
             }
         }
 

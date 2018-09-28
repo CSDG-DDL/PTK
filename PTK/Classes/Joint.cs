@@ -81,7 +81,7 @@ namespace PTK
     {
         public Param_Joint() : base(new GH_InstanceDescription("Joint", "Joint", "Joint", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return null; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Joint; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("45E370EA-0754-4F65-9F53-0DEBF9FAC7CB");
 
