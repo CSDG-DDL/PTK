@@ -1,5 +1,4 @@
-﻿// alphanumerical order for namespaces please
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
@@ -11,15 +10,11 @@ namespace PTK
 {
     public abstract class CrossSection
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
+        // --- field ---
         public string Name { get; private set; }
         // public MaterialProperty MaterialProperty { get; private set; }
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
+        // --- constructors --- 
         public CrossSection()
         {
             Name = "N/A";
@@ -35,23 +30,15 @@ namespace PTK
             Name = _name;
             // MaterialProperty = _materialProperty;
         }
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
+        // --- methods ---
         public abstract double GetHeight();
         public abstract double GetWidth();
-
         public static void GetMaxHeightAndWidth(List<CrossSection> _secs,out double _height,out double _width)
         {
             _height = _secs.Max(s => s.GetHeight());
             _width = _secs.Max(s => s.GetWidth());
         }
-
         public abstract CrossSection DeepCopy();
         public override string ToString()
         {
@@ -68,15 +55,11 @@ namespace PTK
 
     public class RectangleCroSec : CrossSection
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
+        // --- field ---
         private double height = 100;
         private double width = 100;
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
+        // --- constructors --- 
         public RectangleCroSec() : base()
         {
         }
@@ -85,22 +68,8 @@ namespace PTK
             SetHeight(_height);
             SetWidth(_width);
         }
-        /*
-        public RectangleCroSec(string _name, double _height, double _width, MaterialProperty _materialProperty) : base(_name, _materialProperty)
-        {
-            SetHeight(_height);
-            SetWidth(_width);
-        }
-        */
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
+        // --- properties ---
         private void SetHeight(double _height)
         {
             if (_height <= 0)
@@ -126,6 +95,7 @@ namespace PTK
             return width;
         }
 
+        // --- methods ---
         public override CrossSection DeepCopy()
         {
             return (CrossSection)base.MemberwiseClone();
@@ -143,35 +113,18 @@ namespace PTK
 
     public class GH_CroSec : GH_Goo<CrossSection>
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
         public GH_CroSec() { }
         public GH_CroSec(GH_CroSec other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
         public GH_CroSec(CrossSection sec) : base(sec) { this.Value = sec; }
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
         public override bool IsValid => base.m_value.IsValid();
 
         public override string TypeName => "CrossSection";
 
         public override string TypeDescription => "Cross Sectional shape of Element and its material";
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
         public override IGH_Goo Duplicate()
         {
             return new GH_CroSec(this);
         }
-
         public override string ToString()
         {
             return Value.ToString();
@@ -180,33 +133,14 @@ namespace PTK
 
     public class Param_CroSec : GH_PersistentParam<GH_CroSec>
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
-
         public Param_CroSec() : base(new GH_InstanceDescription("CrossSection", "CroSec", "Cross Sectional shape of Element and its material", CommonProps.category, CommonProps.subcate0)) { }
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.CrossSection; } }
 
         public override Guid ComponentGuid => new Guid("480DDCC7-02FB-497D-BF9F-4FAE3CE0687A");
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
         protected override GH_GetterResult Prompt_Plural(ref List<GH_CroSec> values)
         {
             return GH_GetterResult.success;
         }
-
         protected override GH_GetterResult Prompt_Singular(ref GH_CroSec value)
         {
             return GH_GetterResult.success;

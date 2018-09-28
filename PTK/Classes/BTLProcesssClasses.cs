@@ -162,52 +162,37 @@ namespace PTK
 
     public class Refside
     {
-        uint refSideID;
-        Plane refPlane;
-        Line refEdge;
-        Point3d refPoint;
+        // --- field ---
+        public uint RefSideID { get; private set; }
+        public Plane RefPlane { get; private set; }
+        public Line RefEdge { get; private set; }
+        public Point3d RefPoint { get; private set; }
 
-
+        // --- constructors --- 
         public Refside(uint _refsideID, Plane _refPlane, double _length)
         {
-            refSideID = _refsideID;
-            refPlane = _refPlane;
-            refEdge = new Line(refPlane.Origin, refPlane.XAxis, _length);
-            refPoint = refPlane.Origin;
+            RefSideID = _refsideID;
+            RefPlane = _refPlane;
+            RefEdge = new Line(RefPlane.Origin, RefPlane.XAxis, _length);
+            RefPoint = RefPlane.Origin;
         }
-
-        ////////////
-        ///Properties
-        ////////////
-        public uint RefSideID { get { return refSideID; } }
-        public Plane RefPlane { get { return refPlane; } }
-        public Line RefEdge { get { return refEdge; } }
-        public Point3d RefPoint { get { return refPoint; } }
-
-
-
-
     }
 
 
     public class BTLCut
     {
-        //Variable
+        // --- field ---
         public Plane CutPlane { get; private set; }
 
-        //Constructor
+        // --- constructors --- 
         public BTLCut(Plane _cutPlane)
         {
             CutPlane = _cutPlane;
         }
 
-        //DelegateMehod
-
-
+        // --- methods ---
         public PerformedProcess DelegateProcess(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode)
         {
-
-
             List<Point3d> cutpoints = new List<Point3d>();
 
             List<Refside> Refsides = _BTLPartGeometry.Refsides;

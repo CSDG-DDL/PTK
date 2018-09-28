@@ -8,9 +8,11 @@ namespace PTK
 {
     public abstract class Load
     {
+        // --- field ---
         public string Tag { get; private set; }
         public int LoadCase { get; private set; } = 0;
 
+        // --- constructors --- 
         public Load()
         {
             Tag = "N/A";
@@ -21,6 +23,7 @@ namespace PTK
             LoadCase = _loadCase;
         }
 
+        // --- methods ---
         public abstract Load DeepCopy();
         public override string ToString()
         {
@@ -37,10 +40,12 @@ namespace PTK
 
     public class PointLoad : Load
     {
+        // --- field ---
         public Point3d Point { get; private set; }
         public Vector3d ForceVector { get; private set; }
         public Vector3d MomentVector { get; private set; }
 
+        // --- constructors --- 
         public PointLoad() : base()
         {
             Point = new Point3d();
@@ -54,6 +59,7 @@ namespace PTK
             MomentVector = _momentVector;
         }
 
+        // --- methods ---
         public override Load DeepCopy()
         {
             return (Load)MemberwiseClone();
@@ -72,8 +78,10 @@ namespace PTK
 
     public class GravityLoad : Load
     {
+        // --- field ---
         public Vector3d GravityVector { get; private set; }
 
+        // --- constructors --- 
         public GravityLoad() : base()
         {
             GravityVector = new Vector3d();
@@ -83,6 +91,7 @@ namespace PTK
             GravityVector = _gravityVector;
         }
 
+        // --- methods ---
         public override Load DeepCopy()
         {
             return (Load)MemberwiseClone();

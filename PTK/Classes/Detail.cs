@@ -12,20 +12,18 @@ namespace PTK
 {
     public class Detail
     {
+        // --- field ---
         public Node Node { get; private set; }
         public List<Element1D> Elements { get; private set; }
         public List<Vector3d> UnifiedVectors { get; private set; }
         public Dictionary<Element1D, int> ElementsPriorityMap { get; private set; }
         public DetailType Type { get; private set; }
-        //private int crossElementNum = 0;
 
-
-
+        // --- constructors --- 
         public Detail()
         {
             Node = new Node();
             ElementsPriorityMap = new Dictionary<Element1D, int>();
-            
         }
         public Detail(Node _node)
         {
@@ -40,10 +38,7 @@ namespace PTK
             
         }
 
-        
-
-
-
+        // --- methods ---
         public bool SetElements(List<Element1D> _elements, List<string> _priority)
         {
             List<Element1D> crossElements = _elements.FindAll(e => !IsNodeEndPointAtElement(e));

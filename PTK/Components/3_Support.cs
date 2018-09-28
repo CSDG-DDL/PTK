@@ -84,7 +84,7 @@ namespace PTK
             if (frm.ShowDialog() == DialogResult.OK)
             {
                 _comp.boolSupString = frm.BoolSupString;
-                _comp.boolSupArray = Support.StringToArray(_comp.boolSupString);
+                _comp.boolSupArray = Support.ConditionsStringToArray(_comp.boolSupString);
                 
                 _comp.ExpireSolution(true);
             }
@@ -152,7 +152,7 @@ namespace PTK
         {
             boolSupString = reader.GetString("boolSupString");
             // set boolSupArray values when it loads.
-            this.boolSupArray = Support.StringToArray(boolSupString);
+            this.boolSupArray = Support.ConditionsStringToArray(boolSupString);
             return base.Read(reader);
         }
 

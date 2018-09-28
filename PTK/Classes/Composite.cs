@@ -14,36 +14,26 @@ namespace PTK
 {
     public class Composite
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
+        // --- field ---
         public string Name { get; private set; }
         public List<Sub2DElement> Sub2DElements { get; private set; }
         public Alignment Alignment { get; private set; }
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
+
+        // --- constructors --- 
         public Composite()
         {
-            Name = null;
+            Name = "N/A";
             Sub2DElements = new List<Sub2DElement>();
             Alignment = new Alignment();
         }
-
         public Composite(string _name, List<Sub2DElement> _sub2DElements, Alignment _alignment)
         {
             Name = _name;
             Sub2DElements = _sub2DElements;
             Alignment = _alignment;
         }
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
+        // --- methods ---
         public void GetHeightAndWidth(out double _width, out double _height)
         {
             double maxHeight = double.MinValue;
@@ -110,30 +100,9 @@ namespace PTK
 
     public class GH_Composite : GH_Goo<Composite>
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
         public GH_Composite() { }
-        public GH_Composite(GH_Composite other) : base(other.Value)
-        {
-            this.Value = other.Value;
-        }
-        public GH_Composite(Composite composite) : base(composite)
-        {
-            this.Value = composite;
-        }
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
+        public GH_Composite(GH_Composite other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
+        public GH_Composite(Composite composite) : base(composite) { this.Value = composite; }
         public override IGH_Goo Duplicate()
         {
             return new GH_Composite(this);
@@ -145,42 +114,21 @@ namespace PTK
         {
             return Value.ToString();
         }
-
     }
 
     public class Param_Composite : GH_PersistentParam<GH_Composite>
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
 
         public Param_Composite() : base(new GH_InstanceDescription(
             "Composite Cross-section", "Composite", "Composite Cross-section", 
             CommonProps.category, CommonProps.subcate0))
         { }
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
-        // set an icon here
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Composite; } }
-
         public override Guid ComponentGuid => new Guid("c075b093-0f5a-4ff0-8faf-3de8bcd6fa7a");
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
         protected override GH_GetterResult Prompt_Plural(ref List<GH_Composite> values)
         {
             return GH_GetterResult.success;
         }
-
         protected override GH_GetterResult Prompt_Singular(ref GH_Composite value)
         {
             return GH_GetterResult.success;

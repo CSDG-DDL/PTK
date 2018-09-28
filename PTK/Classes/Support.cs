@@ -9,11 +9,13 @@ namespace PTK
 {
     public class Support
     {
+        // --- field ---
         public string Tag { get; private set; }
         public int LoadCase { get; private set; } = 0;
         public Plane FixingPlane { get; private set; }
         public List<bool> Conditions { get; private set; }
 
+        // --- constructors --- 
         public Support()
         {
             Tag = "N/A";
@@ -28,16 +30,16 @@ namespace PTK
             Conditions = _conditions;
         }
 
+        // --- methods ---
         public void UpdateConditions(List<bool> _conditions)
         {
             this.Conditions = _conditions;
         }
 
-        public static bool[] StringToArray(string _boolStr)
+        public static bool[] ConditionsStringToArray(string _boolStr)
         {
             List<bool> _returnArray = new List<bool>();
-            char[] _tempChars;
-            _tempChars = _boolStr.ToCharArray();
+            char[] _tempChars = _boolStr.ToCharArray();
 
             foreach(char c in _tempChars)
             {

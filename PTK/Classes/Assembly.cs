@@ -14,6 +14,7 @@ namespace PTK
 {
     public class Assembly
     {
+        // --- field ---
         public List<Element1D> Elements { get; private set; }
         public List<Node> Nodes { get; private set; }
         public List<string> Tags { get; private set; }
@@ -24,7 +25,7 @@ namespace PTK
         public List<Detail> Details { get; private set; }
         public List<DetailingGroup> DetailingGroups { get; private set; }
 
-
+        // --- constructors --- 
         public Assembly()
         {
             Elements = new List<Element1D>();
@@ -38,7 +39,7 @@ namespace PTK
             DetailingGroups = new List<DetailingGroup>();
         }
 
-        
+        // --- methods ---
         public void GenerateDetails()
         {
             //Making Detail
@@ -182,8 +183,6 @@ namespace PTK
             return param;
         }
 
-        
-
         public Assembly DeepCopy()
         {
             return (Assembly)base.MemberwiseClone();
@@ -205,10 +204,12 @@ namespace PTK
 
     public class StructuralAssembly : Assembly
     {
+        // --- field ---
         public Assembly Assembly { get; private set; }
         public List<Support> Supports { get; private set; }
         public List<Load> Loads { get; private set; }
 
+        // --- constructors ---
         public StructuralAssembly()
         {
             Assembly = new Assembly();
@@ -221,7 +222,8 @@ namespace PTK
             Supports = new List<Support>();
             Loads = new List<Load>();
         }
-     
+
+        // --- methods ---
         public int AddSupport(Support _support)
         {
             if (!Supports.Contains(_support))

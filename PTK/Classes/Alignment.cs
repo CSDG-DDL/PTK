@@ -12,8 +12,7 @@ namespace PTK
 
     public class Alignment
     {
-        //This is a useless comment
-
+        // --- field ---
         public string Name { get; private set; }
         public AlignmentAnchorVert AnchorVert { get; private set; } = AlignmentAnchorVert.Center;
         public AlignmentAnchorHori AnchorHori { get; private set; } = AlignmentAnchorHori.Center;
@@ -22,11 +21,13 @@ namespace PTK
         public double RotationAngle { get; private set; } = 0;  //degree
         public Vector3d AlongVector { get; private set; }
 
+        // --- constructors ---
         public Alignment()
         {
             Name = "N/A";
+            AlongVector = new Vector3d(0, 0, 0);
         }
-        
+
         public Alignment(string _name, double _offsetY, double _offsetZ, double _rotationAngle)
         {
             OffsetY = _offsetY;
@@ -43,11 +44,11 @@ namespace PTK
             AlongVector = _alongVector;
         }
 
+        // --- methods ---
         public void SetAnchor(AlignmentAnchorVert _ver,AlignmentAnchorHori _hor)
         {
             AnchorVert = _ver;
             AnchorHori = _hor;
-
         }
 
         public Alignment DeepCopy()
@@ -74,43 +75,21 @@ namespace PTK
     {
         public GH_Alignment() { }
         public GH_Alignment(GH_Alignment other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
-        public GH_Alignment(Alignment sec) : base(sec) { this.Value = sec; }
+        public GH_Alignment(Alignment ali) : base(ali) { this.Value = ali; }
         public override bool IsValid => base.m_value.IsValid();
-
         public override string TypeName => "Alignment";
-
         public override string TypeDescription => "Deformation and movement of section shape";
-
-        public override IGH_Goo Duplicate()
-        {
-            return new GH_Alignment(this);
-        }
-
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
+        public override IGH_Goo Duplicate() { return new GH_Alignment(this); }
+        public override string ToString() { return Value.ToString(); }
     }
 
     public class Param_Alignment : GH_PersistentParam<GH_Alignment>
     {
         public Param_Alignment() : base(new GH_InstanceDescription("Alignment", "Align", "Deformation and movement of section shape", CommonProps.category, CommonProps.subcate0)) { }
-
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Alignment; } }  //Icon image setting
-
         public override Guid ComponentGuid => new Guid("76E8567B-EBBD-49F0-A30E-1069F4D92045");
-
-        protected override GH_GetterResult Prompt_Plural(ref List<GH_Alignment> values)
-        {
-            return GH_GetterResult.success;
-        }
-
-        protected override GH_GetterResult Prompt_Singular(ref GH_Alignment value)
-        {
-            return GH_GetterResult.success;
-        }
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_Alignment> values) { return GH_GetterResult.success; }
+        protected override GH_GetterResult Prompt_Singular(ref GH_Alignment value) { return GH_GetterResult.success; }
     }
-
-   
 
 }

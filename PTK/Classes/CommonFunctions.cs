@@ -12,6 +12,7 @@ namespace PTK
 {
     public static class CommonFunctions
     {
+        //Function for correcting differences in decimal notation
         public static string ConvertCommaToPeriodDecimal(string _txt, bool _reverse = false)
         {
             if (!_reverse)

@@ -10,8 +10,10 @@ namespace PTK
 {
     public class Node : IEquatable<Node>
     {
+        // --- field ---
         public Point3d Point { get; private set; }
 
+        // --- constructors --- 
         public Node()
         {
             Point = new Point3d();
@@ -21,6 +23,7 @@ namespace PTK
             Point = _point;
         }
 
+        // --- methods ---
         public bool Equals(Node _other)
         {
             return Equals(_other.Point);

@@ -10,8 +10,9 @@ namespace PTK
 {
     public abstract class Element
     {
+        // --- field ---
         public string Tag { get; private set; }
-
+        // --- constructors --- 
         public Element()
         {
             Tag = "N/A";
@@ -24,9 +25,7 @@ namespace PTK
 
     public class Element1D : Element
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
+        // --- field ---
         public Curve BaseCurve { get; private set; }
         public Point3d PointAtStart { get; private set; }
         public Point3d PointAtEnd { get; private set; }
@@ -40,11 +39,7 @@ namespace PTK
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
 
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
-
+        // --- constructors --- 
         public Element1D() : base()
         {
             BaseCurve = null;
@@ -92,10 +87,7 @@ namespace PTK
             InitializeLocalPlane();
         }
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
+        // --- methods ---
         private void SetSub2DElements()
         {
             if (Composite.Sub2DElements != null)

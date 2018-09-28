@@ -11,7 +11,7 @@ namespace PTK
 {
     public class Joint
     {
-        #region fields
+        // --- field ---
         public int LoadCase { get; private set; } = 0;
         public Vector3d TranslateSpringAtStart { get; private set; }
         public Vector3d RotateSpringAtStart { get; private set; }
@@ -19,9 +19,7 @@ namespace PTK
         public Vector3d RotateSpringAtEnd { get; private set; }
         public List<bool> Conditions { get; private set; }
 
-        #endregion
-
-        #region constructors
+        // --- constructors --- 
         public Joint()
         {
         }
@@ -34,12 +32,8 @@ namespace PTK
             RotateSpringAtEnd = _rotE;
             Conditions = _conditions;
         }
-        #endregion
 
-        #region properties
-        #endregion
-
-        #region methods
+        // --- methods ---
         public Joint DeepCopy()
         {
             return (Joint)base.MemberwiseClone();
@@ -59,7 +53,6 @@ namespace PTK
         {
             return true;
         }
-        #endregion
     }
 
     public class GH_Joint : GH_Goo<Joint>

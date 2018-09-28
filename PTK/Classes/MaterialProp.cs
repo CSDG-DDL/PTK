@@ -9,6 +9,7 @@ namespace PTK
 {
     public class MaterialProperty
     {
+        // --- field ---
         public string Name { get; set; }
         public double Fmgk { get; set; }
         public double Ft0gk { get; set; }
@@ -28,6 +29,7 @@ namespace PTK
         public double Rhogk { get; set; }
         public double Rhogmean { get; set; }
 
+        // --- constructors --- 
         public MaterialProperty() { }
         public MaterialProperty(
             string _name,
@@ -70,6 +72,7 @@ namespace PTK
             Rhogmean = _rhogmean;    // density
         }
 
+        // --- methods ---
         public MaterialProperty DeepCopy()
         {
             return (MaterialProperty)base.MemberwiseClone();

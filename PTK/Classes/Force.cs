@@ -10,6 +10,7 @@ namespace PTK
 {
     public class Force
     {
+        // --- field ---
         public int LoadCase { get; private set; } = 0;
         public double FX { get; private set; }
         public double FY { get; private set; }
@@ -18,6 +19,7 @@ namespace PTK
         public double MY { get; private set; }
         public double MZ { get; private set; }
 
+        // --- constructors --- 
         public Force()
         {
             FX = 0.0;
@@ -38,6 +40,7 @@ namespace PTK
             MZ = _mz;
         }
 
+        // --- methods ---
         public Force DeepCopy()
         {
             return (Force)base.MemberwiseClone();

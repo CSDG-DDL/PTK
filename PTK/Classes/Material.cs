@@ -12,9 +12,11 @@ namespace PTK
 {
     public class Material
     {
+        // --- field ---
         public string Name { get; private set; }
         public MaterialProperty StructuralProp { get; private set; }
 
+        // --- constructors --- 
         public Material()
         {
             Name = "N/A";
@@ -31,6 +33,7 @@ namespace PTK
             StructuralProp = _structuralProp;
         }
 
+        // --- methods ---
         public Material DeepCopy()
         {
             return (Material)base.MemberwiseClone();
