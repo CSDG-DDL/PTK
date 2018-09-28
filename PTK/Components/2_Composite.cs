@@ -10,9 +10,9 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class PTK_2_Composite : GH_Component
+    public class PTK_Composite : GH_Component
     {
-        public PTK_2_Composite()
+        public PTK_Composite()
           : base("Composite Cross-section", "Composite",
               "creates a sub element",
               CommonProps.category, CommonProps.subcate2)

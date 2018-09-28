@@ -15,10 +15,10 @@ using System.Windows.Forms;
 
 namespace PTK
 {
-    public class PTK_3_Assembly : GH_Component
+    public class PTK_Assembly : GH_Component
     {
 
-        public PTK_3_Assembly()
+        public PTK_Assembly()
           : base("Assembly", "Assembly",
               "Assembly",
               CommonProps.category, CommonProps.subcate3)

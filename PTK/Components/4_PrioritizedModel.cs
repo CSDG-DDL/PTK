@@ -11,9 +11,9 @@ using Karamba.Elements;
 
 namespace PTK
 {
-    public class PTK_4_PrioritizedModel : GH_Component
+    public class PTK_PrioritizedModel : GH_Component
     {
-        public PTK_4_PrioritizedModel()
+        public PTK_PrioritizedModel()
           : base("Prioritized Model", "PrioriMod",
               "Creating model data by calculating notches between elements according to priority",
               CommonProps.category, CommonProps.subcate4)

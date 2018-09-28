@@ -6,9 +6,9 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_2_Force : GH_Component
+    public class PTK_Force : GH_Component
     {
-        public PTK_2_Force()
+        public PTK_Force()
           : base("Force", "Force",
               "Adding forces here if data allready is provided ",
               CommonProps.category, CommonProps.subcate2)

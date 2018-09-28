@@ -6,10 +6,10 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_4_DetailModel : GH_Component
+    public class PTK_DetailModel : GH_Component
     {
 
-        public PTK_4_DetailModel()
+        public PTK_DetailModel()
           : base("Detail Model", "Detail Model",
               "Detail Model",
               CommonProps.category, CommonProps.subcate4)

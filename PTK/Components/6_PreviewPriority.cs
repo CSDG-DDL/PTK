@@ -11,12 +11,12 @@ using Rhino.Display;
 
 namespace PTK.Components
 {
-    public class PTK_6_PreviewPriority : GH_Component
+    public class PTK_PreviewPriority : GH_Component
     {
 
         private DataTree<TextDot> dotTree = new DataTree<TextDot>();
 
-        public PTK_6_PreviewPriority()
+        public PTK_PreviewPriority()
           : base("PreviewPriority", "PreviewPriority",
               "PreviewPriority",
               CommonProps.category, CommonProps.subcate6)

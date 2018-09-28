@@ -6,12 +6,12 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _10_DefinitionDetailingGroup : GH_Component
+    public class PTK_DefinitionDetailingGroup : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the _10_DefinitionDetailingGroup class.
         /// </summary>
-        public _10_DefinitionDetailingGroup()
+        public PTK_DefinitionDetailingGroup()
           : base("DetailingGroupDefinition", "DG",
               "Define the detailing groups by adding true and false properties",
               CommonProps.category, CommonProps.subcate10)

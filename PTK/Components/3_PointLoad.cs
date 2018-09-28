@@ -6,9 +6,9 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_3_PointLoad : GH_Component
+    public class PTK_PointLoad : GH_Component
     {
-        public PTK_3_PointLoad()
+        public PTK_PointLoad()
             : base("PointLoad", "PointLoad",
                 "Add load here",
                 CommonProps.category, CommonProps.subcate3)

@@ -10,9 +10,9 @@ using System.Collections.Generic;
 
 namespace PTK
 {
-    public class PTK_8_DisassembleNode : GH_Component
+    public class PTK_DisassembleNode : GH_Component
     {
-        public PTK_8_DisassembleNode()
+        public PTK_DisassembleNode()
           : base("Disassemble Node", "X Node",
               "Disassemble Node (PTK)",
               CommonProps.category, CommonProps.subcate8)

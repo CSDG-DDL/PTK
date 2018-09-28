@@ -16,10 +16,10 @@ using System.Windows.Forms;
 namespace PTK
 {
 
-    public class PTK_3StructualAssembly : GH_Component
+    public class PTK_StructualAssembly : GH_Component
     {
 
-        public PTK_3StructualAssembly()
+        public PTK_StructualAssembly()
           : base("Structual Assembly", "Str Assembly",
               "StructualAssembly",
               CommonProps.category, CommonProps.subcate3)

@@ -6,12 +6,12 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _10_Rule_ElementLength : GH_Component
+    public class PTK_Rule_ElementLength : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the _10_Rule_ElementLength class.
         /// </summary>
-        public _10_Rule_ElementLength()
+        public PTK_Rule_ElementLength()
           : base("ElementLengthRule", "L",
               "Grouping details based on length of elements",
               CommonProps.category, CommonProps.subcate10)

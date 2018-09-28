@@ -11,9 +11,9 @@ using Grasshopper.Kernel.Data;
 
 namespace PTK
 {
-    public class PTK_1_LoadStructuralMaterialProp : GH_Component
+    public class PTK_LoadStructuralMaterialProp : GH_Component
     {
-        public PTK_1_LoadStructuralMaterialProp()
+        public PTK_LoadStructuralMaterialProp()
           : base("Load Structural Material Prop", "Load SMP",
               "loads material properties from Tree.",
               CommonProps.category, CommonProps.subcate1)

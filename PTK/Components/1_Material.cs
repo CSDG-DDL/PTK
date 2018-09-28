@@ -8,9 +8,9 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_1_Material : GH_Component
+    public class PTK_Material : GH_Component
     {
-        public PTK_1_Material()
+        public PTK_Material()
           : base("Material", "Mat","Create a Material",
               CommonProps.category, CommonProps.subcate1)
         {

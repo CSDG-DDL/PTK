@@ -12,9 +12,9 @@ using System.Windows.Forms;
 
 namespace PTK
 {
-    public class PTK_8_DisassembleElement : GH_Component
+    public class PTK_DisassembleElement : GH_Component
     {
-        public PTK_8_DisassembleElement()
+        public PTK_DisassembleElement()
           : base("Disassemble Element", "X Element",
               "Disassemble Element (PTK)",
               CommonProps.category, CommonProps.subcate8)

@@ -6,9 +6,9 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_5_FeasibleCheck : GH_Component
+    public class PTK_FeasibleCheck : GH_Component
     {
-        public PTK_5_FeasibleCheck()
+        public PTK_FeasibleCheck()
           : base("FEASIBILITY CHECK", "IsFeasible",
               "FEASIBILITY CHECK",
               CommonProps.category, CommonProps.subcate5)

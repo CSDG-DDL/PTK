@@ -10,9 +10,9 @@ using System.Runtime.Serialization;
 
 namespace PTK
 {
-    public class PTK_7_BtlExport : GH_Component
+    public class PTK_BtlExport : GH_Component
     {
-        public PTK_7_BtlExport()
+        public PTK_BtlExport()
           : base("BTL EXPORTER (PTK)", "Export BTL",
               "Exporting BTL file to the designated location",
               CommonProps.category, CommonProps.subcate7)

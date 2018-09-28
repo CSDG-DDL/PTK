@@ -165,7 +165,7 @@
     <Compile Include="Classes\CrossSection.cs" />
     <Compile Include="Components\8_DisassembleNode.cs" />
     <Compile Include="Classes\Support.cs" />
-    <Compile Include="Components\8_Disassemble.cs" />
+    <Compile Include="Components\8_ExtractAssembly.cs" />
     <Compile Include="Components\8_DisassembleSection.cs" />
     <Compile Include="Components\9_GeneticAlgorithm.cs" />
   </ItemGroup>

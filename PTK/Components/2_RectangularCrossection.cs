@@ -7,9 +7,9 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_2_RectangularCrossSection : GH_Component
+    public class PTK_RectangularCrossSection : GH_Component
     {
-        public PTK_2_RectangularCrossSection()
+        public PTK_RectangularCrossSection()
           : base("Rectangular Cross Section", "RectSec",
               "CrossSection is being generated based on width, height, alignment and height-direction ",
               CommonProps.category, CommonProps.subcate2)

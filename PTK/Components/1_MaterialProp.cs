@@ -5,9 +5,9 @@ using System;
 
 namespace PTK
 {
-    public class PTK_1_StructuralMaterialProp : GH_Component
+    public class PTK_StructuralMaterialProp : GH_Component
     {
-        public PTK_1_StructuralMaterialProp()
+        public PTK_StructuralMaterialProp()
           : base("Material Structural Prop", "MatStrProp",
               "creates material properties",
               CommonProps.category, CommonProps.subcate1)

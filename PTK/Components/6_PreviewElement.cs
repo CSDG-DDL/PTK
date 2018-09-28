@@ -6,9 +6,9 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class PTK_6_PreviewElement : GH_Component
+    public class PTK_PreviewElement : GH_Component
     {
-        public PTK_6_PreviewElement()
+        public PTK_PreviewElement()
           : base("Preview Element", "PrevElem",
               "Preview Element",
               CommonProps.category, CommonProps.subcate6)

@@ -9,9 +9,9 @@ using Grasshopper;
 
 namespace PTK.Components
 {
-    public class SelectDetailingGroup : GH_Component
+    public class PTK_SelectDetailingGroup : GH_Component
     {
-        public SelectDetailingGroup()
+        public PTK_SelectDetailingGroup()
           : base("SelectDetailingGroup", "DG",
               "Use the group name to select a detailing group",
               CommonProps.category, CommonProps.subcate3)

@@ -6,12 +6,12 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class _11_BTL_Cut : GH_Component
+    public class PTK_BTL_Cut : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the _11_BTL_Cut class.
         /// </summary>
-        public _11_BTL_Cut()
+        public PTK_BTL_Cut()
           : base("_11_BTL_Cut", "Nickname",
               "Description",
               CommonProps.category, CommonProps.subcate11)
