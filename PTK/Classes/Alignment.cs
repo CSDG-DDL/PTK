@@ -86,7 +86,7 @@ namespace PTK
     public class Param_Alignment : GH_PersistentParam<GH_Alignment>
     {
         public Param_Alignment() : base(new GH_InstanceDescription("Alignment", "Align", "Deformation and movement of section shape", CommonProps.category, CommonProps.subcate0)) { }
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Alignment; } }  //Icon image setting
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaAlignment; } }  //Icon image setting
         public override Guid ComponentGuid => new Guid("76E8567B-EBBD-49F0-A30E-1069F4D92045");
         protected override GH_GetterResult Prompt_Plural(ref List<GH_Alignment> values) { return GH_GetterResult.success; }
         protected override GH_GetterResult Prompt_Singular(ref GH_Alignment value) { return GH_GetterResult.success; }

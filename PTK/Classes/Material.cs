@@ -78,7 +78,7 @@ namespace PTK
     {
         public Param_Material() : base(new GH_InstanceDescription("Material", "Mat", "Material name and property information", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Material; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaMaterial; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("62539F56-FB20-4342-AC8F-E7C1A2F7BAA2");
 

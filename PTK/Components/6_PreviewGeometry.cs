@@ -84,7 +84,7 @@ namespace PTK.Components
         {
             get
             {
-                return Properties.Resources.Assemble;
+                return Properties.Resources.PreAssemble;
             }
         }
 

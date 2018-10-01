@@ -134,7 +134,7 @@ namespace PTK
     public class Param_CroSec : GH_PersistentParam<GH_CroSec>
     {
         public Param_CroSec() : base(new GH_InstanceDescription("CrossSection", "CroSec", "Cross Sectional shape of Element and its material", CommonProps.category, CommonProps.subcate0)) { }
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.CrossSection; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaCrossSection; } }
 
         public override Guid ComponentGuid => new Guid("480DDCC7-02FB-497D-BF9F-4FAE3CE0687A");
         protected override GH_GetterResult Prompt_Plural(ref List<GH_CroSec> values)

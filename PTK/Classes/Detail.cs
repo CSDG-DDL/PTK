@@ -190,7 +190,7 @@ namespace PTK
     {
         public Param_Detail() : base(new GH_InstanceDescription("Detail", "Detail", "Set of Node and its adjacent element", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Detail; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaDetail; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("16494CE0-36A7-42D0-A033-4DFE936A05B2");
 

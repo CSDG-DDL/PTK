@@ -133,7 +133,7 @@ namespace PTK
     {
         public Param_Load() : base(new GH_InstanceDescription("Load", "Load", "Description", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Load; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaLoad; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("01A7F933-62C3-4780-87EB-381F3344D370");
 
