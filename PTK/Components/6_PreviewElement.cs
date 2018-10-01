@@ -60,8 +60,18 @@ namespace PTK.Components
 
             foreach(Curve s in sectionCurves)
             {
-                Brep[] breps = Brep.CreateFromSweep(element.BaseCurve, s, true, Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-                models.AddRange(breps);
+                Curve c = element.BaseCurve;
+                if (c.IsLinear())
+                {
+                    Line l = new Line(c.PointAtStart, c.PointAtEnd);
+                    Brep[] breps = Brep.CreateFromTaperedExtrude(s, l.Length, l.Direction, l.From, 0, ExtrudeCornerType.None);
+                    models.AddRange(breps);
+                }
+                else
+                {
+                    Brep[] breps = Brep.CreateFromSweep(c, s, true, CommonProps.tolerances);
+                    models.AddRange(breps);
+                }
             }
 
             // --- output ---
