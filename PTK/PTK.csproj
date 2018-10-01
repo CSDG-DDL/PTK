@@ -310,6 +310,7 @@
     <Content Include="ParaCoorFormItem\Viewer.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\ParaComposite.png" />
     <None Include="Resources\PreAssemble.png" />
     <None Include="Resources\Pareto.png" />
     <None Include="Resources\ParaSupport.png" />

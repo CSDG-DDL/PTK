@@ -122,7 +122,7 @@ namespace PTK
             "Composite Cross-section", "Composite", "Composite Cross-section", 
             CommonProps.category, CommonProps.subcate0))
         { }
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Composite; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaComposite; } }
         public override Guid ComponentGuid => new Guid("c075b093-0f5a-4ff0-8faf-3de8bcd6fa7a");
         protected override GH_GetterResult Prompt_Plural(ref List<GH_Composite> values)
         {
