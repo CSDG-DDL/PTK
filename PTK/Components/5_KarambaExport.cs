@@ -29,6 +29,7 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.RegisterParam(new Karamba.Models.Param_Model(), "Karamba Model", "KM", "Karamba Model", GH_ParamAccess.item);
             pManager.RegisterParam(new Karamba.Models.Param_Model(), "Analyzed Assembly", "AA", "", GH_ParamAccess.item);
             pManager.AddNumberParameter("Displacement", "D", "Maximum displacement in [m]", GH_ParamAccess.list);
             pManager.AddNumberParameter("Gravity force", "G", "Resulting force of gravity [kN] of each load-case of the model", GH_ParamAccess.list);
@@ -52,21 +53,23 @@ namespace PTK
 
             // --- solve ---
             var karambaModel = PTK.KarambaConversion.BuildModel(structuralAssembly);
+            Karamba.Models.Model analyzedModel;
 
-            Karamba.Algorithms.Component_ThIAnalyze.solve(
-                karambaModel,
-                out maxDisps,
-                out gravityForces,
-                out elasticEnergy,
-                out warning,
-                out karambaModel
-            );
+            //Karamba.Algorithms.Component_ThIAnalyze.solve(
+            //    karambaModel,
+            //    out maxDisps,
+            //    out gravityForces,
+            //    out elasticEnergy,
+            //    out warning,
+            //    out analyzedModel
+            //);
 
             // --- output ---
             DA.SetData(0, new Karamba.Models.GH_Model(karambaModel));
-            DA.SetDataList(1, maxDisps);
-            DA.SetDataList(2, gravityForces);
-            DA.SetDataList(3, elasticEnergy);
+            //DA.SetData(1, new Karamba.Models.GH_Model(analyzedModel));
+            //DA.SetDataList(2, maxDisps);
+            //DA.SetDataList(3, gravityForces);
+            //DA.SetDataList(4, elasticEnergy);
         }
 
         

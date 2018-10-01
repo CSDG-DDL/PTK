@@ -146,7 +146,7 @@ namespace PTK
             else // when there's an existent node
             {
                 //If there is already a node, map its index
-                int ind = Nodes.FindIndex(n => n.Point.Equals(_pt));
+                int ind = Nodes.FindIndex(n => n.Equals(_pt));
                 if (!NodeMap[_element].Contains(ind))
                 {
                     NodeMap[_element].Add(ind);
