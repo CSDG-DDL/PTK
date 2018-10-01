@@ -64,8 +64,8 @@ namespace PTK.Components
                 if (c.IsLinear())
                 {
                     Line l = new Line(c.PointAtStart, c.PointAtEnd);
-                    Brep[] breps = Brep.CreateFromTaperedExtrude(s, l.Length, l.Direction, l.From, 0, ExtrudeCornerType.None);
-                    models.AddRange(breps);
+                    Brep brep = Extrusion.CreateExtrusion(s, l.Direction).ToBrep();
+                    models.Add(brep);
                 }
                 else
                 {

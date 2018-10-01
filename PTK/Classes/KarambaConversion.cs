@@ -16,7 +16,7 @@ namespace PTK
     {
         public static Karamba.Models.Model BuildModel(StructuralAssembly _strAssembly)
         {
-            var points = new List<Rhino.Geometry.Point3d>();
+            var points = new List<Point3d>();
             var materialMap = new Dictionary<MaterialProperty, Karamba.Materials.FemMaterial>();
             var crosecMap = new Dictionary<CrossSection, Karamba.CrossSections.CroSec>();
             var supports = new List<Karamba.Supports.Support>();
@@ -25,8 +25,7 @@ namespace PTK
             var elemset = new List<Karamba.Utilities.ElemSet>();
 
 
-            points = _strAssembly.Assembly.Nodes.ConvertAll(n => n.Point);
-            // * CommonProps.ConversionUnit(Rhino.UnitSystem.Meters));
+            points = _strAssembly.Assembly.Nodes.ConvertAll(n => n.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters));
             
             foreach(KeyValuePair<CrossSection,MaterialProperty> kvp in _strAssembly.Assembly.CrossSectionMap)
             {
@@ -39,7 +38,9 @@ namespace PTK
 
             foreach(Support s in _strAssembly.Supports)
             {
-                var sup = new Karamba.Supports.Support(s.FixingPlane.Origin, s.Conditions, s.FixingPlane);
+                var sup = new Karamba.Supports.Support(s.FixingPlane.Origin * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters),
+                    s.Conditions,
+                    new Plane(s.FixingPlane.Origin * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters), s.FixingPlane.XAxis, s.FixingPlane.YAxis));
                 sup.loadcase = s.LoadCase;
                 supports.Add(sup);
             }
@@ -48,7 +49,9 @@ namespace PTK
             {
                 if(l is PointLoad pl)
                 {
-                    var load = new Karamba.Loads.PointLoad(pl.Point, pl.ForceVector, pl.MomentVector, pl.LoadCase, true);
+                    var load = new Karamba.Loads.PointLoad(
+                        pl.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters), 
+                        pl.ForceVector, pl.MomentVector, pl.LoadCase, true);
                     loads.Add(load);
                 }
                 else if(l is GravityLoad gl)
@@ -63,7 +66,10 @@ namespace PTK
                 var paramList = _strAssembly.Assembly.SearchNodeParamsAtElement(e);
                 for (int i = 0; i <= paramList.Count-2; i++ )
                 {
-                    var elem = new Karamba.Elements.GrassBeam(e.BaseCurve.PointAt(paramList[i]), e.BaseCurve.PointAt(paramList[i + 1]));
+                    var elem = new Karamba.Elements.GrassBeam(
+                        e.BaseCurve.PointAt(paramList[i]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters), 
+                        e.BaseCurve.PointAt(paramList[i + 1]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)
+                        );
                     //var s = crosecMap[e.Element.Sections[0]];
                     //s.ecce_loc = new Vector3d(e.Element.Align.OffsetY, e.Element.Align.OffsetZ,0);
                     elem.crosec = crosecMap[e.CrossSections[0]]; 
@@ -93,11 +99,11 @@ namespace PTK
             var fm = new Karamba.Materials.FemMaterial_Isotrop(
                 "familyName",
                 _matProp.Name,
-                _matProp.EE0gmean,
-                _matProp.EE0gmean*0.5,
-                _matProp.GGgmean,
-                _matProp.Rhogk*10,
-                _matProp.Ft0gk,
+                _matProp.EE0gmean *0.1*10000,          /* N/mm2 To kN/cm2 入力がGHとコマンドで違う？1万倍 */
+                _matProp.EE0gmean*0.5 *0.1*10000,      /* N/mm2 To kN/cm2 */
+                _matProp.GGgmean *0.1*10000,           /* N/mm2 To kN/cm2 */
+                _matProp.Rhogk *0.01,             /* kg/m3 To kN/m3  コレは同じ*/
+                _matProp.Ft0gk *0.1*10000,             /* N/mm2 To kN/cm2 */
                 0.0000001,
                 null/*color*/
                 );

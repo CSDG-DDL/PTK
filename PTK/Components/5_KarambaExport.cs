@@ -20,7 +20,6 @@ namespace PTK
               CommonProps.category, CommonProps.subcate5)
         {
             Message = CommonProps.initialMessage;
-
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -30,7 +29,7 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Karamba.Models.Param_Model(), "Analyzed Model", "Analyzed Model", "", GH_ParamAccess.item);
+            pManager.RegisterParam(new Karamba.Models.Param_Model(), "Analyzed Assembly", "AA", "", GH_ParamAccess.item);
             pManager.AddNumberParameter("Displacement", "D", "Maximum displacement in [m]", GH_ParamAccess.list);
             pManager.AddNumberParameter("Gravity force", "G", "Resulting force of gravity [kN] of each load-case of the model", GH_ParamAccess.list);
             pManager.AddNumberParameter("Strain Energy", "E", "Internal elastic energy in [kNm of each load cases of the model", GH_ParamAccess.list);

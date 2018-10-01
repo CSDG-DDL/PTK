@@ -77,9 +77,10 @@ namespace PTK
             BaseCurve = _curve;
             PointAtStart = _curve.PointAtStart;
             PointAtEnd = _curve.PointAtEnd;
-            CrossSections = new List<CrossSection>();
             Composite = _composite;
             SetSub2DElements();
+            CrossSections = new List<CrossSection>();
+            Materials = new List<MaterialProperty>();
             SetCrossSections();
             SetMaterial();
             Alignment = _composite.Alignment;
