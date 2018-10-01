@@ -24,7 +24,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new Param_Assembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -38,7 +38,7 @@ namespace PTK
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // --- variables ---
-            GH_Assembly gAssembly = null;
+            GH_StructuralAssembly gStrAssembly = null;
             StructuralAssembly structuralAssembly = null;
             List<double> maxDisps;
             List<double> gravityForces;
@@ -46,15 +46,9 @@ namespace PTK
             string warning;
 
             // --- input --- 
-            if (!DA.GetData(0, ref gAssembly)) { return; }
-            if (gAssembly.Value is StructuralAssembly)
-            {
-                structuralAssembly = (StructuralAssembly)gAssembly.Value;
-            }
-            else
-            {
-                return;
-            }
+            if (!DA.GetData(0, ref gStrAssembly)) { return; }
+            structuralAssembly = gStrAssembly.Value;
+            
 
             // --- solve ---
             var karambaModel = PTK.KarambaConversion.BuildModel(structuralAssembly);
@@ -67,12 +61,6 @@ namespace PTK
                 out warning,
                 out karambaModel
             );
-
-            //feb.Deform deform = new feb.Deform(karambaModel.febmodel);
-            //feb.Response response = new feb.Response(deform);
-
-            //response.updateNodalDisplacements();
-            //response.updateMemberForces();
 
             // --- output ---
             DA.SetData(0, new Karamba.Models.GH_Model(karambaModel));
