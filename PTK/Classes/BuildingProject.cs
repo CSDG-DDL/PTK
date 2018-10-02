@@ -13,38 +13,34 @@ namespace PTK
     {
         public ProjectType BTLProject{ get; private set; }
         public List<BuildingElement> BuildingElements{ get; private set; }
-        public List<BuildingNode> BuildingNodes { get; private set; }
+        //public List<BuildingNode> BuildingNodes { get; private set; }
         private bool ready = false;
 
         public BuildingProject(ProjectType _btlProject)
         {
             BTLProject = _btlProject;
             BuildingElements = new List<BuildingElement>();
-
         }
 
-
+        //Extract machining process to be adapted for each element
+        //エレメントごとに適応されるべき加工プロセスを抽出
         public void PrepairElements(List<Element1D> _elements, List<OrderedTimberProcess> _orderedTimberProcesses)  //PHASE1: PREPAIR
         {
             foreach (Element1D element in _elements)
             {
                 List<OrderedTimberProcess> OrderedProcesessInElement = _orderedTimberProcesses.Where(o => o.element == element).ToList();
-
                 List<PerformTimberProcessDelegate> processDelegateInElement = new List<PerformTimberProcessDelegate>();
                 foreach (OrderedTimberProcess Process in OrderedProcesessInElement)
                 {
                     processDelegateInElement.Add(Process.PerformTimberProcess);
                 }
-
-
-
                 //Find all correct _ordereded Timberprocesses. Store in list
-
-
                 BuildingElements.Add(new BuildingElement(element, processDelegateInElement));
             }
         }
 
+        //Set ManufactureMode for all building elements
+        //全ビルディングエレメントにManufactureModeを設定
         public void ManufactureProject(ManufactureMode _mode)
         {
             foreach(BuildingElement buildingElement in BuildingElements)
@@ -54,11 +50,9 @@ namespace PTK
                 {
                     BTLProject.Parts.Part.AddRange(buildingElement.BTLParts);
                 }
-               
             }
         }
 
-        
 
         public DataTree<Brep> GetBreps()
         {
@@ -73,44 +67,33 @@ namespace PTK
                     {
                         dataTree.AddRange(Sub3DElement.ProcessedStock, new Grasshopper.Kernel.Data.GH_Path(i, j));
                     }
-                    
-
-
-
                 }
             }
             return dataTree;
         }
-        
     }
 
     
-
     public class BuildingElement
     {
         public Element1D Element { get; private set; }
         public List<Sub3DElement> Sub3DElements { get; private set; }
         public List<PartType> BTLParts;
-        public List<OrderedTimberProcess> OrderedTimberProcesseses { get; private set; }
+        //public List<OrderedTimberProcess> OrderedTimberProcesseses { get; private set; }
         private bool ready = false;
 
         public BuildingElement(Element1D _element, List<PerformTimberProcessDelegate> _processDelegate)      //PHASE1: PREPAIR
         {
-            BTLParts = new List<PartType>();
-            ready = true;
             Element = _element;
             Sub3DElements = new List<Sub3DElement>();
+            BTLParts = new List<PartType>();
+            ready = true;
             
             foreach (Sub2DElement subElement in Element.Sub2DElements)
             {
-                //ConstructSub3DElement
                 Sub3DElements.Add(new Sub3DElement(Element, subElement, _processDelegate));
-
             }
-
         }
-
-  
 
         public void ManufactureElement(ManufactureMode _mode)      //PHASE 2: Manufacture
         {
@@ -123,12 +106,9 @@ namespace PTK
                     if (_mode == ManufactureMode.BTL || _mode == ManufactureMode.BOTH)
                     {
                         BTLParts.Add(subelem3D.BTLPart);
-
                     }
-
                 }
             }
-
         }
 
     }
@@ -156,17 +136,15 @@ namespace PTK
             ProcessedStock = new List<Brep>();
             VoidProcess = new List<Brep>();
 
-             height = _Sub2DElement.CrossSection.GetHeight();
-             width = _Sub2DElement.CrossSection.GetWidth();
-             length = _element.BaseCurve.GetLength();
-
+            height = _Sub2DElement.CrossSection.GetHeight();
+            width = _Sub2DElement.CrossSection.GetWidth();
+            length = _element.BaseCurve.GetLength();
 
             CoordinateSystemType CoordinateSystem = new CoordinateSystemType();
 
             List<Point3d> startPoints = new List<Point3d>();
             List<Point3d> endPoints = new List<Point3d>();
             List<Point3d> cornerPoints = new List<Point3d>();
-
 
             ready = true;
             PerformTimberProcesses = _processDelegate;
@@ -181,12 +159,6 @@ namespace PTK
             Plane SubElemPlaneCentric = new Plane(ElementPlaneCentric);
             SubElemPlaneCentric.Translate(SubElemPlaneCentric.XAxis * _Sub2DElement.Alignment.OffsetY + SubElemPlaneCentric.YAxis * _Sub2DElement.Alignment.OffsetZ);
 
-            
-
-
-            
-
-
             //Making CornerPlane, bottom left corner
             Plane TempCorner1 = new Plane(SubElemPlaneCentric);
             TempCorner1.Translate(SubElemPlaneCentric.XAxis * -width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
@@ -195,7 +167,6 @@ namespace PTK
 
             Plane TempCorner2 = new Plane(SubElemPlaneCentric);
             TempCorner2.Translate(SubElemPlaneCentric.XAxis * width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
-
 
             Plane btlPlane = new Plane(TempCorner2.Origin, TempCorner2.ZAxis, CornerPlane.YAxis);
 
@@ -217,10 +188,6 @@ namespace PTK
             refSides.Add(new Refside(2, refPlane2, length));
             refSides.Add(new Refside(3, refPlane3, length));
             refSides.Add(new Refside(4, refPlane4, length));
-
-            
-
-
 
             foreach (Refside side in refSides)
             {
@@ -275,10 +242,6 @@ namespace PTK
             //Assign
         }
 
-
-
-        
-    
 
 
         public void ManufactureSubElement(ManufactureMode _mode)               //PHASE 2: Manufacture

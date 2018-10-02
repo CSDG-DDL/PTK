@@ -16,8 +16,8 @@ namespace PTK.Components
     {
         public BuildModel()
           : base("BuildModel", "Nickname",
-              "Description",
-              "Category", "Subcategory")
+              "Exporting BTL file to the designated location",
+              CommonProps.category, CommonProps.subcate7)
         {
         }
 
