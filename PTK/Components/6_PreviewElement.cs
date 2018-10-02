@@ -70,7 +70,7 @@ namespace PTK.Components
                 {
                     Line l = new Line(c.PointAtStart, c.PointAtEnd);
                     Brep brep = Extrusion.CreateExtrusion(s, l.Direction).ToBrep();
-                    brep = brep.CapPlanarHoles(CommonProps.tolerances);
+                    //brep = brep.CapPlanarHoles(CommonProps.tolerances);
                     tmpModels[brep] = sectionCurves[s];
                 }
                 else
@@ -119,6 +119,10 @@ namespace PTK.Components
                 args.Display.DrawBrepShaded(m.Key, new Rhino.Display.DisplayMaterial(m.Value));
             }
             //base.DrawViewportMeshes(args);
+        }
+        public override void DrawViewportWires(IGH_PreviewArgs args)
+        {
+            //base.DrawViewportWires(args);
         }
     }
 }
