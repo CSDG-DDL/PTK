@@ -13,27 +13,26 @@ namespace PTK
     public class Alignment
     {
         // --- field ---
-        public string Name { get; private set; }
+        public string Name { get; private set; } = "N/A";
         public AlignmentAnchorVert AnchorVert { get; private set; } = AlignmentAnchorVert.Center;
         public AlignmentAnchorHori AnchorHori { get; private set; } = AlignmentAnchorHori.Center;
-        public double OffsetY { get; private set; } = 0;
-        public double OffsetZ { get; private set; } = 0;
-        public double RotationAngle { get; private set; } = 0;  //degree
-        public Vector3d AlongVector { get; private set; }
+        public double OffsetY { get; private set; } = 0.0;
+        public double OffsetZ { get; private set; } = 0.0;
+        public double RotationAngle { get; private set; } = 0.0; //degree
+        public Vector3d AlongVector { get; private set; } = new Vector3d();
 
         // --- constructors ---
-        public Alignment()
+        public Alignment() { }
+        public Alignment(string _name)
         {
-            Name = "N/A";
-            AlongVector = new Vector3d(0, 0, 0);
+            Name = _name;
         }
-
         public Alignment(string _name, double _offsetY, double _offsetZ, double _rotationAngle)
         {
+            Name = _name;
             OffsetY = _offsetY;
             OffsetZ = _offsetZ;
             RotationAngle = _rotationAngle;
-            AlongVector = new Vector3d(0, 0, 0);
         }
 
         public Alignment(string _name, double _offsetY, double _offsetZ, double _rotationAngle, Vector3d _alongVector)
@@ -58,10 +57,11 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Alignment> Name:" + Name +
-                " OffsetY:" + OffsetY.ToString() +
-                " OffsetZ:" + OffsetZ.ToString() +
-                " RotationAngle:" + RotationAngle.ToString() +
+            info = "<Alignment>\n Name:" + Name + "\n" +
+                " Anchor:" + AnchorVert.ToString() + "," + AnchorHori.ToString() + "\n" +
+                " OffsetY:" + OffsetY.ToString() + "\n" +
+                " OffsetZ:" + OffsetZ.ToString() + "\n" +
+                " RotationAngle:" + RotationAngle.ToString() + "\n" +
                 " AlongVector:" + AlongVector.ToString();
             return info;
         }

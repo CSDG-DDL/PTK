@@ -18,11 +18,11 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Alignment Name", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "Alignment Name", GH_ParamAccess.item, "Alignment");
             pManager.AddNumberParameter("Offset Y", "Y", "Offset length local y", GH_ParamAccess.item, 0.0);
             pManager.AddNumberParameter("Offset Z", "Z", "Offset length local z", GH_ParamAccess.item, 0.0);
             pManager.AddNumberParameter("Rotation Angle", "R", "Rotational angle in degree", GH_ParamAccess.item, 0.0);
-            pManager.AddVectorParameter("Along Vector", "V", "Rotate the Z direction of the section plane along the direction of this vector", GH_ParamAccess.item, new Vector3d(0,0,0));
+            pManager.AddVectorParameter("Along Vector", "V", "Rotate the Z direction of the section plane along the direction of this vector", GH_ParamAccess.item, new Vector3d());
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;

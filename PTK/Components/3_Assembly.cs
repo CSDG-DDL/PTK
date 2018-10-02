@@ -30,6 +30,7 @@ namespace PTK
         {
             pManager.AddParameter(new Param_Element1D(), "Elements", "E", "Add elements here", GH_ParamAccess.list);
             pManager.AddGenericParameter("DetailingGroupDefinitions", "DG", "Add detailingroups here", GH_ParamAccess.list);
+            pManager[0].Optional = true;
             pManager[1].Optional = true;
         }
 
@@ -60,21 +61,19 @@ namespace PTK
             {
                 elems = gElems.ConvertAll(e => e.Value);
             }
-
-            // --- solve ---
-            foreach (Element1D elem in elems)
+            if (!DA.GetDataList(1, DetailinGroupDefinitions))
             {
-                assembly.AddElement(elem);
+                DetailinGroupDefinitions = new List<DetailingGroupRulesDefinition>();
             }
             
-            if (DA.GetDataList(1, DetailinGroupDefinitions))
+
+            // --- solve ---
+            elems.ForEach(e => assembly.AddElement(e));
+            assembly.GenerateDetails();
+            
+            foreach(DetailingGroupRulesDefinition DG in DetailinGroupDefinitions)
             {
-                assembly.GenerateDetails();
-                foreach(DetailingGroupRulesDefinition DG in DetailinGroupDefinitions)
-                {
-                    assembly.DetailingGroups.Add(DG.GenerateDetailingGroup(assembly.Details)); 
-                }
-                
+                assembly.AddDetailingGroup(DG.GenerateDetailingGroup(assembly.Details)); 
             }
 
             // --- output ---
