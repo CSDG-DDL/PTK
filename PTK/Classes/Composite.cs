@@ -15,17 +15,12 @@ namespace PTK
     public class Composite
     {
         // --- field ---
-        public string Name { get; private set; }
-        public List<Sub2DElement> Sub2DElements { get; private set; }
-        public Alignment Alignment { get; private set; }
+        public string Name { get; private set; } = "N/A";
+        public List<Sub2DElement> Sub2DElements { get; private set; } = new List<Sub2DElement>();
+        public Alignment Alignment { get; private set; } = new Alignment("Alignment");
 
         // --- constructors --- 
-        public Composite()
-        {
-            Name = "N/A";
-            Sub2DElements = new List<Sub2DElement>();
-            Alignment = new Alignment();
-        }
+        public Composite() { }
         public Composite(string _name, List<Sub2DElement> _sub2DElements, Alignment _alignment)
         {
             Name = _name;
@@ -78,19 +73,20 @@ namespace PTK
             _width = maxWidth - minWidth;
             
         }
+
         public Composite DeepCopy()
         {
             return (Composite)base.MemberwiseClone();
         }
-
         public override string ToString()
         {
             string info;
-            info = "<Composite> Name:" + Name;
-            // plus Subsections, etc.
+            info = "<Composite>\n" +
+                " Name:" + Name + "\n" +
+                " SubElements:" + Sub2DElements.Count.ToString() + "\n" +
+                " Alignment:" + Alignment.Name;
             return info;
         }
-
         public bool IsValid()
         {
             return Name != "N/A";

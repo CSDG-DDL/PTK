@@ -15,41 +15,13 @@ namespace PTK
     public class Sub2DElement
     {
         // --- field ---
-        public string Name { get; private set; }
-        // public List<CrossSection> CrossSections { get; private set; }
-        public CrossSection CrossSection { get; private set; }
-        // public List<MaterialProperty> MaterialProperties { get; private set; }
-        public MaterialProperty MaterialProperty { get; private set; }
-        // public List<Alignment> Alignments { get; private set; }
-        public Alignment Alignment { get; private set; }
+        public string Name { get; private set; } = "N/A";
+        public CrossSection CrossSection { get; private set; } = new RectangleCroSec("RectCroSec");
+        public MaterialProperty MaterialProperty { get; private set; } = new MaterialProperty("Material");
+        public Alignment Alignment { get; private set; } = new Alignment("Alignment");
 
         // --- constructors ---
-
-        /*
-        public SubElement()
-        {
-            Name = null;
-            MaterialProperties = new List<MaterialProperty>();
-            CrossSections = new List<CrossSection>();
-            Alignments = new List<Alignment>();
-        }
-        public SubElement(string _name, List<MaterialProperty> _materialProperties, List<CrossSection> _crossSections, List<Alignment> _alignments)
-        {
-            Name = _name;
-            MaterialProperties = _materialProperties;
-            CrossSections = _crossSections;
-            Alignments = _alignments;
-        }
-        */
-
-        public Sub2DElement()
-        {
-            Name = null;
-            MaterialProperty = new MaterialProperty();
-            CrossSection = new RectangleCroSec();
-            Alignment = new Alignment();
-        }
-
+        public Sub2DElement() { }
         public Sub2DElement(string _name, MaterialProperty _materialProperty, CrossSection _crossSection, Alignment _alignment)
         {
             Name = _name;
@@ -57,7 +29,6 @@ namespace PTK
             CrossSection = _crossSection;
             Alignment = _alignment;
         }
-
 
         // --- methods ---
         public Sub2DElement DeepCopy()
@@ -67,15 +38,17 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<SubElement> Name:" + Name;
-            // plus matprops, plus crossSecs,
+            info = "<SubElement>\n" +
+                " Name:" + Name + "\n" +
+                " CrossSection:" + CrossSection.Name + "\n" +
+                " Material:" + MaterialProperty.Name + "\n" +
+                " Alignment:" + Alignment.Name;
             return info;
         }
         public bool IsValid()
         {
             return Name != "N/A";
         }
-        
     }
 
     public class GH_Sub2DElement : GH_Goo<Sub2DElement>

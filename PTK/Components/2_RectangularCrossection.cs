@@ -19,15 +19,13 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item, "RectCroSec");
             pManager.AddNumberParameter("Width", "W", "", GH_ParamAccess.item,100);  
             pManager.AddNumberParameter("Height", "H", "", GH_ParamAccess.item,100);
-            // pManager.AddParameter(new Param_MaterialProperty(), "Material Property", "M", "Material Property", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
-            // pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -38,25 +36,14 @@ namespace PTK
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // --- variables ---
-            string name = "N/A";
+            string name = null;
             double width = new double();
             double height = new double();
-            // GH_MaterialProperty gMaterialProperty = null;
-            // MaterialProperty materialProperty = null;
 
             // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref width)) { return; }
             if (!DA.GetData(2, ref height)) { return; }
-            /*
-            if (!DA.GetData(3, ref gMaterialProperty)) {
-                materialProperty = new MaterialProperty();
-            }
-            else
-            {
-                materialProperty = gMaterialProperty.Value;
-            }
-            */
 
             // --- solve ---
             GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, height, width));

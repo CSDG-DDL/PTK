@@ -22,12 +22,13 @@ namespace PTK.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item, "Composite");
             pManager.AddParameter(new Param_MaterialProperty(), "Material properties", "M", "Add material properties", GH_ParamAccess.list);
             pManager.AddParameter(new Param_CroSec(), "Cross-sections", "S", "Add cross sections", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Alignment(), "Alignments", "A", "Add alignments", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Alignment(), "Global Alignment", "GA", "Add global alignment", GH_ParamAccess.item);
-
+            pManager[1].Optional = true;
+            pManager[2].Optional = true;
             pManager[3].Optional = true;
             pManager[4].Optional = true;
         }
@@ -94,13 +95,18 @@ namespace PTK.Components
             // --- solve ---
 
             // we have materialProperties, crossSections, alignments, 
-
+            //Very unstable because it does not work unless the number of inputs match. Is it necessary to reconsider the configuration itself?
+            //入力の数が合わないと動作しないため非常に不安定。構成そのものを考え直す必要がある？
             if (crossSections.Count == materialProperties.Count && crossSections.Count == alignments.Count)
             {
                 for (int i = 0; i < crossSections.Count; i++)
                 {
                     sub2dElements.Add(new Sub2DElement(name, materialProperties[i], crossSections[i], alignments[i]));
                 }
+            }
+            else
+            {
+                return;
             }
 
             GH_Composite gComposite = new GH_Composite(new Composite(name, sub2dElements, globalAlignment));

@@ -10,7 +10,7 @@ namespace PTK
     public class MaterialProperty
     {
         // --- field ---
-        public string Name { get; set; }
+        public string Name { get; set; } = "N/A";
         public double Fmgk { get; set; }
         public double Ft0gk { get; set; }
         public double Ft90gk { get; set; }
@@ -31,6 +31,10 @@ namespace PTK
 
         // --- constructors --- 
         public MaterialProperty() { }
+        public MaterialProperty(string _name)
+        {
+            Name = _name;
+        }
         public MaterialProperty(
             string _name,
             double _fmgk,

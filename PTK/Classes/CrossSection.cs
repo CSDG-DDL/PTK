@@ -11,24 +11,13 @@ namespace PTK
     public abstract class CrossSection
     {
         // --- field ---
-        public string Name { get; private set; }
-        // public MaterialProperty MaterialProperty { get; private set; }
+        public string Name { get; private set; } = "N/A";
 
         // --- constructors --- 
-        public CrossSection()
-        {
-            Name = "N/A";
-            // MaterialProperty = new MaterialProperty();
-        }
+        public CrossSection() { }
         public CrossSection(string _name)
         {
             Name = _name;
-            // MaterialProperty = new MaterialProperty();
-        }
-        public CrossSection(string _name, MaterialProperty _materialProperty)
-        {
-            Name = _name;
-            // MaterialProperty = _materialProperty;
         }
 
         // --- methods ---
@@ -36,6 +25,8 @@ namespace PTK
         public abstract double GetWidth();
         public static void GetMaxHeightAndWidth(List<CrossSection> _secs,out double _height,out double _width)
         {
+            //It is a simple implementation and needs to be corrected later. Align is not taken into account.
+            //簡易的な実装なので後で修正が必要。Alignが考慮されていない。
             _height = _secs.Max(s => s.GetHeight());
             _width = _secs.Max(s => s.GetWidth());
         }
@@ -44,26 +35,24 @@ namespace PTK
         {
             string info;
             info = "<CrossSection> Name:" + Name;  
-              //  " Material Property:" + MaterialProperty.Name;
             return info;
         }
         public bool IsValid()
         {
-            return true;
+            return Name != "N/A";
         }
     }
 
     public class RectangleCroSec : CrossSection
     {
         // --- field ---
-        private double height = 100;
-        private double width = 100;
+        public double Height { get; private set; } = 100;
+        public double Width { get; private set; } = 100;
 
         // --- constructors --- 
-        public RectangleCroSec() : base()
-        {
-        }
-       public RectangleCroSec(string _name, double _height, double _width) : base(_name)
+        public RectangleCroSec() : base() { }
+        public RectangleCroSec(string _name) : base(_name) { }
+        public RectangleCroSec(string _name, double _height, double _width) : base(_name)
         {
             SetHeight(_height);
             SetWidth(_width);
@@ -76,11 +65,11 @@ namespace PTK
             {
                 throw new ArgumentException("value <= 0");
             }
-            height = _height;
+            Height = _height;
         }
         public override double GetHeight()
         {
-            return height;
+            return Height;
         }
         private void SetWidth(double _width)
         {
@@ -88,11 +77,11 @@ namespace PTK
             {
                 throw new ArgumentException("value <= 0");
             }
-            width = _width;
+            Width = _width;
         }
         public override double GetWidth()
         {
-            return width;
+            return Width;
         }
 
         // --- methods ---
@@ -103,10 +92,10 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<RectangleCroSec> Name:" + Name +
-                " Height:" + height.ToString() +
-                " Width:" + width.ToString(); 
-                // " Material Property:" + MaterialProperty.Name;
+            info = "<RectangleCroSec>\n"+
+                " Name:" + Name + "\n" +
+                " Height:" + Height.ToString() + "\n" +
+                " Width:" + Width.ToString(); 
             return info; 
         }
     }
