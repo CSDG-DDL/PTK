@@ -1,10 +1,10 @@
-﻿// alphanumerical order for namespaces please
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
@@ -15,22 +15,26 @@ namespace PTK
         // --- field ---
         public string Name { get; private set; }
         public MaterialProperty StructuralProp { get; private set; }
+        public Color Color { get; private set; }
 
         // --- constructors --- 
         public Material()
         {
             Name = "N/A";
             StructuralProp = new MaterialProperty();
+            Color = new Color();
         }
         public Material(string _name)
         {
             Name = _name;
             StructuralProp = new MaterialProperty();
+            Color = new Color();
         }
-        public Material(string _name, MaterialProperty _structuralProp)
+        public Material(string _name, MaterialProperty _structuralProp, Color _color)
         {
             Name = _name;
             StructuralProp = _structuralProp;
+            Color = _color;
         }
 
         // --- methods ---
@@ -41,8 +45,9 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Material> Name:" + Name + 
-                " StructuralProp.Name:" + StructuralProp.Name;
+            info = "<Material> Name:" + Name +
+                " StructuralProp.Name:" + StructuralProp.Name +
+                " Color:" + Color.ToString();
             return info;
         }
 
