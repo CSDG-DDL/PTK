@@ -21,17 +21,19 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Element");
             pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Composite(), "Composite", "CP", "Add the sub-element component here", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Joint(), "Joint", "J", "Add joint", GH_ParamAccess.list);
-            pManager.AddParameter(new Param_Composite(), "Composite", "CP", "Add the sub-element component here", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Structural Priority", "P", "Add integer value to set the priority of the member", GH_ParamAccess.item, -999);
+            pManager.AddIntegerParameter("Structural Priority", "P", "Add integer value to set the priority of the member", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Intersection Nodes?", "I?", "Whether the element intersects other members at other than the end point", GH_ParamAccess.item, true);
 
             pManager[0].Optional = true;
+            pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
+            pManager[4].Optional = true;
             pManager[5].Optional = true;
             pManager[6].Optional = true;
         }
@@ -46,30 +48,21 @@ namespace PTK
             // --- variables ---
             string tag = null;
             Curve curve = null;
-
-            List<GH_Force> gForces = new List<GH_Force>();
-            List<Force> forces = null;
-
-            List<GH_Joint> gJoints = new List<GH_Joint>();
-            List<Joint> joints = null;
-
-            /*
-            GH_SubElement gSubElement = new GH_SubElement();
-            SubElement subElement = null;
-            */
-
             GH_Composite gComposite = null;
             Composite composite = null;
-
+            List<GH_Force> gForces = new List<GH_Force>();
+            List<Force> forces = null;
+            List<GH_Joint> gJoints = new List<GH_Joint>();
+            List<Joint> joints = null;
             int priority = new int();
             bool intersect = true;
 
             // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
-
             if (!DA.GetData(1, ref curve)) { return; }
-
-            if (!DA.GetDataList(2, gForces))
+            if (!DA.GetData(2, ref gComposite)) { return; }
+            composite = gComposite.Value;
+            if (!DA.GetDataList(3, gForces))
             {
                 forces = new List<Force>();
             }
@@ -77,8 +70,7 @@ namespace PTK
             {
                 forces = gForces.ConvertAll(f => f.Value);
             }
-
-            if (!DA.GetDataList(3, gJoints))
+            if (!DA.GetDataList(4, gJoints))
             {
                 joints = new List<Joint>();
             }
@@ -86,25 +78,8 @@ namespace PTK
             {
                 joints = gJoints.ConvertAll(j => j.Value);
             }
-
-            if (!DA.GetData(4, ref gComposite))
-            {
-                composite = new Composite();
-            }
-            else
-            {
-                composite = gComposite.Value;
-            }
-
-            if (!DA.GetData(5, ref priority))
-            {
-                return;
-            }
-
-            if (!DA.GetData(6, ref intersect))
-            {
-                return;
-            }
+            if (!DA.GetData(5, ref priority)) { return; }
+            if (!DA.GetData(6, ref intersect)) { return; }
 
             // --- solve ---
             GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, forces, joints, composite, priority, intersect));

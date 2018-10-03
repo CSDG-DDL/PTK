@@ -11,12 +11,9 @@ namespace PTK
     public abstract class Element
     {
         // --- field ---
-        public string Tag { get; private set; }
+        public string Tag { get; private set; } = "N/A";
         // --- constructors --- 
-        public Element()
-        {
-            Tag = "N/A";
-        }
+        public Element() { }
         public Element(string _tag)
         {
             Tag = _tag;
@@ -26,49 +23,27 @@ namespace PTK
     public class Element1D : Element
     {
         // --- field ---
-        public Curve BaseCurve { get; private set; }
-        public Point3d PointAtStart { get; private set; }
-        public Point3d PointAtEnd { get; private set; }
+        public Curve BaseCurve { get; private set; } = null;
+        public Point3d PointAtStart { get; private set; } = new Point3d();
+        public Point3d PointAtEnd { get; private set; } = new Point3d();
         public Plane CroSecLocalPlane { get; private set; }
-        public Composite Composite { get; private set; }
-        public List<Sub2DElement> Sub2DElements { get; private set; }
-        public List<CrossSection> CrossSections { get; private set; }
-        public List<MaterialProperty> Materials { get; private set; }
-        public Alignment Alignment { get; private set; }
-        public List<Force> Forces { get; private set; }
-        public List<Joint> Joints { get; private set; }
+        public Composite Composite { get; private set; } = new Composite("Composite");
+        public List<Sub2DElement> Sub2DElements { get; private set; } = new List<Sub2DElement>();
+        public List<CrossSection> CrossSections { get; private set; } = new List<CrossSection>();
+        public List<MaterialProperty> Materials { get; private set; } = new List<MaterialProperty>();
+        public Alignment Alignment { get; private set; } = new Alignment("Alignment");
+        public List<Force> Forces { get; private set; } = new List<Force>();
+        public List<Joint> Joints { get; private set; } = new List<Joint>();
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
 
         // --- constructors --- 
         public Element1D() : base()
         {
-            BaseCurve = null;
-            PointAtStart = new Point3d();
-            PointAtEnd = new Point3d();
-            Composite = new Composite();
-            Sub2DElements = new List<Sub2DElement>();
-            CrossSections = new List<CrossSection>();
-            Materials = new List<MaterialProperty>();
-            Alignment = new Alignment();
-            Forces = new List<Force>();
-            Joints = new List<Joint>();
-            Priority = int.MinValue;
             InitializeLocalPlane();
         }
         public Element1D(string _tag) : base(_tag)
         {
-            BaseCurve = null;
-            PointAtStart = new Point3d();
-            PointAtEnd = new Point3d();
-            Composite = new Composite();
-            Sub2DElements = new List<Sub2DElement>();
-            CrossSections = new List<CrossSection>();
-            Materials = new List<MaterialProperty>();
-            Alignment = new Alignment();
-            Forces = new List<Force>();
-            Joints = new List<Joint>();
-            Priority = int.MinValue;
             InitializeLocalPlane();
         }
 
@@ -79,10 +54,6 @@ namespace PTK
             PointAtEnd = _curve.PointAtEnd;
             Composite = _composite;
             SetSub2DElements();
-            CrossSections = new List<CrossSection>();
-            Materials = new List<MaterialProperty>();
-            SetCrossSections();
-            SetMaterial();
             Alignment = _composite.Alignment;
             Forces = _forces;
             Joints = _joints;
@@ -97,10 +68,8 @@ namespace PTK
             if (Composite.Sub2DElements != null)
             {
                 Sub2DElements = Composite.Sub2DElements;
-            }
-            else
-            {
-                Sub2DElements = new List<Sub2DElement>();
+                SetCrossSections();
+                SetMaterial();
             }
         }
 
@@ -109,11 +78,9 @@ namespace PTK
             if (Composite.Sub2DElements != null)
             {
                 foreach (Sub2DElement se in Composite.Sub2DElements)
+                {
                     CrossSections.Add(se.CrossSection);
-            }
-            else
-            {
-                CrossSections = new List<CrossSection>();
+                }
             }
         }
 
@@ -126,10 +93,6 @@ namespace PTK
                     Materials.Add(se.MaterialProperty);
                 }
             }
-            else
-            {
-                Materials = new List<MaterialProperty>();
-            }
         }
 
         private void InitializeLocalPlane()
@@ -141,7 +104,6 @@ namespace PTK
                 {
                     crossSections.Add(se.CrossSection);
                 }
-                // List<CrossSection> Sections = SubElement.CrossSections;
 
                 Vector3d localX = BaseCurve.TangentAtStart;
                 Vector3d globalZ = Vector3d.ZAxis;
@@ -214,9 +176,11 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Element1D> Tag:" + Tag +
+            info = "<Element1D>\n" +
+                " Tag:" + Tag + "\n" +
                 " PointAtStart:" + PointAtStart.ToString() +
-                " PointAtEnd:" + PointAtEnd.ToString();
+                " PointAtEnd:" + PointAtEnd.ToString() + "\n" +
+                " Composite:" + Composite.Name;
             return info;
         }
         public bool IsValid()

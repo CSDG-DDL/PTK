@@ -21,6 +21,10 @@ namespace PTK
 
         // --- constructors --- 
         public Composite() { }
+        public Composite(string _name)
+        {
+            Name = _name;
+        }
         public Composite(string _name, List<Sub2DElement> _sub2DElements, Alignment _alignment)
         {
             Name = _name;
