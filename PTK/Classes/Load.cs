@@ -9,13 +9,14 @@ namespace PTK
     public abstract class Load
     {
         // --- field ---
-        public string Tag { get; private set; }
+        public string Tag { get; private set; } = "N/A";
         public int LoadCase { get; private set; } = 0;
 
         // --- constructors --- 
-        public Load()
+        public Load() { }
+        public Load(string _tag)
         {
-            Tag = "N/A";
+            Tag = _tag;
         }
         public Load(string _tag, int _loadCase)
         {
@@ -41,17 +42,13 @@ namespace PTK
     public class PointLoad : Load
     {
         // --- field ---
-        public Point3d Point { get; private set; }
-        public Vector3d ForceVector { get; private set; }
-        public Vector3d MomentVector { get; private set; }
+        public Point3d Point { get; private set; } = new Point3d();
+        public Vector3d ForceVector { get; private set; } = new Vector3d();
+        public Vector3d MomentVector { get; private set; } = new Vector3d();
 
         // --- constructors --- 
-        public PointLoad() : base()
-        {
-            Point = new Point3d();
-            ForceVector = new Vector3d();
-            MomentVector = new Vector3d();
-        }
+        public PointLoad() : base() { }
+        public PointLoad(string _tag) : base(_tag) { }
         public PointLoad(string _tag, int _loadCase, Point3d _point, Vector3d _forceVector, Vector3d _momentVector) : base(_tag,_loadCase)
         {
             Point = _point;
@@ -67,10 +64,11 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<PointLoad> Tag:" + Tag +
-                " LoadCase:" + LoadCase.ToString() +
-                " Point:" + Point.ToString() +
-                " ForceVector:" + ForceVector.ToString() +
+            info = "<PointLoad>\n" +
+                " Tag:" + Tag + "\n" +
+                " LoadCase:" + LoadCase.ToString() + "\n" +
+                " Point:" + Point.ToString() + "\n" +
+                " ForceVector:" + ForceVector.ToString() + "\n" +
                 " MomentVector:" + MomentVector.ToString() ;
             return info;
         }
@@ -79,13 +77,11 @@ namespace PTK
     public class GravityLoad : Load
     {
         // --- field ---
-        public Vector3d GravityVector { get; private set; }
+        public Vector3d GravityVector { get; private set; } = new Vector3d();
 
         // --- constructors --- 
-        public GravityLoad() : base()
-        {
-            GravityVector = new Vector3d();
-        }
+        public GravityLoad() : base() { }
+        public GravityLoad(string _tag) : base(_tag) { }
         public GravityLoad(string _tag, int _loadCase, Vector3d _gravityVector) : base(_tag,_loadCase)
         {
             GravityVector = _gravityVector;
@@ -99,8 +95,9 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<GravityLoad> Tag:" + Tag +
-                " LoadCase:" + LoadCase.ToString() +
+            info = "<GravityLoad>\n" +
+                " Tag:" + Tag + "\n" +
+                " LoadCase:" + LoadCase.ToString() + "\n" +
                 " GravityVector:" + GravityVector.ToString();
             return info;
         }

@@ -44,13 +44,13 @@ namespace PTK
             double mz = new double();
 
             // --- input --- 
-            if (DA.GetData(0, ref loadCase)) { return; }
-            if (DA.GetData(1, ref fx)) { return; }
-            if (DA.GetData(2, ref fy)) { return; }
-            if (DA.GetData(3, ref fz)) { return; }
-            if (DA.GetData(4, ref mx)) { return; }
-            if (DA.GetData(5, ref my)) { return; }
-            if (DA.GetData(6, ref mz)) { return; }
+            if (!DA.GetData(0, ref loadCase)) { return; }
+            if (!DA.GetData(1, ref fx)) { return; }
+            if (!DA.GetData(2, ref fy)) { return; }
+            if (!DA.GetData(3, ref fz)) { return; }
+            if (!DA.GetData(4, ref mx)) { return; }
+            if (!DA.GetData(5, ref my)) { return; }
+            if (!DA.GetData(6, ref mz)) { return; }
 
             // --- solve ---
             GH_Force force = new GH_Force(new Force(loadCase, fx, fy, fz, mx, my, mz));

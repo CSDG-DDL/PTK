@@ -13,16 +13,14 @@ namespace PTK
     {
         // --- field ---
         public int LoadCase { get; private set; } = 0;
-        public Vector3d TranslateSpringAtStart { get; private set; }
-        public Vector3d RotateSpringAtStart { get; private set; }
-        public Vector3d TranslateSpringAtEnd { get; private set; }
-        public Vector3d RotateSpringAtEnd { get; private set; }
-        public List<bool> Conditions { get; private set; }
+        public Vector3d TranslateSpringAtStart { get; private set; } = new Vector3d();
+        public Vector3d RotateSpringAtStart { get; private set; } = new Vector3d();
+        public Vector3d TranslateSpringAtEnd { get; private set; } = new Vector3d();
+        public Vector3d RotateSpringAtEnd { get; private set; } = new Vector3d();
+        public List<bool> Conditions { get; private set; } = new List<bool>();
 
         // --- constructors --- 
-        public Joint()
-        {
-        }
+        public Joint() { }
         public Joint(int _loadCase, Vector3d _transS, Vector3d _rotS, Vector3d _transE, Vector3d _rotE, List<bool> _conditions)
         {
             LoadCase = _loadCase;

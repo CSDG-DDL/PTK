@@ -30,6 +30,7 @@ namespace PTK
         {
             Node = _node;
             Elements = _elements;
+            GenerateUnifiedElementVectors();
         }
 
         // --- methods ---
@@ -83,6 +84,8 @@ namespace PTK
                 }
                 ElementsPriorityMap[e] = priorityIndex;
             }
+
+            GenerateUnifiedElementVectors();
             return true;
         }
 
