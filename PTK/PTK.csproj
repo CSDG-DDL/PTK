@@ -110,6 +110,7 @@
     <Compile Include="Components\6_PreviewPriority.cs" />
     <Compile Include="Components\4_SelectDetailingGroup.cs" />
     <Compile Include="Components\7_BuildModel.cs" />
+    <Compile Include="Components\8_ExtractDetail.cs" />
     <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
     <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
     <Compile Include="Forms\F01_Supports.cs">

@@ -84,7 +84,7 @@ namespace PTK.Components
 
             if (!DA.GetData(4, ref gGlobalAlignment))
             {
-                globalAlignment = new Alignment();
+                globalAlignment = new Alignment("Alignment");
             }
             else
             {

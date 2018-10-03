@@ -20,108 +20,47 @@ namespace PTK.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("PTK Assembly", "PTK A", "PTK Assembly", GH_ParamAccess.item);
-            pManager.AddTextParameter("DetailingGroupName", "", "", GH_ParamAccess.item);  
+            pManager.AddParameter(new Param_Assembly(), "Assembly", "A", "Assembly", GH_ParamAccess.item);
+            pManager.AddTextParameter("DetailingGroupName", "DN", "DetailingGroupName", GH_ParamAccess.item, "DetailingGroupName");  
             pManager.AddIntegerParameter("Sorting rule", "SR", "0=Structural, 1=Alphabetical, 2=ElementLength", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("N", "NodeTree", "", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("ElementTree", "", "", GH_ParamAccess.tree);
+            pManager.RegisterParam(new Param_Detail(), "Details", "D", "Details", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // --- variables ---
-            Assembly assembly = new Assembly();
             GH_Assembly ghAssembly = new GH_Assembly();
-
-            string Name = "";
+            Assembly assembly = new Assembly();
+            string name = "";
             int priorityKey = 0;
 
             // --- input --- 
-            DA.GetData(0, ref ghAssembly);
-            DA.GetData(1, ref Name);
-            DA.GetData(2, ref priorityKey);
+            if (DA.GetData(0, ref ghAssembly)) { return; }
             assembly = ghAssembly.Value;
-
-
-
-
-
+            if (DA.GetData(1, ref name)) { return; }
+            if (DA.GetData(2, ref priorityKey)) { return; }
 
             //Until now, the slider is a hypothetical object.
             // This command makes it 'real' and adds it to the canvas.
 
-
-
             // --- solve ---
-
-            if (assembly.DetailingGroups.Find(t => t.Name == Name) != null)
+            if (assembly.DetailingGroups.Any(t => t.Name == name))
             {
-                List<Detail> Details = assembly.DetailingGroups.Find(t => t.Name == Name).Details;
+                List<Detail> details = assembly.DetailingGroups.Find(t => t.Name == name).Details;
 
-                List<Node> Nodes = new List<Node>();
-
-
-                DataTree<ElementInDetail> ElementTree = new DataTree<ElementInDetail>();
-                DataTree<Node> NodeTree = new DataTree<Node>();
-
-
-
-                int branchindex = 0;
-                foreach (Detail Detail in Details)
+                foreach (Detail detail in details)
                 {
-                    Detail.GenerateUnifiedElementVectors();
-                    List<ElementInDetail> ElementWrapper = new List<ElementInDetail>();
-
-                    for (int i = 0; i < Detail.Elements.Count; i++)
-                    {
-                        ElementWrapper.Add(new ElementInDetail(Detail.Elements[i], Detail.UnifiedVectors[i]));
-                    }
-
-
-                    //Sorting the element outputs based on 
-                    if (priorityKey == 0)  // sorts by Structural priority
-                    {
-                        ElementWrapper = ElementWrapper.OrderBy(t => t.Element.Priority).ToList();
-
-
-                    }
-
-                    if (priorityKey == 1) //Sorts alphabetically based on tag
-                    {
-                        ElementWrapper = ElementWrapper.OrderBy(t => t.Element.Tag).ToList();
-
-                    }
-
-                    if (priorityKey == 2) //Sorts by length
-                    {
-                        ElementWrapper = ElementWrapper.OrderBy(t => t.Element.BaseCurve.GetLength()).ToList();
-
-                    }
-
-
-
-
-                    ElementTree.AddRange(ElementWrapper, new Grasshopper.Kernel.Data.GH_Path(branchindex));
-                    NodeTree.Add(Detail.Node, new Grasshopper.Kernel.Data.GH_Path(branchindex));
-
-
-                    branchindex++;
-
+                    detail.GenerateUnifiedElementVectors();
+                    detail.SortElement(priorityKey);
                 }
 
-
-
                 // --- output ---
-
-                DA.SetDataTree(0, NodeTree);
-                DA.SetDataTree(1, ElementTree);
+                DA.SetDataList(0, details.ConvertAll(d => new GH_Detail(d)));
             }
-
-
         }
 
         protected override System.Drawing.Bitmap Icon

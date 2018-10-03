@@ -14,22 +14,17 @@ namespace PTK
     public class Detail
     {
         // --- field ---
-        public Node Node { get; private set; }
-        public List<Element1D> Elements { get; private set; }
-        public List<Vector3d> UnifiedVectors { get; private set; }
+        public Node Node { get; private set; } = new Node();
+        public List<Element1D> Elements { get; private set; } = new List<Element1D>();
+        public Dictionary<Element1D, Vector3d> ElementsUnifiedVectorsMap { get; private set; } = new Dictionary<Element1D, Vector3d>();
         public Dictionary<Element1D, int> ElementsPriorityMap { get; private set; } = new Dictionary<Element1D, int>();
-        public DetailType Type { get; private set; }
+        public DetailType Type { get; private set; } = DetailType.NULL;
 
         // --- constructors --- 
-        public Detail()
-        {
-            Node = new Node();
-            Elements = new List<Element1D>();
-        }
+        public Detail() { }
         public Detail(Node _node)
         {
             Node = _node;
-            Elements = new List<Element1D>();
         }
         public Detail(Node _node, List<Element1D> _elements)
         {
@@ -46,7 +41,7 @@ namespace PTK
             if (crossElements.Count >= 2)
             {
                 Type = DetailType.XType;
-                if (!SortElementsByPriority(ref crossElements, _priority))
+                if (!SortElementsByPriorityList(ref crossElements, _priority))
                 {
                     return false;
                 }
@@ -61,7 +56,7 @@ namespace PTK
             }
             if (cornerElements.Count >= 2)
             {
-                if (!SortElementsByPriority(ref cornerElements, _priority))
+                if (!SortElementsByPriorityList(ref cornerElements, _priority))
                 {
                     return false;
                 }
@@ -93,7 +88,6 @@ namespace PTK
 
         public void GenerateUnifiedElementVectors()
         {
-            UnifiedVectors = new List<Vector3d>();
             foreach (Element1D element in Elements)
             {
                 double DistanceElemStart = Node.Point.DistanceTo(element.BaseCurve.PointAtStart);
@@ -101,16 +95,16 @@ namespace PTK
                 element.BaseCurve.Reverse();
                 if (DistanceElemStart < DistanceElemEnd)
                 {
-                    UnifiedVectors.Add(-element.BaseCurve.TangentAtStart);
+                    ElementsUnifiedVectorsMap[element] = -element.BaseCurve.TangentAtStart;
                 }
                 else
                 {
-                    UnifiedVectors.Add(-element.BaseCurve.TangentAtEnd);
+                    ElementsUnifiedVectorsMap[element] = -element.BaseCurve.TangentAtEnd;
                 }
             }
         }
 
-        private bool SortElementsByPriority(ref List<Element1D> _elements, List<string> _priority)
+        private bool SortElementsByPriorityList(ref List<Element1D> _elements, List<string> _priority)
         {
             //When rearranging by priority is not necessary
             if (_elements.Count <= 1 || _elements.ConvertAll(e => e.Tag).Distinct().Count() <= 1)
@@ -126,6 +120,25 @@ namespace PTK
             else
             {
                 return false;
+            }
+        }
+
+        public void SortElement(int _sortingRure)
+        {
+            switch (_sortingRure)
+            {
+                case 0:     // sorts by Structural priority
+                    Elements = Elements.OrderBy(e => e.Priority).ToList();
+                    break;
+                case 1:     //Sorts alphabetically based on tag
+                    Elements = Elements.OrderBy(e => e.Tag).ToList();
+                    break;
+                case 2:     //Sorts by length
+                    Elements = Elements.OrderBy(e => e.BaseCurve.GetLength()).ToList();
+                    break;
+                default:
+                    Elements = Elements;
+                    break;
             }
         }
 
@@ -153,8 +166,8 @@ namespace PTK
         {
             string info;
             info = "<Detail>\n" +
-                " Node:" + Node.Point.ToString() +
-                " Elements:" + Elements.Count +
+                " Node:" + Node.Point.ToString() + "\n" +
+                " Elements:" + Elements.Count + "\n" +
                 " Type:" + Type.ToString();
             return info;
         }
@@ -205,26 +218,4 @@ namespace PTK
         }
     }
 
-
-
-
-    public class ElementInDetail
-    {
-        public Element1D Element { get; private set; }
-        public Vector3d UnifiedVector { get; private set; }
-
-
-        public ElementInDetail(Element1D _element, Vector3d _unifiedVector)
-        {
-            Element = _element;
-            UnifiedVector = _unifiedVector;
-        }
-
-        public ElementInDetail()
-        {
-
-        }
- 
-    }
-    
 }

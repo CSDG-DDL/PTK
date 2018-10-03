@@ -11,13 +11,10 @@ namespace PTK
     public class Node : IEquatable<Node>
     {
         // --- field ---
-        public Point3d Point { get; private set; }
+        public Point3d Point { get; private set; } = new Point3d();
 
         // --- constructors --- 
-        public Node()
-        {
-            Point = new Point3d();
-        }
+        public Node() { }
         public Node(Point3d _point)
         {
             Point = _point;

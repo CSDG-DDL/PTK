@@ -18,8 +18,8 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Element", "E", "", GH_ParamAccess.item);
-            pManager.AddPlaneParameter("CutPlane", "P", "", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
+            pManager.AddPlaneParameter("Cut Plane", "P", "Cut Plane", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -30,21 +30,19 @@ namespace PTK
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // --- variables ---
-            ElementInDetail temp = new ElementInDetail(); 
-            Element1D Element = new Element1D();
+            GH_Element1D gElement = null;
             Plane Plane = new Plane();
 
             // --- input --- 
-            if (!DA.GetData(0, ref temp)) { return; }
-            Element = temp.Element;
+            if (!DA.GetData(0, ref gElement)) { return; }
+            Element1D element = gElement.Value;
             if (!DA.GetData(1, ref Plane)) { return; }
 
             // --- solve ---
-
             BTLCut cut = new BTLCut(Plane);
 
             // Making Object with delegate and ID
-            OrderedTimberProcess Order = new OrderedTimberProcess(Element, new PerformTimberProcessDelegate(cut.DelegateProcess));
+            OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(cut.DelegateProcess));
 
             // --- output ---
             DA.SetData(0, Order);

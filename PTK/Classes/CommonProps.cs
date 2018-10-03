@@ -50,7 +50,7 @@ namespace PTK
     }
     public enum DetailType
     {
-        LType, TType, XType
+        NULL, LType, TType, XType
     }
     public enum ManufactureMode
     {
