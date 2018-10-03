@@ -13,22 +13,15 @@ namespace PTK
     public class Material
     {
         // --- field ---
-        public string Name { get; private set; }
-        public MaterialProperty StructuralProp { get; private set; }
-        public Color Color { get; private set; }
+        public string Name { get; private set; } = "N/A";
+        public MaterialProperty StructuralProp { get; private set; } = new MaterialProperty("MaterialProp");
+        public Color Color { get; private set; } = new Color();
 
         // --- constructors --- 
-        public Material()
-        {
-            Name = "N/A";
-            StructuralProp = new MaterialProperty();
-            Color = new Color();
-        }
+        public Material() { }
         public Material(string _name)
         {
             Name = _name;
-            StructuralProp = new MaterialProperty();
-            Color = new Color();
         }
         public Material(string _name, MaterialProperty _structuralProp, Color _color)
         {
@@ -45,8 +38,9 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Material> Name:" + Name +
-                " StructuralProp.Name:" + StructuralProp.Name +
+            info = "<Material>\n" +
+                " Name:" + Name + "\n" +
+                " StructuralProp.Name:" + StructuralProp.Name + "\n" +
                 " Color:" + Color.ToString();
             return info;
         }

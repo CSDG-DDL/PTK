@@ -17,7 +17,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "Name", "names Material.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "names Material.", GH_ParamAccess.item, "MaterialProp");
 
             pManager.AddNumberParameter("f m,g,k", "fmgk", "in [N/mm2]", GH_ParamAccess.item, 26 );
             pManager.AddNumberParameter("f t,0,g,k", "ft0gk", "in [N/mm2]", GH_ParamAccess.item, 19 );
@@ -39,7 +39,6 @@ namespace PTK
 
             pManager.AddNumberParameter("Rho g,k", "Rhogk", "in [kg/m3]", GH_ParamAccess.item, 385);
             pManager.AddNumberParameter("Rho g,meam", "Rhogmean" , "in [kg/m3]", GH_ParamAccess.item, 420);
-            
         }
 
 
@@ -79,7 +78,8 @@ namespace PTK
             double Rhogmean = new double();
 
             // --- input --- 
-            DA.GetData(0, ref Name);
+            if (!DA.GetData(0, ref Name)) { return; } ;
+
             if (!DA.GetData(1, ref fmgk)) { return; }
             if (!DA.GetData(2, ref ft0gk)) { return; }
             if (!DA.GetData(3, ref ft90gk)) { return; }
