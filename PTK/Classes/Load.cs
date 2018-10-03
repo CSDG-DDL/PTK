@@ -35,7 +35,7 @@ namespace PTK
         }
         public bool IsValid()
         {
-            return true;
+            return Tag != "N/A";
         }
     }
 

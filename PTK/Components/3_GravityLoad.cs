@@ -10,7 +10,7 @@ namespace PTK.Components
     {
 
         public PTK_GravityLoad()
-          : base("GtravityLoad", "GravityLoad",
+          : base("GravityLoad", "GravityLoad",
                 "Add load here",
                 CommonProps.category, CommonProps.subcate3)
         {
@@ -19,7 +19,7 @@ namespace PTK.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item, "N/A");
+            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item, "GravityLoad");
             pManager.AddIntegerParameter("Load Case", "LC", "Load case", GH_ParamAccess.item, 0);
             pManager.AddVectorParameter("Gravity Vector", "G", "in [kN]. Vector which describe the diretion and value in kN", GH_ParamAccess.item,new Vector3d(0,0,-1));
 
@@ -37,11 +37,11 @@ namespace PTK.Components
         {
             // --- variables ---
             string Tag = null;
-            int lcase = 0;
+            int lcase = new int();
             Vector3d gvector = new Vector3d();
 
             // --- input --- 
-            DA.GetData(0, ref Tag);
+            if (!DA.GetData(0, ref Tag)) { return; }
             if (!DA.GetData(1, ref lcase)) { return; }
             if (!DA.GetData(2, ref gvector)) { return; }
 

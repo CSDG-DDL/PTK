@@ -32,7 +32,7 @@ namespace PTK
             pManager.AddParameter(new Param_Assembly(), "Assembly", "A", "Assembly", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Support(), "Supports", "S", "Supports", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Load(), "Loads", "L", "Loads", GH_ParamAccess.list);
-
+            pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
         }
@@ -109,8 +109,6 @@ namespace PTK
             {
                 strAssembly.AddLoad(l);
             }
-
-            //Assembly upcastedAssembly = strAssembly;
 
             // --- output ---
             DA.SetData(0, new GH_StructuralAssembly(strAssembly));

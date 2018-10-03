@@ -10,17 +10,16 @@ namespace PTK
     public class Support
     {
         // --- field ---
-        public string Tag { get; private set; }
+        public string Tag { get; private set; } = "N/A";
         public int LoadCase { get; private set; } = 0;
-        public Plane FixingPlane { get; private set; }
-        public List<bool> Conditions { get; private set; }
+        public Plane FixingPlane { get; private set; } = new Plane();
+        public List<bool> Conditions { get; private set; } = new List<bool>();
 
         // --- constructors --- 
-        public Support()
+        public Support() { }
+        public Support(string _tag)
         {
-            Tag = "N/A";
-            FixingPlane = new Plane();
-            Conditions = new List<bool>();
+            Tag = _tag;
         }
         public Support(string _tag, int _loadCase, Plane _fixingPlane, List<bool> _conditions) 
         {
@@ -33,7 +32,7 @@ namespace PTK
         // --- methods ---
         public void UpdateConditions(List<bool> _conditions)
         {
-            this.Conditions = _conditions;
+            Conditions = _conditions;
         }
 
         public static bool[] ConditionsStringToArray(string _boolStr)
@@ -61,14 +60,16 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Support> LoadCase:" + LoadCase.ToString() +
-                " FixingPlane:" + FixingPlane.Origin.ToString() +
-                " Conditions:" + Conditions.ToArray().ToString();
+            info = "<Support>\n" +
+                " Tag:" + Tag + "\n" +
+                " LoadCase:" + LoadCase.ToString() + "\n" +
+                " FixingPlane:" + FixingPlane.Origin.ToString() + "\n" +
+                " Conditions:" + string.Join(",", Conditions);
             return info;
         }
         public bool IsValid()
         {
-            return true;
+            return Tag != "N/A";
         }
     }
 

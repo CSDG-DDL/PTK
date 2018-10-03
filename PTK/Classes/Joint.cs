@@ -44,7 +44,7 @@ namespace PTK
                 " RotateSpringAtStart:" + RotateSpringAtStart.ToString() +
                 " TranslateSpringAtEnd:" + TranslateSpringAtEnd.ToString() +
                 " RotateSpringAtEnd:" + RotateSpringAtEnd.ToString() +
-                " Conditions:" + Conditions.ToString();
+                " Conditions:" + string.Join(",", Conditions);
             return info;
         }
         public bool IsValid()
