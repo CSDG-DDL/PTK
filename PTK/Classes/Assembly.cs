@@ -256,6 +256,14 @@ namespace PTK
         {
             return Value.ToString();
         }
+        public override bool CastFrom(object source)
+        {
+            return base.CastFrom(source);
+        }
+        public override bool CastTo<Q>(ref Q target)
+        {
+            return base.CastTo(ref target);
+        }
     }
 
     public class Param_Assembly : GH_PersistentParam<GH_Assembly>
@@ -291,6 +299,23 @@ namespace PTK
         public override string ToString()
         {
             return Value.ToString();
+        }
+        public override bool CastTo<Q>(ref Q target)
+        {
+            //if (typeof(Q).IsAssignableFrom(typeof(Assembly)))
+            //{
+            //    object ptr = Value;
+            //    target = (Q)ptr;
+            //    return true;
+            //}
+            if (typeof(Q).IsAssignableFrom(typeof(GH_Assembly)))
+            {
+                object ptr = new GH_Assembly(Value);
+                target = (Q)ptr;
+                return true;
+            }
+            return false;
+            //return base.CastTo(ref target);
         }
     }
 
