@@ -16,10 +16,10 @@ using System.Windows.Forms;
 namespace PTK
 {
 
-    public class PTK_3StructualAssembly : GH_Component
+    public class PTK_StructualAssembly : GH_Component
     {
 
-        public PTK_3StructualAssembly()
+        public PTK_StructualAssembly()
           : base("Structual Assembly", "Str Assembly",
               "StructualAssembly",
               CommonProps.category, CommonProps.subcate3)
@@ -32,28 +32,22 @@ namespace PTK
             pManager.AddParameter(new Param_Assembly(), "Assembly", "A", "Assembly", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Support(), "Supports", "S", "Supports", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Load(), "Loads", "L", "Loads", GH_ParamAccess.list);
-
+            pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Param_Assembly(), "StructuralAssembly", "SA", "StructuralAssembly", GH_ParamAccess.item);
-            // pManager.RegisterParam(new Param_Node(), "Nodes", "N", "Nodes included in the Assembly", GH_ParamAccess.list);
+            pManager.RegisterParam(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
             pManager.AddLineParameter("Lines", "Lns", "only for V.0.3", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            /////////////////////////////////////////////////////////////////////////////////
-            // variables
-            /////////////////////////////////////////////////////////////////////////////////
-            
+            // --- variables ---
             GH_Assembly gAssembly = null;
             Assembly assembly = null;
-            List<GH_StructuralElement> gStrElems = new List<GH_StructuralElement>();
-            List<StructuralElement> strElems = null;
             List<GH_Support> gSups = new List<GH_Support>();
             List<Support> sups = null;
             List<GH_Load> gLoads = new List<GH_Load>();
@@ -61,13 +55,9 @@ namespace PTK
 
             // below: tempLines will be removed after V.0.3
             // just a temporal line element exporter to connect to Karamba
-            List<Line> tempLines = new List<Line>(); 
+            List<Line> tempLines = new List<Line>();
 
-
-            /////////////////////////////////////////////////////////////////////////////////
-            // input
-            /////////////////////////////////////////////////////////////////////////////////
-
+            // --- input --- 
             if (!DA.GetData(0, ref gAssembly))
             {
                 assembly = new Assembly();
@@ -96,16 +86,11 @@ namespace PTK
             }
 
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // solve
-            /////////////////////////////////////////////////////////////////////////////////
-
+            // --- solve ---
             StructuralAssembly strAssembly = new StructuralAssembly(assembly);
 
             foreach(Element1D e in assembly.Elements)
             {
-                strAssembly.AddSElement(new StructuralElement(e));
-
                 var paramList = strAssembly.Assembly.SearchNodeParamsAtElement(e);
 
                 for (int i = 0; i < paramList.Count - 1; i++)
@@ -115,12 +100,7 @@ namespace PTK
                     tempLines.Add(new Line(spt, ept));
                 }
             }
-            /*
-            foreach(StructuralElement sElem in strAssembly.SElements)
-            {
-                strAssembly.AddSElement(sElem);
-            }
-            */
+
             foreach (Support s in sups)
             {
                 strAssembly.AddSupport(s);
@@ -130,17 +110,11 @@ namespace PTK
                 strAssembly.AddLoad(l);
             }
 
-            Assembly upcastedAssembly = strAssembly;
-
-            /////////////////////////////////////////////////////////////////////////////////
-            // output
-            /////////////////////////////////////////////////////////////////////////////////
-
-            DA.SetData(0, new GH_Assembly(upcastedAssembly));
+            // --- output ---
+            DA.SetData(0, new GH_StructuralAssembly(strAssembly));
 
             // below: temporal output at V.0.3
             DA.SetDataList(1, tempLines);
-
         }
 
         protected override System.Drawing.Bitmap Icon

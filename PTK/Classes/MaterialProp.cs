@@ -9,7 +9,8 @@ namespace PTK
 {
     public class MaterialProperty
     {
-        public string Name { get; set; }
+        // --- field ---
+        public string Name { get; set; } = "N/A";
         public double Fmgk { get; set; }
         public double Ft0gk { get; set; }
         public double Ft90gk { get; set; }
@@ -28,7 +29,12 @@ namespace PTK
         public double Rhogk { get; set; }
         public double Rhogmean { get; set; }
 
+        // --- constructors --- 
         public MaterialProperty() { }
+        public MaterialProperty(string _name)
+        {
+            Name = _name;
+        }
         public MaterialProperty(
             string _name,
             double _fmgk,
@@ -70,6 +76,7 @@ namespace PTK
             Rhogmean = _rhogmean;    // density
         }
 
+        // --- methods ---
         public MaterialProperty DeepCopy()
         {
             return (MaterialProperty)base.MemberwiseClone();
@@ -120,7 +127,7 @@ namespace PTK
     {
         public Param_MaterialProperty() : base(new GH_InstanceDescription("MaterialProperty", "MatStruct", "Material properties for structural calculation", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Material; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaMaterial; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("248D46D3-6995-4CE8-AAD6-D30E99E6C493");
 

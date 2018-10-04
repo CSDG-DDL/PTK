@@ -9,16 +9,17 @@ namespace PTK
 {
     public class Support
     {
-        public string Tag { get; private set; }
+        // --- field ---
+        public string Tag { get; private set; } = "N/A";
         public int LoadCase { get; private set; } = 0;
-        public Plane FixingPlane { get; private set; }
-        public List<bool> Conditions { get; private set; }
+        public Plane FixingPlane { get; private set; } = new Plane();
+        public List<bool> Conditions { get; private set; } = new List<bool>();
 
-        public Support()
+        // --- constructors --- 
+        public Support() { }
+        public Support(string _tag)
         {
-            Tag = "N/A";
-            FixingPlane = new Plane();
-            Conditions = new List<bool>();
+            Tag = _tag;
         }
         public Support(string _tag, int _loadCase, Plane _fixingPlane, List<bool> _conditions) 
         {
@@ -28,16 +29,16 @@ namespace PTK
             Conditions = _conditions;
         }
 
+        // --- methods ---
         public void UpdateConditions(List<bool> _conditions)
         {
-            this.Conditions = _conditions;
+            Conditions = _conditions;
         }
 
-        public static bool[] StringToArray(string _boolStr)
+        public static bool[] ConditionsStringToArray(string _boolStr)
         {
             List<bool> _returnArray = new List<bool>();
-            char[] _tempChars;
-            _tempChars = _boolStr.ToCharArray();
+            char[] _tempChars = _boolStr.ToCharArray();
 
             foreach(char c in _tempChars)
             {
@@ -59,14 +60,16 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Support> LoadCase:" + LoadCase.ToString() +
-                " FixingPlane:" + FixingPlane.Origin.ToString() +
-                " Conditions:" + Conditions.ToArray().ToString();
+            info = "<Support>\n" +
+                " Tag:" + Tag + "\n" +
+                " LoadCase:" + LoadCase.ToString() + "\n" +
+                " FixingPlane:" + FixingPlane.Origin.ToString() + "\n" +
+                " Conditions:" + string.Join(",", Conditions);
             return info;
         }
         public bool IsValid()
         {
-            return true;
+            return Tag != "N/A";
         }
     }
 
@@ -92,7 +95,7 @@ namespace PTK
     {
         public Param_Support() : base(new GH_InstanceDescription("Support", "Spp", "The plane of the fixed point and the constraint condition", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Support; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaSupport; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("6426D65C-7B2A-4B08-9A58-5547B627C7B0");
 

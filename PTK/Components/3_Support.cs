@@ -15,13 +15,13 @@ using Rhino.Geometry;
 namespace PTK
 {
 
-    public class PTK_3_Support : GH_Component
+    public class PTK_Support : GH_Component
     {
         
         private string boolSupString = "";
         private bool[] boolSupArray = { false, false, false, false, false, false }; // six degrees of freedom
         
-        public PTK_3_Support()
+        public PTK_Support()
           : base("Support", "Support",
               "Add Supports Conditions here",
               CommonProps.category, CommonProps.subcate3)
@@ -45,28 +45,24 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string tag = null;
             int lCase = 0;
             // List<Plane> supPlns = new List<Plane>();
             Plane supPln = new Plane();
             List<Support> sups = new List<Support>();
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
             if (!DA.GetData(1, ref lCase)) { return; }
             if (!DA.GetData(2, ref supPln)) { return; }
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_Support sup = new GH_Support(new Support(tag, lCase, supPln, new List<bool>(boolSupArray)));
-            #endregion
 
-            #region output
+            // --- output ---
             Message = boolSupString;
             DA.SetData(0, sup);
-            #endregion
         }
 
         public override void CreateAttributes()
@@ -75,7 +71,7 @@ namespace PTK
             m_attributes = new Attributes_Custom(this);
         }
 
-        public static void Menu_CustomOnClick(PTK_3_Support _comp)
+        public static void Menu_CustomOnClick(PTK_Support _comp)
         {
             if (_comp.boolSupString == "") _comp.boolSupString = "000000";
             Forms.F01_Supports frm = new Forms.F01_Supports(_comp.boolSupString);
@@ -84,7 +80,7 @@ namespace PTK
             if (frm.ShowDialog() == DialogResult.OK)
             {
                 _comp.boolSupString = frm.BoolSupString;
-                _comp.boolSupArray = Support.StringToArray(_comp.boolSupString);
+                _comp.boolSupArray = Support.ConditionsStringToArray(_comp.boolSupString);
                 
                 _comp.ExpireSolution(true);
             }
@@ -132,7 +128,7 @@ namespace PTK
                     RectangleF rec = ButtonBounds;
                     if (rec.Contains(e.CanvasLocation))
                     {
-                        Menu_CustomOnClick((PTK_3_Support)Owner);
+                        Menu_CustomOnClick((PTK_Support)Owner);
                         return GH_ObjectResponse.Handled;
                     }
                 }
@@ -152,7 +148,7 @@ namespace PTK
         {
             boolSupString = reader.GetString("boolSupString");
             // set boolSupArray values when it loads.
-            this.boolSupArray = Support.StringToArray(boolSupString);
+            this.boolSupArray = Support.ConditionsStringToArray(boolSupString);
             return base.Read(reader);
         }
 

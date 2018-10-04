@@ -11,20 +11,16 @@ namespace PTK
 {
     public class Joint
     {
-        #region fields
+        // --- field ---
         public int LoadCase { get; private set; } = 0;
-        public Vector3d TranslateSpringAtStart { get; private set; }
-        public Vector3d RotateSpringAtStart { get; private set; }
-        public Vector3d TranslateSpringAtEnd { get; private set; }
-        public Vector3d RotateSpringAtEnd { get; private set; }
-        public List<bool> Conditions { get; private set; }
+        public Vector3d TranslateSpringAtStart { get; private set; } = new Vector3d();
+        public Vector3d RotateSpringAtStart { get; private set; } = new Vector3d();
+        public Vector3d TranslateSpringAtEnd { get; private set; } = new Vector3d();
+        public Vector3d RotateSpringAtEnd { get; private set; } = new Vector3d();
+        public List<bool> Conditions { get; private set; } = new List<bool>();
 
-        #endregion
-
-        #region constructors
-        public Joint()
-        {
-        }
+        // --- constructors --- 
+        public Joint() { }
         public Joint(int _loadCase, Vector3d _transS, Vector3d _rotS, Vector3d _transE, Vector3d _rotE, List<bool> _conditions)
         {
             LoadCase = _loadCase;
@@ -34,12 +30,8 @@ namespace PTK
             RotateSpringAtEnd = _rotE;
             Conditions = _conditions;
         }
-        #endregion
 
-        #region properties
-        #endregion
-
-        #region methods
+        // --- methods ---
         public Joint DeepCopy()
         {
             return (Joint)base.MemberwiseClone();
@@ -52,14 +44,13 @@ namespace PTK
                 " RotateSpringAtStart:" + RotateSpringAtStart.ToString() +
                 " TranslateSpringAtEnd:" + TranslateSpringAtEnd.ToString() +
                 " RotateSpringAtEnd:" + RotateSpringAtEnd.ToString() +
-                " Conditions:" + Conditions.ToString();
+                " Conditions:" + string.Join(",", Conditions);
             return info;
         }
         public bool IsValid()
         {
             return true;
         }
-        #endregion
     }
 
     public class GH_Joint : GH_Goo<Joint>
@@ -88,7 +79,7 @@ namespace PTK
     {
         public Param_Joint() : base(new GH_InstanceDescription("Joint", "Joint", "Joint", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Joint; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaJoint; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("45E370EA-0754-4F65-9F53-0DEBF9FAC7CB");
 

@@ -6,11 +6,11 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class PTK_3_GravityLoad : GH_Component
+    public class PTK_GravityLoad : GH_Component
     {
 
-        public PTK_3_GravityLoad()
-          : base("GtravityLoad", "GravityLoad",
+        public PTK_GravityLoad()
+          : base("GravityLoad", "GravityLoad",
                 "Add load here",
                 CommonProps.category, CommonProps.subcate3)
         {
@@ -19,7 +19,7 @@ namespace PTK.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item, "N/A");
+            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item, "GravityLoad");
             pManager.AddIntegerParameter("Load Case", "LC", "Load case", GH_ParamAccess.item, 0);
             pManager.AddVectorParameter("Gravity Vector", "G", "in [kN]. Vector which describe the diretion and value in kN", GH_ParamAccess.item,new Vector3d(0,0,-1));
 
@@ -35,25 +35,21 @@ namespace PTK.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string Tag = null;
-            int lcase = 0;
+            int lcase = new int();
             Vector3d gvector = new Vector3d();
-            #endregion
 
-            #region input
-            DA.GetData(0, ref Tag);
+            // --- input --- 
+            if (!DA.GetData(0, ref Tag)) { return; }
             if (!DA.GetData(1, ref lcase)) { return; }
             if (!DA.GetData(2, ref gvector)) { return; }
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_Load load = new GH_Load(new GravityLoad(Tag, lcase, gvector));
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, load);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

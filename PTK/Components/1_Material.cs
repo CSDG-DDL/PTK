@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Drawing;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -8,12 +9,10 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_1_Material : GH_Component
+    public class PTK_Material : GH_Component
     {
-        //change yuto
-
-        public PTK_1_Material()
-          : base("Material", "Mat","Create a Material",
+        public PTK_Material()
+          : base("Material", "Material", "Create a Material",
               CommonProps.category, CommonProps.subcate1)
         {
             Message = CommonProps.initialMessage;
@@ -21,8 +20,12 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name","N", "Material Name", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "Material Name", GH_ParamAccess.item, "Material");
             pManager.AddParameter(new Param_MaterialProperty(), "Structural Material Prop", "SMP", "Add material properties here", GH_ParamAccess.item);
+            pManager.AddColourParameter("Color", "C", "Preview Color", GH_ParamAccess.item,new System.Drawing.Color());
+            pManager[0].Optional = true;
+            pManager[1].Optional = true;
+            pManager[2].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -32,30 +35,31 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string name = null;
             GH_MaterialProperty gProp = null;
             MaterialProperty prop = null;
-            #endregion
+            GH_Colour gColor = null;
+            Color color;
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref gProp)) {
-                prop = new MaterialProperty();
+                prop = new MaterialProperty("MaterialProp");
             }
             else
             {
                 prop = gProp.Value;
             }
-            #endregion
+            if(!DA.GetData(2,ref gColor)) { return; }
+            color = gColor.Value;
 
-            #region solve
-            GH_Material material = new GH_Material(new Material(name, prop));
-            #endregion
 
-            #region output
+            // --- solve ---
+            GH_Material material = new GH_Material(new Material(name, prop, color));
+
+            // --- output ---
             DA.SetData(0, material);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

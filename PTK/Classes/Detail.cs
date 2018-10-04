@@ -3,57 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System.Linq;
 using Grasshopper;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 namespace PTK
 {
     public class Detail
     {
-        public Node Node { get; private set; }
-        public List<Element1D> Elements { get; private set; }
-        public List<Vector3d> UnifiedVectors { get; private set; }
-        public Dictionary<Element1D, int> ElementsPriorityMap { get; private set; }
-        public DetailType Type { get; private set; }
-        //private int crossElementNum = 0;
+        // --- field ---
+        public Node Node { get; private set; } = new Node();
+        public List<Element1D> Elements { get; private set; } = new List<Element1D>();
+        public Dictionary<Element1D, Vector3d> ElementsUnifiedVectorsMap { get; private set; } = new Dictionary<Element1D, Vector3d>();
+        public Dictionary<Element1D, int> ElementsPriorityMap { get; private set; } = new Dictionary<Element1D, int>();
+        public DetailType Type { get; private set; } = DetailType.NULL;
 
-
-
-        public Detail()
-        {
-            Node = new Node();
-            ElementsPriorityMap = new Dictionary<Element1D, int>();
-            
-        }
+        // --- constructors --- 
+        public Detail() { }
         public Detail(Node _node)
         {
             Node = _node;
-            ElementsPriorityMap = new Dictionary<Element1D, int>();
         }
-
         public Detail(Node _node, List<Element1D> _elements)
         {
             Node = _node;
             Elements = _elements;
-            
+            GenerateUnifiedElementVectors();
         }
 
-        
-
-
-
+        // --- methods ---
         public bool SetElements(List<Element1D> _elements, List<string> _priority)
         {
             List<Element1D> crossElements = _elements.FindAll(e => !IsNodeEndPointAtElement(e));
             List<Element1D> cornerElements = _elements.FindAll(e => IsNodeEndPointAtElement(e));
-            // test 
 
             if (crossElements.Count >= 2)
             {
                 Type = DetailType.XType;
-                if (!SortElementsByPriority(ref crossElements, _priority))
+                if (!SortElementsByPriorityList(ref crossElements, _priority))
                 {
                     return false;
                 }
@@ -68,7 +57,7 @@ namespace PTK
             }
             if (cornerElements.Count >= 2)
             {
-                if (!SortElementsByPriority(ref cornerElements, _priority))
+                if (!SortElementsByPriorityList(ref cornerElements, _priority))
                 {
                     return false;
                 }
@@ -95,41 +84,30 @@ namespace PTK
                 }
                 ElementsPriorityMap[e] = priorityIndex;
             }
+
+            GenerateUnifiedElementVectors();
             return true;
         }
 
         public void GenerateUnifiedElementVectors()
         {
-            UnifiedVectors = new List<Vector3d>();
             foreach (Element1D element in Elements)
             {
                 double DistanceElemStart = Node.Point.DistanceTo(element.BaseCurve.PointAtStart);
                 double DistanceElemEnd = Node.Point.DistanceTo(element.BaseCurve.PointAtEnd);
-                Line test = new Line(element.BaseCurve.PointAtStart, element.BaseCurve.PointAtEnd);  
                 element.BaseCurve.Reverse();
-
-                Line test2 = new Line(Node.Point, element.BaseCurve.PointAt(element.BaseCurve.GetLength() / 2));
-
-                
-
-
                 if (DistanceElemStart < DistanceElemEnd)
                 {
-                    UnifiedVectors.Add(-element.BaseCurve.TangentAtStart);
-
+                    ElementsUnifiedVectorsMap[element] = -element.BaseCurve.TangentAtStart;
                 }
                 else
                 {
-                    UnifiedVectors.Add(-element.BaseCurve.TangentAtEnd);
-
+                    ElementsUnifiedVectorsMap[element] = -element.BaseCurve.TangentAtEnd;
                 }
-
             }
-
         }
 
-
-        private bool SortElementsByPriority(ref List<Element1D> _elements, List<string> _priority)
+        private bool SortElementsByPriorityList(ref List<Element1D> _elements, List<string> _priority)
         {
             //When rearranging by priority is not necessary
             if (_elements.Count <= 1 || _elements.ConvertAll(e => e.Tag).Distinct().Count() <= 1)
@@ -148,10 +126,29 @@ namespace PTK
             }
         }
 
+        public void SortElement(int _sortingRure)
+        {
+            switch (_sortingRure)
+            {
+                case 0:     // sorts by Structural priority
+                    Elements = Elements.OrderBy(e => e.Priority).ToList();
+                    break;
+                case 1:     //Sorts alphabetically based on tag
+                    Elements = Elements.OrderBy(e => e.Tag).ToList();
+                    break;
+                case 2:     //Sorts by length
+                    Elements = Elements.OrderBy(e => e.BaseCurve.GetLength()).ToList();
+                    break;
+                default:
+                    Elements = Elements;
+                    break;
+            }
+        }
+
         private bool IsNodeEndPointAtElement(Element1D _element)
         {
-            if (Node.Point.DistanceTo(_element.BaseCurve.PointAtStart) <= CommonProps.tolerances ||
-                Node.Point.DistanceTo(_element.BaseCurve.PointAtEnd) <= CommonProps.tolerances)
+            if (Node.Equals(_element.BaseCurve.PointAtStart) ||
+                Node.Equals(_element.BaseCurve.PointAtEnd) )
             {
                 return true;
             }
@@ -160,32 +157,68 @@ namespace PTK
 
         public double SearchNodeParamAtElement(Element1D _element)
         {
-            double p;
-            _element.BaseCurve.ClosestPoint(Node.Point, out p);
+            _element.BaseCurve.ClosestPoint(Node.Point, out double p);
             return p;
         }
+
+        public Detail DeepCopy()
+        {
+            return (Detail)base.MemberwiseClone();
+        }
+        public override string ToString()
+        {
+            string info;
+            info = "<Detail>\n" +
+                " Node:" + Node.Point.ToString() + "\n" +
+                " Elements:" + Elements.Count + "\n" +
+                " Type:" + Type.ToString();
+            return info;
+        }
+        public bool IsValid()
+        {
+            return Node.IsValid() && Elements.Count != 0;
+        }
     }
 
-
-    
-    
-    public class ElementInDetail
+    public class GH_Detail : GH_Goo<Detail>
     {
-        public Element1D Element { get; private set; }
-        public Vector3d UnifiedVector { get; private set; }
+        public GH_Detail() { }
+        public GH_Detail(GH_Detail other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
+        public GH_Detail(Detail detail) : base(detail) { this.Value = detail; }
+        public override bool IsValid => base.m_value.IsValid();
 
+        public override string TypeName => "Detail";
 
-        public ElementInDetail(Element1D _element, Vector3d _unifiedVector)
+        public override string TypeDescription => "Set of Node and its adjacent element";
+
+        public override IGH_Goo Duplicate()
         {
-            Element = _element;
-            UnifiedVector = _unifiedVector;
+            return new GH_Detail(this);
         }
 
-        public ElementInDetail()
+        public override string ToString()
         {
-
+            return Value.ToString();
         }
- 
     }
-    
+
+    public class Param_Detail : GH_PersistentParam<GH_Detail>
+    {
+        public Param_Detail() : base(new GH_InstanceDescription("Detail", "Detail", "Set of Node and its adjacent element", CommonProps.category, CommonProps.subcate0)) { }
+
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaDetail; } }  //Set icon image
+
+        public override Guid ComponentGuid => new Guid("16494CE0-36A7-42D0-A033-4DFE936A05B2");
+
+        protected override GH_GetterResult Prompt_Plural(ref List<GH_Detail> values)
+        {
+            return GH_GetterResult.success;
+        }
+
+        protected override GH_GetterResult Prompt_Singular(ref GH_Detail value)
+        {
+            return GH_GetterResult.success;
+        }
+    }
+
 }

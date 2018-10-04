@@ -5,9 +5,9 @@ using System;
 
 namespace PTK
 {
-    public class PTK_1_StructuralMaterialProp : GH_Component
+    public class PTK_StructuralMaterialProp : GH_Component
     {
-        public PTK_1_StructuralMaterialProp()
+        public PTK_StructuralMaterialProp()
           : base("Material Structural Prop", "MatStrProp",
               "creates material properties",
               CommonProps.category, CommonProps.subcate1)
@@ -17,7 +17,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "Name", "names Material.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "names Material.", GH_ParamAccess.item, "MaterialProp");
 
             pManager.AddNumberParameter("f m,g,k", "fmgk", "in [N/mm2]", GH_ParamAccess.item, 26 );
             pManager.AddNumberParameter("f t,0,g,k", "ft0gk", "in [N/mm2]", GH_ParamAccess.item, 19 );
@@ -39,7 +39,6 @@ namespace PTK
 
             pManager.AddNumberParameter("Rho g,k", "Rhogk", "in [kg/m3]", GH_ParamAccess.item, 385);
             pManager.AddNumberParameter("Rho g,meam", "Rhogmean" , "in [kg/m3]", GH_ParamAccess.item, 420);
-            
         }
 
 
@@ -51,7 +50,7 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string Name = null;
 
             // for glulam according LIMTREBOKA
@@ -77,10 +76,10 @@ namespace PTK
 
             double Rhogk = new double();
             double Rhogmean = new double();
-            #endregion
 
-            #region input
-            DA.GetData(0, ref Name);
+            // --- input --- 
+            if (!DA.GetData(0, ref Name)) { return; } ;
+
             if (!DA.GetData(1, ref fmgk)) { return; }
             if (!DA.GetData(2, ref ft0gk)) { return; }
             if (!DA.GetData(3, ref ft90gk)) { return; }
@@ -101,9 +100,8 @@ namespace PTK
 
             if (!DA.GetData(16, ref Rhogk)) { return; }
             if (!DA.GetData(17, ref Rhogmean)) { return; }
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_MaterialProperty prop = new GH_MaterialProperty(
                 new MaterialProperty(
                     Name,
@@ -132,14 +130,9 @@ namespace PTK
                     Rhogmean
                 )
             );
-            
 
-            #endregion
-
-            #region output
+            // --- output ---
             DA.SetData(0, prop);
-            #endregion
-
         }
 
         protected override System.Drawing.Bitmap Icon

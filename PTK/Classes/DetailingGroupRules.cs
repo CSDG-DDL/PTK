@@ -10,9 +10,6 @@ using Grasshopper.Kernel.Types;
 namespace PTK.Rules
 
 {
-    
-
-
     public class Rule
     {
         public CheckGroupDelegate checkdelegate;
@@ -21,42 +18,29 @@ namespace PTK.Rules
         {
             checkdelegate = _checkdelegate;
         }
-        
     }
 
    
 
     public class ElementLength
     {
-        #region fields
+        // --- field ---
         private double minLength = 0;
         private double maxLength = 100000000000;
 
-
-        #endregion
-
-        #region constructors
+        // --- constructors --- 
         public ElementLength(double _min, double _max)
         {
-
             minLength = _min;
             maxLength = _max;
-
         }
 
-
-        #endregion
-        #region properties
-
-        #endregion
-        #region methods
-
+        // --- methods ---
         public bool check(Detail _detail)  //Checking element length
         {
             Detail detail = _detail;
             Node node = detail.Node;
             List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
-
 
             bool valid = false;
             foreach (Element1D element in elements)
@@ -71,53 +55,34 @@ namespace PTK.Rules
                     valid = false;
                     break;
                 }
-
             }
-
-
-
             return valid;
         }
-        #endregion
 
     }
+
     public class ElementAmount 
     {
-        #region fields
+        // --- field ---
         private int minAmount = 0;
         private int maxAmount = 1000;
 
-
-        #endregion
-
-        #region constructors
+        // --- constructors --- 
         public ElementAmount(int _minAmount, int _maxAmount)
         {
-
             minAmount = _minAmount;
             maxAmount = _maxAmount;
-
         }
 
-
-        #endregion
-        #region properties
-
-        #endregion
-        #region methods
-
+        // --- methods ---
         public bool check(Detail _detail)
         {
             Detail detail = _detail;
             Node node = detail.Node;
             List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
 
-            
-
-
             bool valid = false;
             foreach (Element1D element in elements)
-
             {
                 if (minAmount <= elements.Count && elements.Count <= maxAmount == true)
                 {
@@ -128,32 +93,23 @@ namespace PTK.Rules
                     valid = false;
                     break;
                 }
-
             }
-
-
-
             return valid;
         }
-        #endregion
-
     }
 
     public class NodeHitRegion 
     {
+        // --- field ---
+        public List<Curve> Polycurves { get; private set; }
 
-
-        private List<Curve> polycurves;
-        public List<Curve> Polycurves { get { return polycurves; } set { } }
-
-
+        // --- constructors --- 
         public NodeHitRegion(List<Curve> _polyCurves)
         {
-            polycurves = new List<Curve>();
-            polycurves = _polyCurves;
+            Polycurves = new List<Curve>();
         }
 
-    
+        // --- methods ---
         public bool check(Detail _detail)
         //This method checks if the node point is in the regions or not.
         {
@@ -161,17 +117,14 @@ namespace PTK.Rules
             Node node = detail.Node;
             List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
 
-
-
             double tolerance = CommonProps.tolerances; ;
             Plane Curveplane = new Plane();
 
-            for (int i = 0; i < polycurves.Count; i++)
+            for (int i = 0; i < Polycurves.Count; i++)
             {
-                Curve polycurve = polycurves[i];
+                Curve polycurve = Polycurves[i];
                 if (polycurve.TryGetPlane(out Curveplane))
                 {
-
                     PointContainment relationship = polycurve.Contains(node.Point, Curveplane, tolerance);
                     if (relationship == PointContainment.Inside || relationship == PointContainment.Coincident)
                     {
@@ -179,49 +132,31 @@ namespace PTK.Rules
                         {
                             return true;
                         }
-
                     }
-
                 }
             }
-
             return false;
-
-
         }
-
-
-
     }
 
 
     public class ElementTag
     {
-        #region fields
-
+        // --- field ---
         private List<string> tagsAre = new List<string>();
         private int mode = 0;
 
-        #endregion
-        #region constructors
-
+        // --- constructors --- 
         public ElementTag(List<string> _tagsAre, int _mode = 0)
         {
             tagsAre = _tagsAre;
             mode = _mode;
         }
 
-        #endregion
-        #region properties
-
-        #endregion
-        #region methods
-
+        // --- methods ---
         public bool check(Detail _detail)
         {
             List<Element1D> _elements = _detail.Elements;
-
-
             List<String> detailTags = new List<string>();
             List<String> tagsAreStrict = tagsAre;
             List<String> tagsAreDistinct = tagsAre.Distinct().ToList();
@@ -230,7 +165,6 @@ namespace PTK.Rules
             tagsAreDistinct.Sort();
 
             bool valid = false;
-
            
             if (mode >= 4) //mode verifier
                 mode = 0;
@@ -311,20 +245,10 @@ namespace PTK.Rules
                     }
                 }
             }
-
             return valid;
         }
 
-
-
-
-
-
-
-
-        #endregion
     }
-
 
 
     /*
@@ -421,16 +345,5 @@ namespace PTK.Rules
 
 
 
-
-
-
-    #region fields
-    #endregion
-    #region constructors
-    #endregion
-    #region properties
-    #endregion
-    #region methods
-    #endregion
 
 }

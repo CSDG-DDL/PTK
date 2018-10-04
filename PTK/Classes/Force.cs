@@ -10,23 +10,17 @@ namespace PTK
 {
     public class Force
     {
+        // --- field ---
         public int LoadCase { get; private set; } = 0;
-        public double FX { get; private set; }
-        public double FY { get; private set; }
-        public double FZ { get; private set; }
-        public double MX { get; private set; }
-        public double MY { get; private set; }
-        public double MZ { get; private set; }
+        public double FX { get; private set; } = 0.0;
+        public double FY { get; private set; } = 0.0;
+        public double FZ { get; private set; } = 0.0;
+        public double MX { get; private set; } = 0.0;
+        public double MY { get; private set; } = 0.0;
+        public double MZ { get; private set; } = 0.0;
 
-        public Force()
-        {
-            FX = 0.0;
-            FY = 0.0;
-            FZ = 0.0;
-            MX = 0.0;
-            MY = 0.0;
-            MZ = 0.0;
-        }
+        // --- constructors --- 
+        public Force() { }
         public Force(int _loadCase, double _fx, double _fy, double _fz, double _mx, double _my, double _mz)
         {
             LoadCase = _loadCase;
@@ -38,6 +32,7 @@ namespace PTK
             MZ = _mz;
         }
 
+        // --- methods ---
         public Force DeepCopy()
         {
             return (Force)base.MemberwiseClone();
@@ -45,9 +40,10 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Force> FX:" + FX.ToString() +
+            info = "<Force>\n" +
+                " FX:" + FX.ToString() +
                 " FY:" + FY.ToString() +
-                " FZ:" + FZ.ToString() +
+                " FZ:" + FZ.ToString() + "\n" +
                 " MX:" + MX.ToString() +
                 " MY:" + MY.ToString() +
                 " MZ:" + MZ.ToString();

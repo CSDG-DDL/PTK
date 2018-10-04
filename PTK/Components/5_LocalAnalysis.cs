@@ -6,12 +6,12 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_5_LocalAnalysis : GH_Component
+    public class PTK_LocalAnalysis : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the PTK_C_03 class.
         /// </summary>
-        public PTK_5_LocalAnalysis()
+        public PTK_LocalAnalysis()
           : base("Local Analysis (PTK)", "Local Analysis",
               "Local Analysis",
               CommonProps.category, CommonProps.subcate5)

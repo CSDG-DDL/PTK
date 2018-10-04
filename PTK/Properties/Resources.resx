@@ -220,4 +220,43 @@
   <data name="StrAssemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\StrAssemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ParaAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaAssemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaAssemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaCrossSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaCrossSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaDetail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaDetail.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaElement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaElement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaJoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaJoint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaPareto" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaPareto.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaStrAssemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaStrAssemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaSupport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaSupport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaComposite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaComposite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

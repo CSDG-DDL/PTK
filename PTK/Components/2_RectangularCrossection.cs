@@ -7,9 +7,9 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_2_RectangularCrossSection : GH_Component
+    public class PTK_RectangularCrossSection : GH_Component
     {
-        public PTK_2_RectangularCrossSection()
+        public PTK_RectangularCrossSection()
           : base("Rectangular Cross Section", "RectSec",
               "CrossSection is being generated based on width, height, alignment and height-direction ",
               CommonProps.category, CommonProps.subcate2)
@@ -19,15 +19,13 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item, "RectCroSec");
             pManager.AddNumberParameter("Width", "W", "", GH_ParamAccess.item,100);  
             pManager.AddNumberParameter("Height", "H", "", GH_ParamAccess.item,100);
-            // pManager.AddParameter(new Param_MaterialProperty(), "Material Property", "M", "Material Property", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
-            // pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -37,36 +35,21 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
-            string name = "N/A";
+            // --- variables ---
+            string name = null;
             double width = new double();
             double height = new double();
-            // GH_MaterialProperty gMaterialProperty = null;
-            // MaterialProperty materialProperty = null;
-            #endregion
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref width)) { return; }
             if (!DA.GetData(2, ref height)) { return; }
-            /*
-            if (!DA.GetData(3, ref gMaterialProperty)) {
-                materialProperty = new MaterialProperty();
-            }
-            else
-            {
-                materialProperty = gMaterialProperty.Value;
-            }
-            */
-            #endregion
 
-            #region solve
+            // --- solve ---
             GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, height, width));
-            #endregion
 
-            #region output
+            // --- output ---
             DA.SetData(0, sec);
-            #endregion
         }
 
         protected override System.Drawing.Bitmap Icon

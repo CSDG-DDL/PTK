@@ -14,19 +14,13 @@ namespace PTK.Components
 {
     public class BuildModel : GH_Component
     {
-        /// <summary>
-        /// Initializes a new instance of the BuildModel class.
-        /// </summary>
         public BuildModel()
           : base("BuildModel", "Nickname",
-              "Description",
-              "Category", "Subcategory")
+              "Exporting BTL file to the designated location",
+              CommonProps.category, CommonProps.subcate7)
         {
         }
 
-        /// <summary>
-        /// Registers all the input parameters for this component.
-        /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Assembly", "A", "", GH_ParamAccess.item);
@@ -36,37 +30,29 @@ namespace PTK.Components
             pManager[1].Optional = true;
         }
 
-        /// <summary>
-        /// Registers all the output parameters for this component.
-        /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddTextParameter("", "", "", GH_ParamAccess.item);
             pManager.AddBrepParameter("Breps", "", "", GH_ParamAccess.tree);
         }
 
-        /// <summary>
-        /// This is the method that actually does the work.
-        /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            // --- variables ---
             Assembly assembly = new Assembly();
             GH_Assembly ghAssembly = new GH_Assembly();
-
             List<OrderedTimberProcess> Orders = new List<OrderedTimberProcess>();
 
             string Name = "";
             int priorityKey = 0;
             string filepath = "";
 
-
-
+            // --- input --- 
             DA.GetData(0, ref ghAssembly);
             DA.GetDataList(1, Orders);
             DA.GetData(2, ref filepath);
 
-
+            // --- solve ---
             BuildingProject GrasshopperProject = new BuildingProject(new ProjectType());
             GrasshopperProject.PrepairElements(ghAssembly.Value.Elements, Orders);
             GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
@@ -102,27 +88,20 @@ namespace PTK.Components
             SerializerObj.Serialize(WriteFileStream, BTLx);
             WriteFileStream.Close();
 
+            // --- output ---
             DA.SetDataList(0, "Yeahhhh");
             DA.SetDataTree(1, dataTree);
 
         }
 
-        /// <summary>
-        /// Provides an Icon for the component.
-        /// </summary>
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
-                return null;
+                return Properties.Resources.BTL;
             }
         }
 
-        /// <summary>
-        /// Gets the unique ID for this component. Do not change this ID after release.
-        /// </summary>
         public override Guid ComponentGuid
         {
             get { return new Guid("c6bb5772-148b-4381-aad8-8161d8f5856f"); }

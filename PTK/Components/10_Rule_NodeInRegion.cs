@@ -6,12 +6,12 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _10_Rule_NodeInRegion : GH_Component
+    public class PTK_Rule_NodeInRegion : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the _11_04_NodeInRegion class.
         /// </summary>
-        public _10_Rule_NodeInRegion()
+        public PTK_Rule_NodeInRegion()
           : base("NodeInRegion", "Nickname",
               "Description",
               CommonProps.category, CommonProps.subcate10)

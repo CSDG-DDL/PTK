@@ -10,12 +10,9 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class PTK_2_Composite : GH_Component
+    public class PTK_Composite : GH_Component
     {
-        /// <summary>
-        /// Initializes a new instance of the _2_SubElement class.
-        /// </summary>
-        public PTK_2_Composite()
+        public PTK_Composite()
           : base("Composite Cross-section", "Composite",
               "creates a sub element",
               CommonProps.category, CommonProps.subcate2)
@@ -23,41 +20,27 @@ namespace PTK.Components
             Message = CommonProps.initialMessage;
         }
 
-        /// <summary>
-        /// Registers all the input parameters for this component.
-        /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item, "Composite");
             pManager.AddParameter(new Param_MaterialProperty(), "Material properties", "M", "Add material properties", GH_ParamAccess.list);
             pManager.AddParameter(new Param_CroSec(), "Cross-sections", "S", "Add cross sections", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Alignment(), "Alignments", "A", "Add alignments", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Alignment(), "Global Alignment", "GA", "Add global alignment", GH_ParamAccess.item);
-
+            pManager[1].Optional = true;
+            pManager[2].Optional = true;
             pManager[3].Optional = true;
             pManager[4].Optional = true;
         }
 
-        /// <summary>
-        /// Registers all the output parameters for this component.
-        /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.RegisterParam(new Param_Composite(), "Composite Cross-section", "Composite", "PTK Sub-elements", GH_ParamAccess.item);
-
         }
 
-        /// <summary>
-        /// This is the method that actually does the work.
-        /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
-            /////////////////////////////////////////////////////////////////////////////////
-            // variables
-            /////////////////////////////////////////////////////////////////////////////////
-
+            // --- variables ---
             string name = null;
             List<GH_MaterialProperty> gMaterialProperties = new List<GH_MaterialProperty>();
             List<MaterialProperty> materialProperties = null;
@@ -67,14 +50,10 @@ namespace PTK.Components
             List<Alignment> alignments = null;
             GH_Alignment gGlobalAlignment = null;
             Alignment globalAlignment = null;
-
             List<Sub2DElement> sub2dElements = new List<Sub2DElement>();
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // input
-            /////////////////////////////////////////////////////////////////////////////////
-
-            if(!DA.GetData(0, ref name)) { return; }
+            // --- input --- 
+            if (!DA.GetData(0, ref name)) { return; }
         
             if (!DA.GetDataList(1, gMaterialProperties))
             {
@@ -105,7 +84,7 @@ namespace PTK.Components
 
             if (!DA.GetData(4, ref gGlobalAlignment))
             {
-                globalAlignment = new Alignment();
+                globalAlignment = new Alignment("Alignment");
             }
             else
             {
@@ -113,12 +92,11 @@ namespace PTK.Components
             }
 
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // solve
-            /////////////////////////////////////////////////////////////////////////////////
+            // --- solve ---
 
             // we have materialProperties, crossSections, alignments, 
-
+            //Very unstable because it does not work unless the number of inputs match. Is it necessary to reconsider the configuration itself?
+            //入力の数が合わないと動作しないため非常に不安定。構成そのものを考え直す必要がある？
             if (crossSections.Count == materialProperties.Count && crossSections.Count == alignments.Count)
             {
                 for (int i = 0; i < crossSections.Count; i++)
@@ -126,42 +104,26 @@ namespace PTK.Components
                     sub2dElements.Add(new Sub2DElement(name, materialProperties[i], crossSections[i], alignments[i]));
                 }
             }
+            else
+            {
+                return;
+            }
 
             GH_Composite gComposite = new GH_Composite(new Composite(name, sub2dElements, globalAlignment));
 
-            /*
-            GH_SubElement subElement = new GH_SubElement(
-                                            new SubElement(
-                                                            name, 
-                                                            materialProperties,
-                                                            crossSections,
-                                                            alignments
-                                                           ));
-            
-            */
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // output
-            /////////////////////////////////////////////////////////////////////////////////
+            // --- output ---
             DA.SetData(0, gComposite);
         }
 
-        /// <summary>
-        /// Provides an Icon for the component.
-        /// </summary>
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
                 return Properties.Resources.Composite;
             }
         }
 
-        /// <summary>
-        /// Gets the unique ID for this component. Do not change this ID after release.
-        /// </summary>
         public override Guid ComponentGuid
         {
             get { return new Guid("9c4880e6-f925-484b-9ec1-cf5cf466d417"); }

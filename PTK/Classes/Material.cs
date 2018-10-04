@@ -1,10 +1,10 @@
-﻿// alphanumerical order for namespaces please
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
@@ -12,25 +12,25 @@ namespace PTK
 {
     public class Material
     {
-        public string Name { get; private set; }
-        public MaterialProperty StructuralProp { get; private set; }
+        // --- field ---
+        public string Name { get; private set; } = "N/A";
+        public MaterialProperty StructuralProp { get; private set; } = new MaterialProperty("MaterialProp");
+        public Color Color { get; private set; } = new Color();
 
-        public Material()
-        {
-            Name = "N/A";
-            StructuralProp = new MaterialProperty();
-        }
+        // --- constructors --- 
+        public Material() { }
         public Material(string _name)
         {
             Name = _name;
-            StructuralProp = new MaterialProperty();
         }
-        public Material(string _name, MaterialProperty _structuralProp)
+        public Material(string _name, MaterialProperty _structuralProp, Color _color)
         {
             Name = _name;
             StructuralProp = _structuralProp;
+            Color = _color;
         }
 
+        // --- methods ---
         public Material DeepCopy()
         {
             return (Material)base.MemberwiseClone();
@@ -38,8 +38,10 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Material> Name:" + Name + 
-                " StructuralProp.Name:" + StructuralProp.Name;
+            info = "<Material>\n" +
+                " Name:" + Name + "\n" +
+                " StructuralProp.Name:" + StructuralProp.Name + "\n" +
+                " Color:" + Color.ToString();
             return info;
         }
 
@@ -75,7 +77,7 @@ namespace PTK
     {
         public Param_Material() : base(new GH_InstanceDescription("Material", "Mat", "Material name and property information", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Material; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaMaterial; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("62539F56-FB20-4342-AC8F-E7C1A2F7BAA2");
 

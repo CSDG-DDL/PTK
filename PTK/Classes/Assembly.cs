@@ -14,88 +14,46 @@ namespace PTK
 {
     public class Assembly
     {
-        public List<Element1D> Elements { get; private set; }
-        public List<Node> Nodes { get; private set; }
-        public List<string> Tags { get; private set; }
-        public List<CrossSection> CrossSections { get; private set; }
-        public List<MaterialProperty> MaterialProperties { get; private set; }
-        public Dictionary<Element1D,List<int>> NodeMap { get; private set; }
-        public Dictionary<CrossSection, MaterialProperty> CrossSectionMap { get; private set; }
-        public List<Detail> Details { get; private set; }
-        public List<DetailingGroup> DetailingGroups { get; private set; }
+        // --- field ---
+        public List<Element1D> Elements { get; private set; } = new List<Element1D>();
+        public List<Node> Nodes { get; private set; } = new List<Node>();
+        public List<string> Tags { get; private set; } = new List<string>();
+        public List<CrossSection> CrossSections { get; private set; } = new List<CrossSection>();
+        public List<MaterialProperty> MaterialProperties { get; private set; } = new List<MaterialProperty>();
+        public Dictionary<Element1D, List<int>> NodeMap { get; private set; } = new Dictionary<Element1D, List<int>>();
+        public Dictionary<CrossSection, MaterialProperty> CrossSectionMap { get; private set; } = new Dictionary<CrossSection, MaterialProperty>();
+        public List<Detail> Details { get; private set; } = new List<Detail>();
+        public List<DetailingGroup> DetailingGroups { get; private set; } = new List<DetailingGroup>();
 
-        RTree rTreeNodes = new RTree();
+        // --- constructors --- 
+        public Assembly() { }
 
-
-
-        public Assembly()
-        {
-            Elements = new List<Element1D>();
-            Nodes = new List<Node>();
-            Tags = new List<string>();
-            CrossSections = new List<CrossSection>();
-            MaterialProperties = new List<MaterialProperty>();
-            NodeMap = new Dictionary<Element1D, List<int>>();
-            CrossSectionMap = new Dictionary<CrossSection, MaterialProperty>();
-            Details = new List<Detail>();
-            DetailingGroups = new List<DetailingGroup>();
-            
-
-            
-
-        }
-
-        
-        public void GenerateDetails()
-        {
-            //Making Detail
-            foreach(Node node in Nodes)
-            {
-                ;
-
-                int ind = Nodes.IndexOf(node);
-                List<Element1D> Elements = NodeMap.Where(p => p.Value.Contains(ind)).ToList().ConvertAll(p => p.Key);
-
-
-                Details.Add(new Detail(node, Elements));
-
-            }
-
-            
-        }
-
-
+        // --- methods ---
         public int AddElement(Element1D _element)
         {
             if (!Elements.Contains(_element))
             {
-                // SearchNodes:
-                //
-                // 
                 SearchNodes(_element);
-
                 Elements.Add(_element);
                 string tag = _element.Tag;
                 if (!Tags.Contains(tag))
                 {
                     Tags.Add(tag);
                 }
-                // foreach(CrossSection sec in _element.CrossSections)
-                for (int i=0; i< _element.CrossSections.Count; i++)
+
+                foreach(Sub2DElement subElem in _element.Sub2DElements)
                 {
-                    CrossSection sec = _element.CrossSections[i];
-                    if(!CrossSectionMap.ContainsKey(sec))
+                    CrossSection sec = subElem.CrossSection;
+                    if (!CrossSections.Contains(sec))
                     {
                         CrossSections.Add(sec);
-                        // MaterialProperty matProp = sec.MaterialProperty;
-                        MaterialProperty matProp = _element.Sub2DElements[i].MaterialProperty;
-
-                        CrossSectionMap.Add(sec, matProp);
-                        if (!MaterialProperties.Contains(matProp))
-                        {
-                            MaterialProperties.Add(matProp);
-                        }
                     }
+                    MaterialProperty mat = subElem.MaterialProperty;
+                    if (!MaterialProperties.Contains(mat))
+                    {
+                        MaterialProperties.Add(mat);
+                    }
+                    CrossSectionMap[sec] = mat;
                 }
             }
             return Elements.Count;
@@ -116,7 +74,7 @@ namespace PTK
             //Register intersection with other elements as a node
             foreach (Element1D otherElem in Elements.FindAll(e => e.IsIntersectWithOther == true))
             {
-                var events = Intersection.CurveCurve(otherElem.BaseCurve, _element.BaseCurve, Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance, 0.0);
+                var events = Intersection.CurveCurve(otherElem.BaseCurve, _element.BaseCurve, CommonProps.tolerances, CommonProps.tolerances);
                 if(events != null)
                 {
                     foreach(IntersectionEvent e in events)
@@ -152,64 +110,37 @@ namespace PTK
 
         private void AddPointToNodeMap(Element1D _element, Point3d _pt)
         {
-
-            bool nodeExists = false;
-            int nodeIndex = new int();
-            //bool nodeExists = NodeExists(Nodes, ref rTreeNodes, _point);
-            // "nodeExisting" will be performed, when items are found.
-            EventHandler<RTreeEventArgs> nodeExisting =
-                (object sender, RTreeEventArgs args) =>
-                {
-                    nodeExists = true;
-                    nodeIndex = args.Id;
-                };
-
-            double tol = CommonProps.tolerances;
-            // bounding box of a node considering the tolerance
-            BoundingBox spotBBox = new BoundingBox
-                (_pt.X - tol, _pt.Y - tol, _pt.Z - tol, _pt.X + tol, _pt.Y + tol, _pt.Z + tol);
-
-            // performs node search, making nodeExists to true when an existent node is detected.
-            rTreeNodes.Search(spotBBox, nodeExisting);
-
-            // in case node doesn't exist:
-            if (!nodeExists)
+            // When there is no node found at the position
+            if (!Nodes.Exists(n => n.Equals(_pt)))
             {
                 Nodes.Add(new Node(_pt));
-                nodeIndex = Nodes.Count - 1;
-                NodeMap[_element].Add(nodeIndex);
-                rTreeNodes.Insert(new BoundingBox(_pt, _pt), nodeIndex);
+                NodeMap[_element].Add(Nodes.Count-1);   //Attach a node to an element with a new ID
             }
+            //If there is already a node, map its index
             else
             {
-                NodeMap[_element].Add(nodeIndex);
-            }
-
-            /*
-            // When there is no node found at the position
-            // if (!Nodes.Exists(n => n.Equals(_point)))
-            if (!Nodes.Exists(n => n.Point == _pt))
-            {
-                //Here i make a new detail. and add the element to the detail
-                // node location less than the tolerance
-                Nodes.Add(new Node(_pt));
-                NodeMap[_element].Add(Nodes.Count-1);
-            }
-            else // when there's an existent node
-            {
-                //Here i add an element to the detail
-                // int ind = Nodes.FindIndex(n => n.Equals(_point));
-                int ind = Nodes.FindIndex(n => n.Point.Equals(_pt));
-                //If there is already a node, map its index
+                int ind = Nodes.FindIndex(n => n.Equals(_pt));
                 if (!NodeMap[_element].Contains(ind))
                 {
                     NodeMap[_element].Add(ind);
                 }
             }
-            */
-
         }
 
+        public void GenerateDetails()
+        {
+            foreach (Node node in Nodes)
+            {
+                int ind = Nodes.IndexOf(node);
+                List<Element1D> Elements = NodeMap.Where(p => p.Value.Contains(ind)).ToList().ConvertAll(p => p.Key);
+                Details.Add(new Detail(node, Elements));
+            }
+        }
+
+        public void AddDetailingGroup(DetailingGroup _dg)
+        {
+            DetailingGroups.Add(_dg);
+        }
 
         public List<double> SearchNodeParamsAtElement(Element1D _element)
         {
@@ -218,8 +149,7 @@ namespace PTK
             {
                 foreach(int i in NodeMap[_element])
                 {
-                    double p;
-                    _element.BaseCurve.ClosestPoint(Nodes[i].Point, out p);
+                    _element.BaseCurve.ClosestPoint(Nodes[i].Point, out double p);
                     // remove same values
                     if (param.Count == 0)
                     {
@@ -234,15 +164,11 @@ namespace PTK
                             param.Add(p);
                         }
                     }
-
                 }
                 param.Sort();
             }
-
             return param;
         }
-
-        
 
         public Assembly DeepCopy()
         {
@@ -251,10 +177,10 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Assembly> Elements:" + Elements.Count.ToString() +
-                " Nodes:" + Nodes.Count.ToString() +
-                " Material Properties:" + MaterialProperties.Count.ToString() +
-                " Sections:" + CrossSections.Count.ToString();
+            info = "<Assembly>\n Elements:" + Elements.Count.ToString() + "\n" +
+                " Nodes:" + Nodes.Count.ToString() + "\n" +
+                " CrossSections:" + CrossSections.Count.ToString() + "\n" +
+                " Material Properties:" + MaterialProperties.Count.ToString();
             return info;
         }
         public bool IsValid()
@@ -265,35 +191,19 @@ namespace PTK
 
     public class StructuralAssembly : Assembly
     {
-        public Assembly Assembly { get; private set; }
-        public List<StructuralElement> SElements { get; private set; }
-        public List<Support> Supports { get; private set; }
-        public List<Load> Loads { get; private set; }
+        // --- field ---
+        public Assembly Assembly { get; private set; } = new Assembly();
+        public List<Support> Supports { get; private set; } = new List<Support>();
+        public List<Load> Loads { get; private set; } = new List<Load>();
 
-        public StructuralAssembly()
-        {
-            Assembly = new Assembly();
-            SElements = new List<StructuralElement>();
-            Supports = new List<Support>();
-            Loads = new List<Load>();
-        }
+        // --- constructors ---
+        public StructuralAssembly() { }
         public StructuralAssembly(Assembly _assembly)
         {
             Assembly = _assembly;
-            SElements = new List<StructuralElement>();
-            Supports = new List<Support>();
-            Loads = new List<Load>();
-        }
-     
-        public int AddSElement(StructuralElement _sElement)
-        {
-            if (!SElements.Contains(_sElement))
-            {
-                SElements.Add(_sElement);
-            }
-            return SElements.Count;
         }
 
+        // --- methods ---
         public int AddSupport(Support _support)
         {
             if (!Supports.Contains(_support))
@@ -319,14 +229,14 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<StructuralAssembly> StructuralElements:" + SElements.Count.ToString() +
-                " Supports:" + Supports.Count.ToString() +
+            info = "<StructuralAssembly>\n"+
+                " Supports:" + Supports.Count.ToString() + "\n" +
                 " Loads:" + Loads.Count.ToString();
             return info;
         }
         public new bool IsValid()
         {
-            return SElements.Count != 0;
+            return Assembly != null && Assembly.IsValid();
         }
     }
 
@@ -352,7 +262,7 @@ namespace PTK
     {
         public Param_Assembly() : base(new GH_InstanceDescription("Assembly", "Assembly", "A model that gathers elements and has intersection points", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Assemble; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaAssemble; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("E49369AA-4F29-498E-9808-E3197929FF51");
 
@@ -376,7 +286,7 @@ namespace PTK
             return new GH_StructuralAssembly(this);
         }
         public override bool IsValid => base.m_value.IsValid();
-        public override string TypeName => "StructuralAssembly";
+        public override string TypeName => "Structural Assembly";
         public override string TypeDescription => "A model that gathers elements and has intersection points";
         public override string ToString()
         {
@@ -386,9 +296,9 @@ namespace PTK
 
     public class Param_StructuralAssembly : GH_PersistentParam<GH_StructuralAssembly>
     {
-        public Param_StructuralAssembly() : base(new GH_InstanceDescription("StructuralAssembly", "StructuralAssembly", "A model that gathers elements and has intersection points", CommonProps.category, CommonProps.subcate0)) { }
+        public Param_StructuralAssembly() : base(new GH_InstanceDescription("Structural Assembly", "Str Assembly", "A model that gathers elements and has intersection points", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.StrAssemble; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaStrAssemble; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("4B468C32-EC87-47F8-A995-0832EDADEBA0");
 

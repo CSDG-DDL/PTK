@@ -11,9 +11,9 @@ using Grasshopper.Kernel.Data;
 
 namespace PTK
 {
-    public class PTK_1_LoadStructuralMaterialProp : GH_Component
+    public class PTK_LoadStructuralMaterialProp : GH_Component
     {
-        public PTK_1_LoadStructuralMaterialProp()
+        public PTK_LoadStructuralMaterialProp()
           : base("Load Structural Material Prop", "Load SMP",
               "loads material properties from Tree.",
               CommonProps.category, CommonProps.subcate1)
@@ -35,7 +35,7 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             string MaterialName = "N/A";
 
             // for glulam according LIMTREBOKA
@@ -68,17 +68,16 @@ namespace PTK
             GH_Structure<GH_String> Tree = new GH_Structure<GH_String>();
 
             List<string> nlist = new List<string>();
-            #endregion
 
-            #region input
+            // --- input --- 
             DA.GetData(0, ref MaterialName) ;
             DA.GetDataTree(1, out Tree ) ;
-            #endregion
 
 
-            #region solve
+            // --- solve ---
+
             // check locale: "comma" or "period"
-            DecimalSeparator envDs = CommonProps.FindDecimalSeparator();
+            DecimalSeparator envDs = CommonFunctions.FindDecimalSeparator();
             DecimalSeparator csvDs = DecimalSeparator.error;
              
             // registering materials
@@ -109,12 +108,12 @@ namespace PTK
                 if (envDs == DecimalSeparator.comma && csvDs == DecimalSeparator.period)
                 {
                     // if csv includes "period", it needs treatment
-                    convertedTxt = Functions.ConvertCommaToPeriodDecimal(nlist[i], true);
+                    convertedTxt = CommonFunctions.ConvertCommaToPeriodDecimal(nlist[i], true);
                 }
                 else if (envDs == DecimalSeparator.period && csvDs == DecimalSeparator.comma)
                 {
                     // if csv includes "comma", it needs treatment
-                    convertedTxt = Functions.ConvertCommaToPeriodDecimal(nlist[i], false);
+                    convertedTxt = CommonFunctions.ConvertCommaToPeriodDecimal(nlist[i], false);
                 }
                 else
                 {
@@ -179,13 +178,9 @@ namespace PTK
             ));
 
 
-            #endregion
-            
-            #region output
+            // --- output ---
             DA.SetData(0, prop);
             //DA.SetDataList(1, nlist);
-            #endregion
-
         }
 
         protected override System.Drawing.Bitmap Icon

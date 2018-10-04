@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Drawing;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class PTK_6_PreviewElement : GH_Component
+    public class PTK_PreviewElement : GH_Component
     {
-        public PTK_6_PreviewElement()
+        Dictionary<Brep, Color> models = new Dictionary<Brep, Color>();
+
+        public PTK_PreviewElement()
           : base("Preview Element", "PrevElem",
               "Preview Element",
               CommonProps.category, CommonProps.subcate6)
@@ -28,20 +32,18 @@ namespace PTK.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            #region variables
+            // --- variables ---
             GH_Element1D gElement = null;
-            List<Brep> models = new List<Brep>();
-            #endregion
+            Dictionary<Brep, Color> tmpModels = new Dictionary<Brep, Color>();
 
-            #region input
+            // --- input --- 
             if (!DA.GetData(0, ref gElement)) { return; }
             Element1D element = gElement.Value;
-            #endregion
 
-            #region solve
-            List<Curve> sectionCurves = new List<Curve>();
+            // --- solve ---
+            Dictionary<Curve, Color> sectionCurves = new Dictionary<Curve, Color>();
             
-            List<CrossSection> crossSections = new List<CrossSection>();
+            //List<CrossSection> crossSections = new List<CrossSection>();
             foreach (Sub2DElement subElement in element.Sub2DElements)
             {
                 Vector3d localY = element.CroSecLocalPlane.XAxis;
@@ -54,35 +56,73 @@ namespace PTK.Components
                     element.CroSecLocalPlane.XAxis, 
                     element.CroSecLocalPlane.YAxis);
 
-                sectionCurves.Add(new Rectangle3d(
+                sectionCurves[new Rectangle3d(
                             localPlaneSubElement,
                             new Interval(-subElement.CrossSection.GetWidth()/2, subElement.CrossSection.GetWidth()/2),
-                            new Interval(-subElement.CrossSection.GetHeight()/2, subElement.CrossSection.GetHeight()/2)).ToNurbsCurve());
+                            new Interval(-subElement.CrossSection.GetHeight()/2, subElement.CrossSection.GetHeight()/2)).ToNurbsCurve()]
+                            =Color.GhostWhite;
             }
 
-            foreach(Curve s in sectionCurves)
+            foreach(Curve s in sectionCurves.Keys)
             {
-                Brep[] breps = Brep.CreateFromSweep(element.BaseCurve, s, true, Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-                models.AddRange(breps);
+                Curve c = element.BaseCurve;
+                if (c.IsLinear())
+                {
+                    Line l = new Line(c.PointAtStart, c.PointAtEnd);
+                    Brep brep = Extrusion.CreateExtrusion(s, l.Direction).ToBrep();
+                    //brep = brep.CapPlanarHoles(CommonProps.tolerances);
+                    tmpModels[brep] = sectionCurves[s];
+                }
+                else
+                {
+                    Brep[] breps = Brep.CreateFromSweep(c, s, true, CommonProps.tolerances);
+                    foreach(var brep in breps)
+                    {
+                        tmpModels[brep] = sectionCurves[s];
+                    }
+                }
             }
-            #endregion
 
-            #region output
-            DA.SetDataList(0, models);
-            #endregion
+            // --- output ---
+            foreach(var m in tmpModels)
+            {
+                models[m.Key] = m.Value;
+            }
+            DA.SetDataList(0, tmpModels.Keys);
         }
 
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                return Properties.Resources.Element;
+                return Properties.Resources.PreElement;
             }
         }
 
         public override Guid ComponentGuid
         {
             get { return new Guid("7da0c2a7-ccb0-4f9e-b383-43b74bf56375"); }
+        }
+
+        public override void ExpireSolution(bool recompute)
+        {
+            models.Clear();
+            base.ExpireSolution(recompute);
+        }
+
+        //public override BoundingBox ClippingBox => models.Keys.ToList()[0].GetBoundingBox(false);
+        public override void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+            foreach(var m in models)
+            {
+                //args.Display.DrawObject(m.Key, new Rhino.Display.DisplayMaterial(m.Value, 0.5));
+                args.Display.DrawBrepShaded(m.Key, new Rhino.Display.DisplayMaterial(m.Value));
+            }
+            //base.DrawViewportMeshes(args);
+        }
+        public override void DrawViewportWires(IGH_PreviewArgs args)
+        {
+            //base.DrawViewportWires(args);
         }
     }
 }

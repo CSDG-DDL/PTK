@@ -14,102 +14,48 @@ namespace PTK
 {
     public class Sub2DElement
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
-        public string Name { get; private set; }
-        // public List<CrossSection> CrossSections { get; private set; }
-        public CrossSection CrossSection { get; private set; }
-        // public List<MaterialProperty> MaterialProperties { get; private set; }
-        public MaterialProperty MaterialProperty { get; private set; }
-        // public List<Alignment> Alignments { get; private set; }
-        public Alignment Alignment { get; private set; }
+        // --- field ---
+        public string Name { get; private set; } = "N/A";
+        public CrossSection CrossSection { get; private set; } = new RectangleCroSec("RectCroSec");
+        public MaterialProperty MaterialProperty { get; private set; } = new MaterialProperty("Material");
+        public Alignment Alignment { get; private set; } = new Alignment("Alignment");
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /*
-        public SubElement()
-        {
-            Name = null;
-            MaterialProperties = new List<MaterialProperty>();
-            CrossSections = new List<CrossSection>();
-            Alignments = new List<Alignment>();
-        }
-        public SubElement(string _name, List<MaterialProperty> _materialProperties, List<CrossSection> _crossSections, List<Alignment> _alignments)
-        {
-            Name = _name;
-            MaterialProperties = _materialProperties;
-            CrossSections = _crossSections;
-            Alignments = _alignments;
-        }
-        */
-
-        public Sub2DElement()
-        {
-            Name = null;
-            MaterialProperty = new MaterialProperty();
-            CrossSection = new RectangleCroSec();
-            Alignment = new Alignment();
-        }
-
+        // --- constructors ---
+        public Sub2DElement() { }
         public Sub2DElement(string _name, MaterialProperty _materialProperty, CrossSection _crossSection, Alignment _alignment)
         {
             Name = _name;
             MaterialProperty = _materialProperty;
             CrossSection = _crossSection;
             Alignment = _alignment;
-        }        
+        }
 
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
+        // --- methods ---
         public Sub2DElement DeepCopy()
         {
             return (Sub2DElement)base.MemberwiseClone();
         }
-
         public override string ToString()
         {
             string info;
-            info = "<SubElement> Name:" + Name;
-            // plus matprops, plus crossSecs,
+            info = "<SubElement>\n" +
+                " Name:" + Name + "\n" +
+                " CrossSection:" + CrossSection.Name + "\n" +
+                " Material:" + MaterialProperty.Name + "\n" +
+                " Alignment:" + Alignment.Name;
             return info;
         }
-
         public bool IsValid()
         {
             return Name != "N/A";
         }
-        
     }
 
     public class GH_Sub2DElement : GH_Goo<Sub2DElement>
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
         public GH_Sub2DElement() { }
         public GH_Sub2DElement(GH_Sub2DElement other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
         public GH_Sub2DElement(Sub2DElement subelem) : base(subelem) { this.Value = subelem; }
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
         public override IGH_Goo Duplicate()
         {
             return new GH_Sub2DElement(this);
@@ -121,35 +67,15 @@ namespace PTK
         {
             return Value.ToString();
         }
-        
-        
     }
 
     public class Param_Sub2DElement : GH_PersistentParam<GH_Sub2DElement>
     {
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
         public Param_Sub2DElement() : base(new GH_InstanceDescription("SubElement", "SubElem",
             "A part of an Element", CommonProps.category, CommonProps.subcate0))
         { }
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
-        
-        // set an icon here
         protected override System.Drawing.Bitmap Icon { get { return null; } }
-
         public override Guid ComponentGuid => new Guid("8a12f26a-532b-4da0-80a0-d775f5648123");
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
         protected override GH_GetterResult Prompt_Plural(ref List<GH_Sub2DElement> values)
         {
             return GH_GetterResult.success;

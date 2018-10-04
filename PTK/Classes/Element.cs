@@ -10,12 +10,10 @@ namespace PTK
 {
     public abstract class Element
     {
-        public string Tag { get; private set; }
-
-        public Element()
-        {
-            Tag = "N/A";
-        }
+        // --- field ---
+        public string Tag { get; private set; } = "N/A";
+        // --- constructors --- 
+        public Element() { }
         public Element(string _tag)
         {
             Tag = _tag;
@@ -24,54 +22,28 @@ namespace PTK
 
     public class Element1D : Element
     {
-        /////////////////////////////////////////////////////////////////////////////////
-        // fields
-        /////////////////////////////////////////////////////////////////////////////////
-        public Curve BaseCurve { get; private set; }
-        public Point3d PointAtStart { get; private set; }
-        public Point3d PointAtEnd { get; private set; }
+        // --- field ---
+        public Curve BaseCurve { get; private set; } = null;
+        public Point3d PointAtStart { get; private set; } = new Point3d();
+        public Point3d PointAtEnd { get; private set; } = new Point3d();
         public Plane CroSecLocalPlane { get; private set; }
-        // public Sub2DElement SubElement { get; private set; }
-        public List<Sub2DElement> Sub2DElements { get; private set; }
-        public List<CrossSection> CrossSections { get; private set; }
-        public Composite Composite { get; private set; }
-        public Alignment Align { get; private set; }
-        public List<Force> Forces { get; private set; }
-        public List<Joint> Joints { get; private set; }
+        public Composite Composite { get; private set; } = new Composite("Composite");
+        public List<Sub2DElement> Sub2DElements { get; private set; } = new List<Sub2DElement>();
+        public List<CrossSection> CrossSections { get; private set; } = new List<CrossSection>();
+        public List<MaterialProperty> Materials { get; private set; } = new List<MaterialProperty>();
+        public Alignment Alignment { get; private set; } = new Alignment("Alignment");
+        public List<Force> Forces { get; private set; } = new List<Force>();
+        public List<Joint> Joints { get; private set; } = new List<Joint>();
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
 
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // constructors
-        /////////////////////////////////////////////////////////////////////////////////
-
+        // --- constructors --- 
         public Element1D() : base()
         {
-            BaseCurve = null;
-            PointAtStart = new Point3d();
-            PointAtEnd = new Point3d();
-            Composite = new Composite();
-            Sub2DElements = new List<Sub2DElement>();
-            CrossSections = new List<CrossSection>();
-            Align = new Alignment();
-            Forces = new List<Force>();
-            Joints = new List<Joint>();
-            Priority = int.MinValue;
             InitializeLocalPlane();
         }
         public Element1D(string _tag) : base(_tag)
         {
-            BaseCurve = null;
-            PointAtStart = new Point3d();
-            PointAtEnd = new Point3d();
-            Composite = new Composite();
-            Sub2DElements = new List<Sub2DElement>();
-            CrossSections = new List<CrossSection>();
-            Align = new Alignment(); 
-            Forces = new List<Force>();
-            Joints = new List<Joint>();
-            Priority = int.MinValue;
             InitializeLocalPlane();
         }
 
@@ -80,41 +52,24 @@ namespace PTK
             BaseCurve = _curve;
             PointAtStart = _curve.PointAtStart;
             PointAtEnd = _curve.PointAtEnd;
-            // SubElement = _subElement;
-            CrossSections = new List<CrossSection>();
             Composite = _composite;
-            Align = new Alignment(); // should not be a new instance 
+            SetSub2DElements();
+            Alignment = _composite.Alignment;
             Forces = _forces;
             Joints = _joints;
             IsIntersectWithOther = _intersect;
             Priority = _priority;
-            SetSub2DElements();
-            SetCrossSections();
             InitializeLocalPlane();
-
-
-
-
-
         }
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // properties
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // methods
-        /////////////////////////////////////////////////////////////////////////////////
-
+        // --- methods ---
         private void SetSub2DElements()
         {
             if (Composite.Sub2DElements != null)
             {
                 Sub2DElements = Composite.Sub2DElements;
-            }
-            else
-            {
-                Sub2DElements = new List<Sub2DElement>();
+                SetCrossSections();
+                SetMaterial();
             }
         }
 
@@ -122,12 +77,21 @@ namespace PTK
         {
             if (Composite.Sub2DElements != null)
             {
-                foreach(Sub2DElement se in Composite.Sub2DElements)
-                CrossSections.Add(se.CrossSection);
+                foreach (Sub2DElement se in Composite.Sub2DElements)
+                {
+                    CrossSections.Add(se.CrossSection);
+                }
             }
-            else
+        }
+
+        private void SetMaterial()
+        {
+            if(Composite.Sub2DElements != null)
             {
-                CrossSections = new List<CrossSection>();
+                foreach(Sub2DElement se in Composite.Sub2DElements)
+                {
+                    Materials.Add(se.MaterialProperty);
+                }
             }
         }
 
@@ -140,7 +104,6 @@ namespace PTK
                 {
                     crossSections.Add(se.CrossSection);
                 }
-                // List<CrossSection> Sections = SubElement.CrossSections;
 
                 Vector3d localX = BaseCurve.TangentAtStart;
                 Vector3d globalZ = Vector3d.ZAxis;
@@ -152,7 +115,7 @@ namespace PTK
                 // localY direction is obtained by the cross product of globalZ and localX.
 
                 Vector3d localY = Vector3d.CrossProduct(globalZ, localX);   //case B
-                if (localY.Length==0)
+                if (localY.Length == 0)
                 {
                     localY = Vector3d.YAxis;    //case A
                 }
@@ -161,16 +124,16 @@ namespace PTK
                 Plane localYZ = new Plane(BaseCurve.PointAtStart, localY, localZ);
 
                 //AlongVector
-                if (Align.AlongVector.Length != 0)
+                if (Alignment.AlongVector.Length != 0)
                 {
-                    double rot = Vector3d.VectorAngle(localYZ.YAxis, Align.AlongVector, localYZ);
+                    double rot = Vector3d.VectorAngle(localYZ.YAxis, Alignment.AlongVector, localYZ);
                     localYZ.Rotate(rot, localYZ.ZAxis);
                 }
 
                 // rotation
-                if (Align.RotationAngle != 0.0)
+                if (Alignment.RotationAngle != 0.0)
                 {
-                    double rot = Align.RotationAngle * Math.PI / 180; // degree to radian
+                    double rot = Alignment.RotationAngle * Math.PI / 180; // degree to radian
                     localYZ.Rotate(rot, localYZ.ZAxis);
                 }
 
@@ -178,24 +141,24 @@ namespace PTK
                 double offsetV = 0.0;
                 double offsetU = 0.0;
                 CrossSection.GetMaxHeightAndWidth(crossSections, out double height, out double width);
-                if(Align.AnchorVert == AlignmentAnchorVert.Top)
+                if (Alignment.AnchorVert == AlignmentAnchorVert.Top)
                 {
                     offsetV += height / 2;
                 }
-                else if(Align.AnchorVert == AlignmentAnchorVert.Bottom)
+                else if (Alignment.AnchorVert == AlignmentAnchorVert.Bottom)
                 {
                     offsetV -= height / 2;
                 }
-                if (Align.AnchorHori == AlignmentAnchorHori.Right)
+                if (Alignment.AnchorHori == AlignmentAnchorHori.Right)
                 {
                     offsetV += width / 2;
                 }
-                else if (Align.AnchorHori == AlignmentAnchorHori.Left)
+                else if (Alignment.AnchorHori == AlignmentAnchorHori.Left)
                 {
                     offsetV -= width / 2;
                 }
-                offsetV += Align.OffsetZ;
-                offsetU += Align.OffsetY;
+                offsetV += Alignment.OffsetZ;
+                offsetU += Alignment.OffsetY;
                 localYZ.Origin = localYZ.PointAt(offsetU, offsetV);
 
                 CroSecLocalPlane = localYZ;
@@ -213,9 +176,11 @@ namespace PTK
         public override string ToString()
         {
             string info;
-            info = "<Element1D> Tag:" + Tag +
+            info = "<Element1D>\n" +
+                " Tag:" + Tag + "\n" +
                 " PointAtStart:" + PointAtStart.ToString() +
-                " PointAtEnd:" + PointAtEnd.ToString();
+                " PointAtEnd:" + PointAtEnd.ToString() + "\n" +
+                " Composite:" + Composite.Name;
             return info;
         }
         public bool IsValid()
@@ -224,65 +189,13 @@ namespace PTK
         }
     }
 
-    public class StructuralElement
-    {
-        public Element1D Element { get; private set; }
-        public List<Force> Forces { get; private set; }
-        public List<Joint> Joints { get; private set; }
 
-        public StructuralElement()
-        {
-            Element = new Element1D();
-            Forces = new List<Force>();
-            Joints = new List<Joint>();
-        }
-
-        public StructuralElement(Element1D _element)
-        {
-            Element = _element;
-            Forces = new List<Force>();
-            Joints = new List<Joint>();
-        }
-
-        public StructuralElement(Element1D _element, List<Force> _forces, List<Joint> _joints)
-        {
-            Element = _element;
-            Forces = _forces;
-            Joints = _joints;
-        }
-
-        public int AddForce(Force _force)
-        {
-            Forces.Add(_force);
-            return Forces.Count;
-        }
-        public int AddJoint(Joint _joint)
-        {
-            Joints.Add(_joint);
-            return Forces.Count;
-        }
-        public StructuralElement DeepCopy()
-        {
-            return (StructuralElement)base.MemberwiseClone();
-        }
-        public override string ToString()
-        {
-            string info;
-            info = "<StructuralElement> Element1D:" + Element.Tag +
-                " Forces:" + Forces.Count.ToString();
-            return info;
-        }
-        public bool IsValid()
-        {
-            return Element != null;
-        }
-    }
 
     public class GH_Element1D : GH_Goo<Element1D>
     {
         public GH_Element1D() { }
         public GH_Element1D(GH_Element1D other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
-        public GH_Element1D(Element1D str) : base(str) { this.Value = str; }
+        public GH_Element1D(Element1D ele) : base(ele) { this.Value = ele; }
         public override IGH_Goo Duplicate()
         {
             return new GH_Element1D(this);
@@ -300,7 +213,7 @@ namespace PTK
     {
         public Param_Element1D() : base(new GH_InstanceDescription("Element1D", "Elem1D", "A linear Element", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Element; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaElement; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("76479A6F-4C3D-43E0-B85E-FF2C6A99FEA5");
 
@@ -314,59 +227,5 @@ namespace PTK
             return GH_GetterResult.success;
         }
     }
-
-    public class GH_StructuralElement : GH_Goo<StructuralElement>
-    {
-        public GH_StructuralElement() { }
-        public GH_StructuralElement(GH_StructuralElement other) : base(other.Value) { this.Value = other.Value.DeepCopy(); }
-        public GH_StructuralElement(StructuralElement elem) : base(elem) { this.Value = elem; }
-        public override IGH_Goo Duplicate()
-        {
-            return new GH_StructuralElement(this);
-        }
-        public override bool IsValid => base.m_value.IsValid();
-        public override string TypeName => "StructuralElement";
-        public override string TypeDescription => "Element with structural information added";
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
-    }
-
-    public class Param_StructuralElement : GH_PersistentParam<GH_StructuralElement>
-    {
-        public Param_StructuralElement() : base(new GH_InstanceDescription("StructuralElement", "SElem", "Element with structural information added", CommonProps.category, CommonProps.subcate0)) { }
-
-        protected override System.Drawing.Bitmap Icon { get { return null; } }  //Set icon image
-
-        public override Guid ComponentGuid => new Guid("B29BCA28-9108-48C1-B4F5-F808644F015A");
-
-        protected override GH_GetterResult Prompt_Plural(ref List<GH_StructuralElement> values)
-        {
-            return GH_GetterResult.success;
-        }
-
-        protected override GH_GetterResult Prompt_Singular(ref GH_StructuralElement value)
-        {
-            return GH_GetterResult.success;
-        }
-    }
-
-    //Predefined in detail.cs
-    /*
-    public class ElementInDetail  //Used to output an element and its detailSpesific data
-    {
-        public Element1D Element;
-        public Vector3d UnifiedVector;
-        public ElementInDetail()
-        {
-
-        }
-        public ElementInDetail(Element1D _element, Vector3d _UnifiedVector)
-        {
-            Element = _element;
-            UnifiedVector = _UnifiedVector;
-        }
-    }
-    */
 }
+
