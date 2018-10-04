@@ -21,7 +21,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Assembly", "A", "Assembly", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Assembly(), "Assembly", "A", "Assembly", GH_ParamAccess.item);
             pManager[0].Optional = true;
         }
 
