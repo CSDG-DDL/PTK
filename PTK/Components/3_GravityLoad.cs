@@ -56,7 +56,7 @@ namespace PTK.Components
         {
             get
             {
-                return Properties.Resources.Load;
+                return Properties.Resources.GravityLoad;
             }
         }
 

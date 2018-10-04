@@ -63,7 +63,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.Load;
+                return PTK.Properties.Resources.PointLoad;
             }
         }
 

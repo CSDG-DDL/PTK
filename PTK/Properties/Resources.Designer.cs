@@ -243,6 +243,16 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap GravityLoad {
+            get {
+                object obj = ResourceManager.GetObject("GravityLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap Joint {
             get {
                 object obj = ResourceManager.GetObject("Joint", resourceCulture);
@@ -463,6 +473,16 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap PointLoad {
+            get {
+                object obj = ResourceManager.GetObject("PointLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap PreAssemble {
             get {
                 object obj = ResourceManager.GetObject("PreAssemble", resourceCulture);
@@ -526,6 +546,16 @@ namespace PTK.Properties {
         internal static System.Drawing.Bitmap Support {
             get {
                 object obj = ResourceManager.GetObject("Support", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap UniformLoad {
+            get {
+                object obj = ResourceManager.GetObject("UniformLoad", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
