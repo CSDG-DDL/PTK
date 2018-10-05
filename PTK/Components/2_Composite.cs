@@ -13,7 +13,7 @@ namespace PTK.Components
     public class PTK_Composite : GH_Component
     {
         public PTK_Composite()
-          : base("Composite Cross-section", "Composite",
+          : base("Composite CrossSection", "Composite",
               "creates a sub element",
               CommonProps.category, CommonProps.subcate2)
         {

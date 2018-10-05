@@ -8,8 +8,8 @@ namespace PTK
     public class PTK_StructuralMaterialProp : GH_Component
     {
         public PTK_StructuralMaterialProp()
-          : base("Material Structural Prop", "MatStrProp",
-              "creates material properties",
+          : base("Material Prop", "MatProp",
+              "Creates material properties",
               CommonProps.category, CommonProps.subcate1)
         {
             Message = CommonProps.initialMessage;
@@ -17,7 +17,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "names Material.", GH_ParamAccess.item, "MaterialProp");
+            pManager.AddTextParameter("Name", "N", "Material Name (more detailed name such as product name and standard name)", GH_ParamAccess.item, "MaterialProp");
 
             pManager.AddNumberParameter("f m,g,k", "fmgk", "in [N/mm2]", GH_ParamAccess.item, 26 );
             pManager.AddNumberParameter("f t,0,g,k", "ft0gk", "in [N/mm2]", GH_ParamAccess.item, 19 );
@@ -44,8 +44,8 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Param_MaterialProperty(), "Structural Material Prop", "SMP",
-                "Material Property (PTK) data to be connected to a Material (PTK) component");
+            pManager.RegisterParam(new Param_MaterialProperty(), "Material Prop", "MatProp",
+                "Data of the Material constituting the Element");
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
