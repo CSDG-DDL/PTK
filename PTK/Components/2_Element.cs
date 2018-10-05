@@ -23,7 +23,7 @@ namespace PTK
         {
             pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Element");
             pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Composite(), "Composite", "CP", "Add the sub-element component here", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_CroSec(), "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Joint(), "Joint", "J", "Add joint", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Structural Priority", "P", "Add integer value to set the priority of the member", GH_ParamAccess.item, 0);
@@ -48,8 +48,8 @@ namespace PTK
             // --- variables ---
             string tag = null;
             Curve curve = null;
-            GH_Composite gComposite = null;
-            Composite composite = null;
+            GH_CroSec gCroSec = null;
+            CrossSection crossSection = null;
             List<GH_Force> gForces = new List<GH_Force>();
             List<Force> forces = null;
             List<GH_Joint> gJoints = new List<GH_Joint>();
@@ -60,8 +60,8 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
             if (!DA.GetData(1, ref curve)) { return; }
-            if (!DA.GetData(2, ref gComposite)) { return; }
-            composite = gComposite.Value;
+            if (!DA.GetData(2, ref gCroSec)) { return; }
+            crossSection = gCroSec.Value;
             if (!DA.GetDataList(3, gForces))
             {
                 forces = new List<Force>();
@@ -82,7 +82,7 @@ namespace PTK
             if (!DA.GetData(6, ref intersect)) { return; }
 
             // --- solve ---
-            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, forces, joints, composite, priority, intersect));
+            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, crossSection, forces, joints, priority, intersect));
 
             // --- output ---
             DA.SetData(0, elem);

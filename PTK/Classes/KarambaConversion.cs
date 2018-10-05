@@ -27,13 +27,13 @@ namespace PTK
 
             points = _strAssembly.Assembly.Nodes.ConvertAll(n => n.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters));
             
-            foreach(KeyValuePair<CrossSection,MaterialProperty> kvp in _strAssembly.Assembly.CrossSectionMap)
+            foreach(var sec in _strAssembly.Assembly.CrossSections)
             {
-                if (!materialMap.ContainsKey(kvp.Value))
+                if (!materialMap.ContainsKey(sec.MaterialProperty))
                 {
-                    materialMap.Add(kvp.Value, MakeFemMaterial(kvp.Value));
+                    materialMap.Add(sec.MaterialProperty, MakeFemMaterial(sec.MaterialProperty));
                 }
-                crosecMap.Add(kvp.Key, MakeCrossSection(kvp.Key, materialMap[kvp.Value]));
+                crosecMap.Add(sec, MakeCrossSection(sec, materialMap[sec.MaterialProperty]));
             }
 
             foreach(Support s in _strAssembly.Supports)
@@ -72,7 +72,15 @@ namespace PTK
                         );
                     //var s = crosecMap[e.Element.Sections[0]];
                     //s.ecce_loc = new Vector3d(e.Element.Align.OffsetY, e.Element.Align.OffsetZ,0);
-                    elem.crosec = crosecMap[e.CrossSections[0]]; 
+                    //複合断面暫定対応
+                    if(e.CrossSection is Composite comp)
+                    {
+                        elem.crosec = crosecMap[comp.SubCrossSections[0].Item1];
+                    }
+                    else
+                    {
+                        elem.crosec = crosecMap[e.CrossSection]; 
+                    }
                     //At present it is supposed to be one section material
                     //elem.z_ori
                     elems.Add(elem);

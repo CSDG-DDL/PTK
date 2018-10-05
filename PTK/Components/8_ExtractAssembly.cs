@@ -31,7 +31,6 @@ namespace PTK
             pManager.RegisterParam(new Param_Node(), "Nodes", "N", "Nodes", GH_ParamAccess.list);
             pManager.RegisterParam(new Param_Detail(), "Details", "D", "Details", GH_ParamAccess.list);
             pManager.AddTextParameter("Tags", "T", "Tag list held by Elements included in Assemble", GH_ParamAccess.list);
-            pManager.RegisterParam(new Param_MaterialProperty(), "Material properties", "MP", "Material property list held by Elements included in Assemble", GH_ParamAccess.list);
             pManager.RegisterParam(new Param_CroSec(), "CrossSection", "S", "CrossSection list held by Elements included in Assemble", GH_ParamAccess.list);
         }
 
@@ -50,7 +49,6 @@ namespace PTK
             List<GH_Node> nodes = assembly.Nodes.ConvertAll(n => new GH_Node(n));
             List<GH_Detail> details = assembly.Details.ConvertAll(d => new GH_Detail(d));
             List<string> tags = assembly.Tags;
-            List<GH_MaterialProperty> materialProperties = assembly.MaterialProperties.ConvertAll(m => new GH_MaterialProperty(m));
             List<GH_CroSec> sections = assembly.CrossSections.ConvertAll(s => new GH_CroSec(s));
 
             // --- output ---
@@ -58,8 +56,7 @@ namespace PTK
             DA.SetDataList(1, nodes);
             DA.SetDataList(2, details);
             DA.SetDataList(3, tags);
-            DA.SetDataList(4, materialProperties);
-            DA.SetDataList(5, sections);
+            DA.SetDataList(4, sections);
         }
 
         protected override System.Drawing.Bitmap Icon

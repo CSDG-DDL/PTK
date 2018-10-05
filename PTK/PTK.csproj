@@ -94,7 +94,7 @@
     <Compile Include="Classes\SubElement.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
-    <Compile Include="Components\2_Composite.cs" />
+    <Compile Include="Components\2_CompositeCrossSection.cs" />
     <Compile Include="Components\10_DefinitionDetailingGroup.cs" />
     <Compile Include="Components\10_Rule_ElementAmount.cs" />
     <Compile Include="Components\10_Rule_ElementLength.cs" />

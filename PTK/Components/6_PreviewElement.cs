@@ -42,28 +42,36 @@ namespace PTK.Components
 
             // --- solve ---
             Dictionary<Curve, Color> sectionCurves = new Dictionary<Curve, Color>();
-            
-            //List<CrossSection> crossSections = new List<CrossSection>();
-            foreach (Sub2DElement subElement in element.Sub2DElements)
+            Vector3d localY = element.CroSecLocalPlane.XAxis;
+            Vector3d localZ = element.CroSecLocalPlane.YAxis;
+            Point3d originSection = element.CroSecLocalPlane.Origin;
+
+            if(element.CrossSection is Composite comp)
             {
-                Vector3d localY = element.CroSecLocalPlane.XAxis;
-                Vector3d localZ = element.CroSecLocalPlane.YAxis;
+                List<Tuple<CrossSection, Alignment>> secs = comp.RecursionCrossSectionSearch();
+                foreach(var s in secs)
+                {
+                    Point3d originSubSection = originSection + s.Item2.OffsetY * localY + s.Item2.OffsetZ * localZ;
 
-                Point3d originElement = element.CroSecLocalPlane.Origin;
-                Point3d originSubElement = originElement + subElement.Alignment.OffsetY * localY + subElement.Alignment.OffsetZ * localZ;
-                
-                Plane localPlaneSubElement = new Plane(originSubElement, 
-                    element.CroSecLocalPlane.XAxis, 
-                    element.CroSecLocalPlane.YAxis);
+                    Plane localPlaneSubSection = new Plane(originSubSection, localY, localZ);
 
+                    sectionCurves[new Rectangle3d(
+                                localPlaneSubSection,
+                                new Interval(-s.Item1.GetWidth()/2, s.Item1.GetWidth()/2),
+                                new Interval(-s.Item1.GetHeight()/2, s.Item1.GetHeight()/2)).ToNurbsCurve()]
+                                =Color.GhostWhite;
+                }
+            }
+            else
+            {
                 sectionCurves[new Rectangle3d(
-                            localPlaneSubElement,
-                            new Interval(-subElement.CrossSection.GetWidth()/2, subElement.CrossSection.GetWidth()/2),
-                            new Interval(-subElement.CrossSection.GetHeight()/2, subElement.CrossSection.GetHeight()/2)).ToNurbsCurve()]
-                            =Color.GhostWhite;
+                                element.CroSecLocalPlane,
+                                new Interval(-element.CrossSection.GetWidth() / 2, element.CrossSection.GetWidth() / 2),
+                                new Interval(-element.CrossSection.GetHeight() / 2, element.CrossSection.GetHeight() / 2)).ToNurbsCurve()]
+                                = Color.GhostWhite;
             }
 
-            foreach(Curve s in sectionCurves.Keys)
+            foreach (Curve s in sectionCurves.Keys)
             {
                 Curve c = element.BaseCurve;
                 if (c.IsLinear())

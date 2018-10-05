@@ -19,9 +19,9 @@ namespace PTK
         public List<Node> Nodes { get; private set; } = new List<Node>();
         public List<string> Tags { get; private set; } = new List<string>();
         public List<CrossSection> CrossSections { get; private set; } = new List<CrossSection>();
-        public List<MaterialProperty> MaterialProperties { get; private set; } = new List<MaterialProperty>();
+        //public List<MaterialProperty> MaterialProperties { get; private set; } = new List<MaterialProperty>();
         public Dictionary<Element1D, List<int>> NodeMap { get; private set; } = new Dictionary<Element1D, List<int>>();
-        public Dictionary<CrossSection, MaterialProperty> CrossSectionMap { get; private set; } = new Dictionary<CrossSection, MaterialProperty>();
+        //public Dictionary<CrossSection, MaterialProperty> CrossSectionMap { get; private set; } = new Dictionary<CrossSection, MaterialProperty>();
         public List<Detail> Details { get; private set; } = new List<Detail>();
         public List<DetailingGroup> DetailingGroups { get; private set; } = new List<DetailingGroup>();
 
@@ -41,20 +41,31 @@ namespace PTK
                     Tags.Add(tag);
                 }
 
-                foreach(Sub2DElement subElem in _element.Sub2DElements)
+                if(_element.CrossSection is Composite comp)
                 {
-                    CrossSection sec = subElem.CrossSection;
+                    var secs = comp.RecursionCrossSectionSearch();
+                    foreach(var sec in secs.ConvertAll(s=>s.Item1))
+                    {
+                        if (!CrossSections.Contains(sec))
+                        {
+                            CrossSections.Add(sec);
+                        }
+                    }
+                }
+                else
+                {
+                    CrossSection sec = _element.CrossSection;
                     if (!CrossSections.Contains(sec))
                     {
                         CrossSections.Add(sec);
                     }
-                    MaterialProperty mat = subElem.MaterialProperty;
-                    if (!MaterialProperties.Contains(mat))
-                    {
-                        MaterialProperties.Add(mat);
-                    }
-                    CrossSectionMap[sec] = mat;
                 }
+                //MaterialProperty mat = sec.MaterialProperty;
+                //if (!MaterialProperties.Contains(mat))
+                //{
+                //    MaterialProperties.Add(mat);
+                //}
+                //CrossSectionMap[sec] = mat;
             }
             return Elements.Count;
         }
@@ -179,8 +190,7 @@ namespace PTK
             string info;
             info = "<Assembly>\n Elements:" + Elements.Count.ToString() + "\n" +
                 " Nodes:" + Nodes.Count.ToString() + "\n" +
-                " CrossSections:" + CrossSections.Count.ToString() + "\n" +
-                " Material Properties:" + MaterialProperties.Count.ToString();
+                " CrossSections:" + CrossSections.Count.ToString();
             return info;
         }
         public bool IsValid()

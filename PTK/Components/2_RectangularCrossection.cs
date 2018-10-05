@@ -22,10 +22,12 @@ namespace PTK
             pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item, "RectCroSec");
             pManager.AddNumberParameter("Width", "W", "", GH_ParamAccess.item,100);  
             pManager.AddNumberParameter("Height", "H", "", GH_ParamAccess.item,100);
+            pManager.AddParameter(new Param_MaterialProperty(), "Material properties", "M", "Add material properties", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
+            pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -39,14 +41,18 @@ namespace PTK
             string name = null;
             double width = new double();
             double height = new double();
+            GH_MaterialProperty gMaterial = null;
+            MaterialProperty material = null;
 
             // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref width)) { return; }
             if (!DA.GetData(2, ref height)) { return; }
+            if (!DA.GetData(3, ref gMaterial)) { return; }
+            material = gMaterial.Value;
 
             // --- solve ---
-            GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, height, width));
+            GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, material, height, width));
 
             // --- output ---
             DA.SetData(0, sec);
