@@ -48,7 +48,6 @@ namespace PTK
             // --- variables ---
             string tag = null;
             int lCase = 0;
-            // List<Plane> supPlns = new List<Plane>();
             Plane supPln = new Plane();
             List<Support> sups = new List<Support>();
 
@@ -67,7 +66,6 @@ namespace PTK
 
         public override void CreateAttributes()
         {
-            // base.CreateAttributes();
             m_attributes = new Attributes_Custom(this);
         }
 

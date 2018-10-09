@@ -29,10 +29,6 @@ namespace PTK
         public Point3d PointAtEnd { get; private set; } = new Point3d();
         public Plane CroSecLocalPlane { get; private set; }
         public CrossSection CrossSection { get; private set; } = null;
-        //public Composite Composite { get; private set; } = new Composite("Composite");
-        //public List<Sub2DElement> Sub2DElements { get; private set; } = new List<Sub2DElement>();
-        //public List<CrossSection> CrossSections { get; private set; } = new List<CrossSection>();
-        //public List<MaterialProperty> Materials { get; private set; } = new List<MaterialProperty>();
         public Alignment Alignment { get; private set; } = new Alignment("Alignment");
         public List<Force> Forces { get; private set; } = new List<Force>();
         public List<Joint> Joints { get; private set; } = new List<Joint>();
@@ -61,64 +57,11 @@ namespace PTK
             InitializeLocalPlane();
         }
 
-        //public Element1D(string _tag, Curve _curve, List<Force> _forces, List<Joint> _joints, Composite _composite, int _priority, bool _intersect = true) : base(_tag)
-        //{
-        //    BaseCurve = _curve;
-        //    PointAtStart = _curve.PointAtStart;
-        //    PointAtEnd = _curve.PointAtEnd;
-        //    Composite = _composite;
-        //    SetSub2DElements();
-        //    Alignment = _composite.Alignment;
-        //    Forces = _forces;
-        //    Joints = _joints;
-        //    IsIntersectWithOther = _intersect;
-        //    Priority = _priority;
-        //    InitializeLocalPlane();
-        //}
-
         // --- methods ---
-        //private void SetSub2DElements()
-        //{
-        //    if (Composite.Sub2DElements != null)
-        //    {
-        //        Sub2DElements = Composite.Sub2DElements;
-        //        SetCrossSections();
-        //        SetMaterial();
-        //    }
-        //}
-
-        //private void SetCrossSections()
-        //{
-        //    if (Composite.Sub2DElements != null)
-        //    {
-        //        foreach (Sub2DElement se in Composite.Sub2DElements)
-        //        {
-        //            CrossSections.Add(se.CrossSection);
-        //        }
-        //    }
-        //}
-
-        //private void SetMaterial()
-        //{
-        //    if(Composite.Sub2DElements != null)
-        //    {
-        //        foreach(Sub2DElement se in Composite.Sub2DElements)
-        //        {
-        //            Materials.Add(se.MaterialProperty);
-        //        }
-        //    }
-        //}
-
         private void InitializeLocalPlane()
         {
             if (BaseCurve != null)
             {
-                //List<CrossSection> crossSections = new List<CrossSection>();
-                //foreach (Sub2DElement se in Sub2DElements)
-                //{
-                //    crossSections.Add(se.CrossSection);
-                //}
-
                 Vector3d localX = BaseCurve.TangentAtStart;
                 Vector3d globalZ = Vector3d.ZAxis;
 
@@ -156,7 +99,6 @@ namespace PTK
                 double offsetU = 0.0;
                 double height = CrossSection.GetHeight();
                 double width = CrossSection.GetWidth();
-                //CrossSection.GetMaxHeightAndWidth(crossSections, out double height, out double width);
                 if (Alignment.AnchorVert == AlignmentAnchorVert.Top)
                 {
                     offsetV += height / 2;

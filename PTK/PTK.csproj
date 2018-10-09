@@ -75,7 +75,6 @@
     <Compile Include="Classes\Assembly.cs" />
     <Compile Include="Classes\BTLProcesssClasses.cs" />
     <Compile Include="Classes\btlx_10.DesignerNew.cs" />
-    <Compile Include="Classes\Composite.cs" />
     <Compile Include="Classes\Detail.cs" />
     <Compile Include="Classes\DetailingGroup.cs" />
     <Compile Include="Classes\DetailingGroupRules.cs" />
@@ -91,7 +90,6 @@
     <Compile Include="Classes\Node.cs" />
     <Compile Include="Classes\CommonProps.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
-    <Compile Include="Classes\SubElement.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
     <Compile Include="Components\2_CompositeCrossSection.cs" />

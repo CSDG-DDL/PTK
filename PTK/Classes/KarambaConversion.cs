@@ -70,8 +70,6 @@ namespace PTK
                         e.BaseCurve.PointAt(paramList[i]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters), 
                         e.BaseCurve.PointAt(paramList[i + 1]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)
                         );
-                    //var s = crosecMap[e.Element.Sections[0]];
-                    //s.ecce_loc = new Vector3d(e.Element.Align.OffsetY, e.Element.Align.OffsetZ,0);
                     //複合断面暫定対応
                     if(e.CrossSection is Composite comp)
                     {
@@ -81,8 +79,6 @@ namespace PTK
                     {
                         elem.crosec = crosecMap[e.CrossSection]; 
                     }
-                    //At present it is supposed to be one section material
-                    //elem.z_ori
                     elems.Add(elem);
                 }
             }

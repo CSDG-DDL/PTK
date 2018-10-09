@@ -19,9 +19,7 @@ namespace PTK
         public List<Node> Nodes { get; private set; } = new List<Node>();
         public List<string> Tags { get; private set; } = new List<string>();
         public List<CrossSection> CrossSections { get; private set; } = new List<CrossSection>();
-        //public List<MaterialProperty> MaterialProperties { get; private set; } = new List<MaterialProperty>();
         public Dictionary<Element1D, List<int>> NodeMap { get; private set; } = new Dictionary<Element1D, List<int>>();
-        //public Dictionary<CrossSection, MaterialProperty> CrossSectionMap { get; private set; } = new Dictionary<CrossSection, MaterialProperty>();
         public List<Detail> Details { get; private set; } = new List<Detail>();
         public List<DetailingGroup> DetailingGroups { get; private set; } = new List<DetailingGroup>();
 
@@ -60,12 +58,6 @@ namespace PTK
                         CrossSections.Add(sec);
                     }
                 }
-                //MaterialProperty mat = sec.MaterialProperty;
-                //if (!MaterialProperties.Contains(mat))
-                //{
-                //    MaterialProperties.Add(mat);
-                //}
-                //CrossSectionMap[sec] = mat;
             }
             return Elements.Count;
         }

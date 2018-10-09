@@ -154,7 +154,7 @@ namespace PTK
         }
         //Re-examination is necessary because Align rotation etc. are not considered.
         //Alignの回転などを考慮していないので再検討が必要。
-        public void GetHeightAndWidth(out double _width, out double _height)
+        private void GetHeightAndWidth(out double _width, out double _height)
         {
             double maxHeight = double.MinValue;
             double maxWidth = double.MinValue;
