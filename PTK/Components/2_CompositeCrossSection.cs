@@ -22,7 +22,7 @@ namespace PTK.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item, "Composite");
+            pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item, "Not Named Composite");
             pManager.AddParameter(new Param_CroSec(), "Cross-sections", "S", "Sub CrossSections", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Alignment(), "Alignments", "A", "Alignmnet", GH_ParamAccess.list);
             pManager[0].Optional = true;

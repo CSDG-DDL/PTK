@@ -20,7 +20,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Material Name in large classification such as \"Wood\", \"Iron\"", GH_ParamAccess.item, "Material");
+            pManager.AddTextParameter("Name", "N", "Material Name in large classification such as \"Wood\", \"Iron\"", GH_ParamAccess.item, "Not Named Material");
             pManager.AddParameter(new Param_MaterialProperty(), "Structural Material Prop", "SMP", "Data representing the structural nature of the material", GH_ParamAccess.item);
             pManager.AddColourParameter("Color", "C", "Preview Color", GH_ParamAccess.item,new System.Drawing.Color());
             pManager[0].Optional = true;
@@ -45,7 +45,7 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref gProp)) {
-                prop = new MaterialProperty("MaterialProp");
+                prop = new MaterialProperty("Not Named Material Prop");
             }
             else
             {

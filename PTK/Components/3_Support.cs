@@ -31,16 +31,17 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item);
+            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item,"Not Named Support");
             pManager.AddIntegerParameter("Load Case", "LC", "Load case", GH_ParamAccess.item, 0); 
             pManager.AddPlaneParameter("Fix Plane", "P", "", GH_ParamAccess.item);
-            
+            pManager[0].Optional = true;
             pManager[1].Optional = true;
+            pManager[2].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("PTK Supports", "Sup (PTK)", "Support data to be send to Assembler(PTK)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Support", "S", "Support data to be send to Assembler(PTK)", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

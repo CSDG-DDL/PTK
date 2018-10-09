@@ -19,7 +19,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item, "RectCroSec");
+            pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item, "Not Named RectCroSec");
             pManager.AddNumberParameter("Width", "W", "", GH_ParamAccess.item,100);  
             pManager.AddNumberParameter("Height", "H", "", GH_ParamAccess.item,100);
             pManager.AddParameter(new Param_MaterialProperty(), "Material properties", "M", "Add material properties", GH_ParamAccess.item);

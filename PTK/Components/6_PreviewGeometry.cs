@@ -19,6 +19,7 @@ namespace PTK.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Assembly(), "Assembly", "A", "connect an Assembly here", GH_ParamAccess.item);
+            pManager[0].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)

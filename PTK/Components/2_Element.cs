@@ -21,7 +21,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Element");
+            pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Not Named Element");
             pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
             pManager.AddParameter(new Param_CroSec(), "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.list);

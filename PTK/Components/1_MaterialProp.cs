@@ -17,7 +17,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Material Name (more detailed name such as product name and standard name)", GH_ParamAccess.item, "MaterialProp");
+            pManager.AddTextParameter("Name", "N", "Material Name (more detailed name such as product name and standard name)", GH_ParamAccess.item, "Not Named Material Prop");
 
             pManager.AddNumberParameter("f m,g,k", "fmgk", "in [N/mm2]", GH_ParamAccess.item, 26 );
             pManager.AddNumberParameter("f t,0,g,k", "ft0gk", "in [N/mm2]", GH_ParamAccess.item, 19 );
