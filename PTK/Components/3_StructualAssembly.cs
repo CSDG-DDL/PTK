@@ -91,7 +91,7 @@ namespace PTK
 
             foreach(Element1D e in assembly.Elements)
             {
-                var paramList = strAssembly.Assembly.SearchNodeParamsAtElement(e);
+                var paramList = strAssembly.SearchNodeParamsAtElement(e);
 
                 for (int i = 0; i < paramList.Count - 1; i++)
                 {

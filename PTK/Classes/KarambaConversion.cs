@@ -25,9 +25,9 @@ namespace PTK
             var elemset = new List<Karamba.Utilities.ElemSet>();
 
 
-            points = _strAssembly.Assembly.Nodes.ConvertAll(n => n.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters));
+            points = _strAssembly.Nodes.ConvertAll(n => n.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters));
             
-            foreach(var sec in _strAssembly.Assembly.CrossSections)
+            foreach(var sec in _strAssembly.CrossSections)
             {
                 if (!materialMap.ContainsKey(sec.MaterialProperty))
                 {
@@ -61,9 +61,9 @@ namespace PTK
                 }
             }
 
-            foreach(Element1D e in _strAssembly.Assembly.Elements)
+            foreach(Element1D e in _strAssembly.Elements)
             {
-                var paramList = _strAssembly.Assembly.SearchNodeParamsAtElement(e);
+                var paramList = _strAssembly.SearchNodeParamsAtElement(e);
                 for (int i = 0; i <= paramList.Count-2; i++ )
                 {
                     var elem = new Karamba.Elements.GrassBeam(

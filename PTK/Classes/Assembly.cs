@@ -25,6 +25,16 @@ namespace PTK
 
         // --- constructors --- 
         public Assembly() { }
+        public Assembly(Assembly _assembly)
+        {
+            Elements = _assembly.Elements;
+            Nodes = _assembly.Nodes;
+            Tags = _assembly.Tags;
+            CrossSections = _assembly.CrossSections;
+            NodeMap = _assembly.NodeMap;
+            Details = _assembly.Details;
+            DetailingGroups = _assembly.DetailingGroups;
+        }
 
         // --- methods ---
         public int AddElement(Element1D _element)
@@ -200,9 +210,10 @@ namespace PTK
 
         // --- constructors ---
         public StructuralAssembly() { }
-        public StructuralAssembly(Assembly _assembly)
+        public StructuralAssembly(Assembly _assembly) : base(_assembly)
         {
-            Assembly = _assembly;
+            //Assembly = _assembly;
+            
         }
 
         // --- methods ---
@@ -236,10 +247,10 @@ namespace PTK
                 " Loads:" + Loads.Count.ToString();
             return info;
         }
-        public new bool IsValid()
-        {
-            return Assembly != null && Assembly.IsValid();
-        }
+        //public new bool IsValid()
+        //{
+        //    return Assembly != null && Assembly.IsValid();
+        //}
     }
 
     public class GH_Assembly : GH_Goo<Assembly>
