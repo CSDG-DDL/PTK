@@ -102,6 +102,7 @@
     <Compile Include="Components\2_SimpleAlignment.cs" />
     <Compile Include="Components\2_Force.cs" />
     <Compile Include="Classes\Force.cs" />
+    <Compile Include="Components\6_PreviewCrossSection.cs" />
     <Compile Include="Components\6_PreviewElement.cs" />
     <Compile Include="Classes\DetailModel.cs" />
     <Compile Include="Components\6_PreviewGeometry.cs" />
