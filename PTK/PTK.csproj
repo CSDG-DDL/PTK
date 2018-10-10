@@ -96,6 +96,7 @@
     <Compile Include="Components\10_DefinitionDetailingGroup.cs" />
     <Compile Include="Components\10_Rule_ElementAmount.cs" />
     <Compile Include="Components\10_Rule_ElementLength.cs" />
+    <Compile Include="Components\2_CircularCrossSection.cs" />
     <Compile Include="Components\3_GravityLoad.cs" />
     <Compile Include="Components\3_StructualAssembly.cs" />
     <Compile Include="Components\6_FinishedModel.cs" />
@@ -310,6 +311,8 @@
     <Content Include="ParaCoorFormItem\Viewer.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\RectangleCS.png" />
+    <None Include="Resources\CircularCS.png" />
     <None Include="Resources\Joint.png" />
     <None Include="Resources\GravityLoad.png" />
     <None Include="Resources\GA.png" />
@@ -332,7 +335,6 @@
     <None Include="Resources\Support.png" />
     <None Include="Resources\StrAssemble.png" />
     <None Include="Resources\SearchDetail.png" />
-    <None Include="Resources\RectangleCS.png" />
     <None Include="Resources\PSO.png" />
     <None Include="Resources\PreElement.png" />
     <None Include="Resources\PreAssemble.png" />

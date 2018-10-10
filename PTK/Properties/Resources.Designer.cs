@@ -93,6 +93,16 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap CircularCS {
+            get {
+                object obj = ResourceManager.GetObject("CircularCS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap Composite {
             get {
                 object obj = ResourceManager.GetObject("Composite", resourceCulture);

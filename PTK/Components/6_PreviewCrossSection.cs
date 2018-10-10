@@ -237,6 +237,10 @@ namespace PTK.Components
             {
                 path.AddRectangle(new RectangleF((float)(x0 - rsec.Width / 2), (float)(y0 - rsec.Height / 2), (float)(rsec.Width), (float)(rsec.Height)));
             }
+            else if(_sec is CircularCroSec csec)
+            {
+                path.AddEllipse((float)(x0 - csec.GetWidth() / 2), (float)(y0 - csec.GetHeight() / 2), (float)(csec.GetWidth()), (float)(csec.GetHeight()));
+            }
 
             //path.AddLine((float)(x0 + 0), (float)(y0 + 0), (float)(x0 + 100), (float)(y0 - 100));
             return path;

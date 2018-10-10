@@ -93,7 +93,7 @@ namespace PTK
         // --- methods ---
         public override CrossSection DeepCopy()
         {
-            return (CrossSection)base.MemberwiseClone();
+            return (RectangleCroSec)base.MemberwiseClone();
         }
         public override string ToString()
         {
@@ -105,6 +105,57 @@ namespace PTK
             return info; 
         }
     }
+
+    public class CircularCroSec : CrossSection
+    {
+        // --- field ---
+        public double Radius { get; private set; } = 100;
+
+        // --- constructors --- 
+        public CircularCroSec() : base() { }
+        public CircularCroSec(string _name) : base(_name) { }
+        public CircularCroSec(string _name, MaterialProperty _material, double _radius) : base(_name, _material)
+        {
+            SetRadius(_radius);
+        }
+
+        // --- properties ---
+        private void SetRadius(double _radius)
+        {
+            if (_radius <= 0)
+            {
+                throw new ArgumentException("value <= 0");
+            }
+            Radius = _radius;
+        }
+        public double GetDiameter()
+        {
+            return Radius * 2;
+        }
+        public override double GetHeight()
+        {
+            return Radius * 2;
+        }
+        public override double GetWidth()
+        {
+            return Radius * 2;
+        }
+
+        // --- methods ---
+        public override CrossSection DeepCopy()
+        {
+            return (CircularCroSec)base.MemberwiseClone();
+        }
+        public override string ToString()
+        {
+            string info;
+            info = "<CircularCroSec>\n" +
+                " Name:" + Name + "\n" +
+                " Radius:" + Radius.ToString();
+            return info;
+        }
+    }
+
 
     public class Composite : CrossSection
     {
