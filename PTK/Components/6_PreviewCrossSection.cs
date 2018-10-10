@@ -90,6 +90,16 @@ namespace PTK.Components
         protected override void OnVolatileDataCollected()
         {
             m_secs.Clear();
+            //if (base.m_data.IsEmpty)
+            //{
+            //    m_min = 0.0;
+            //    m_max = 1.0;
+            //}
+            //else
+            //{
+            //    m_min = double.MaxValue;
+            //    m_max = double.MinValue;
+            //}
             Secs.AddRange(m_data.ToList().ConvertAll(s => s.Value));
             //base.OnVolatileDataCollected();
         }
@@ -97,14 +107,14 @@ namespace PTK.Components
 
     public class GH_PreviewCrossSectionAttributes : GH_ResizableAttributes<PTK_PreviewCrossSection>
     {
-        private GH_Capsule capsule;
-        private List<GraphicsPath> secPaths;
+        private GH_Capsule m_capsule;
+        private List<GraphicsPath> m_secPaths;
         //private int active;
 
         public GH_PreviewCrossSectionAttributes(PTK_PreviewCrossSection owner)
         : base(owner)
         {
-            secPaths = new List<GraphicsPath>();
+            m_secPaths = new List<GraphicsPath>();
             //active = -1;
             Rectangle r = new Rectangle(0, 0, 150, 150);
             Bounds = r;
@@ -132,46 +142,46 @@ namespace PTK.Components
         public override void ExpireLayout()
         {
             base.ExpireLayout();
-            if (capsule != null)
+            if (m_capsule != null)
             {
-                capsule.Dispose();
-                capsule = null;
+                m_capsule.Dispose();
+                m_capsule = null;
             }
-            if(secPaths != null)
+            if(m_secPaths != null)
             {
-                foreach(var sec in secPaths)
+                foreach(var sec in m_secPaths)
                 {
                     sec?.Dispose();
                 }
-                secPaths.Clear();
+                m_secPaths.Clear();
             }
         }
         protected override void PrepareForRender(GH_Canvas canvas)
         {
-            if (capsule == null)
+            if (m_capsule == null)
             {
                 GH_Palette palette = GH_Palette.Hidden;
                 if (Owner.RuntimeMessageLevel == GH_RuntimeMessageLevel.Error)
                 {
                     palette = GH_Palette.Error;
                 }
-                capsule = GH_Capsule.CreateCapsule(Bounds, palette, 5, 30);
-                capsule.AddInputGrip(InputGrip.Y);
-                capsule.SetJaggedEdges(false, true);
+                m_capsule = GH_Capsule.CreateCapsule(Bounds, palette, 5, 30);
+                m_capsule.AddInputGrip(InputGrip.Y);
+                m_capsule.SetJaggedEdges(false, true);
             }
-            if (secPaths == null)
+            if (m_secPaths == null)
             {
-                secPaths = new List<GraphicsPath>();
+                m_secPaths = new List<GraphicsPath>();
             }
-            if (secPaths.Count != Owner.Secs.Count)
+            if (m_secPaths.Count != Owner.Secs.Count)
             {
-                secPaths.Clear();
+                m_secPaths.Clear();
                 if (Owner.Secs.Count != 0)
                 {
                     int n = Owner.Secs.Count - 1;
                     for (int i = 0; i <= n; i++)
                     {
-                        secPaths.Add(GetPath());
+                        m_secPaths.Add(GetPath(Owner.Secs[i]));
                     }
                 }
             }
@@ -193,10 +203,10 @@ namespace PTK.Components
                         Bounds = bounds;
                         if (visible)
                         {
-                            capsule.Render(graphics, Selected, Owner.Locked, true);
+                            m_capsule.Render(graphics, Selected, Owner.Locked, true);
                             Rectangle rectangle = GH_Convert.ToRectangle(GraphBounds);
                             GH_GraphicsUtil.Grid(graphics, rectangle, 10);
-                            if (secPaths.Count > 0)
+                            if (m_secPaths.Count > 0)
                             {
                                 graphics.SetClip(rectangle);
                                 int num = Owner.Secs.Count - 1;
@@ -217,16 +227,24 @@ namespace PTK.Components
             //base.Render(canvas, graphics, channel);
         }
 
-        private GraphicsPath GetPath()
+        private GraphicsPath GetPath(CrossSection _sec)
         {
             GraphicsPath path = new GraphicsPath();
-            path.AddLine(0, 0, 100, 100);
+            RectangleF area = GraphBounds;
+            double x0 = (double)(area.Left+area.Width/2f);
+            double y0 = (double)(area.Top+area.Height/2f);
+            if(_sec is RectangleCroSec rsec)
+            {
+                path.AddRectangle(new RectangleF((float)(x0 - rsec.Width / 2), (float)(y0 - rsec.Height / 2), (float)(rsec.Width), (float)(rsec.Height)));
+            }
+
+            //path.AddLine((float)(x0 + 0), (float)(y0 + 0), (float)(x0 + 100), (float)(y0 - 100));
             return path;
         }
 
         private void DrawPath(Graphics graphics, int index)
         {
-            if (index >= 0 && index < secPaths.Count && secPaths[index] != null)
+            if (index >= 0 && index < m_secPaths.Count && m_secPaths[index] != null)
             {
                 Pen pen = null;
                 if (Owner.Locked)
@@ -243,7 +261,7 @@ namespace PTK.Components
                 pen.StartCap = LineCap.Round;
                 pen.EndCap = LineCap.Round;
                 pen.LineJoin = LineJoin.Round;
-                graphics.DrawPath(pen, secPaths[index]);
+                graphics.DrawPath(pen, m_secPaths[index]);
                 pen.Dispose();
             }
         }
