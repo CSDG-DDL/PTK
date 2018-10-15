@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Rhino.Geometry;
 
+
 namespace PTK
 {
     public class BTLFunctions       //THis is the BTL element. There can be more than one BTL element in a main element (Element.cl)
@@ -167,16 +168,162 @@ namespace PTK
         public Plane RefPlane { get; private set; }
         public Line RefEdge { get; private set; }
         public Point3d RefPoint { get; private set; }
+        public double RefSideXLength { get; private set; }
+        public double RefSideYLength { get; private set; }
+        public double RefSideZLength { get; private set; }
 
         // --- constructors --- 
-        public Refside(uint _refsideID, Plane _refPlane, double _length)
+        public Refside(uint _refsideID, Plane _refPlane, double _refSideXLength, double _refSideYLength, double _refSideZLength)
         {
             RefSideID = _refsideID;
             RefPlane = _refPlane;
-            RefEdge = new Line(RefPlane.Origin, RefPlane.XAxis, _length);
+            RefEdge = new Line(RefPlane.Origin, RefPlane.XAxis, _refSideXLength);
             RefPoint = RefPlane.Origin;
+            RefSideXLength = _refSideXLength;
+            RefSideYLength = _refSideYLength;
+            RefSideZLength = _refSideZLength;
         }
     }
+
+
+    public class BTLDrill
+    {
+        public Line DrillLine { get; private set; }
+        public double Radius { get; private set; }
+
+        public BTLDrill (Line _drillLine, double _radius)
+        {
+            DrillLine = _drillLine;
+            Radius = _radius;
+        }
+        // --- methods ---
+        public PerformedProcess DelegateProcess(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode)
+        {
+
+
+            List<Refside> Refsides = _BTLPartGeometry.Refsides;
+            List<Point3d> CornerPoints = _BTLPartGeometry.CornerPoints;
+            List<Point3d> EndPoints = _BTLPartGeometry.Endpoints;
+            List<Point3d> StartPoints = _BTLPartGeometry.StartPoints;
+
+
+
+
+            //Finding the best refsides
+
+
+            Point3d intersectPoint = new Point3d();
+            Refside Refside = null;
+            Point3d localPlaneInsertPoint = new Point3d();
+            Point3d localPlaneIntersectPoint = new Point3d();
+
+            foreach (Refside side in Refsides)
+            {
+                double param =0;
+                if (Rhino.Geometry.Intersect.Intersection.LinePlane(DrillLine, side.RefPlane, out param)==true)
+                {
+                    if (0 <= param && param <= 1)
+                    {
+                        intersectPoint = DrillLine.PointAt(param);
+
+
+                        side.RefPlane.RemapToPlaneSpace(intersectPoint, out localPlaneIntersectPoint);
+                        if (localPlaneIntersectPoint.X < side.RefSideXLength && localPlaneIntersectPoint.Y < side.RefSideYLength)
+                        {
+                            Refside = side;
+                            break;
+                        }
+                    }
+                }
+                
+                
+            }
+
+            if (Refside == null)
+            {
+                return null;
+            }
+
+
+            //Flipping line if incorrect direction. 
+            Point3d LineStartPoint = DrillLine.From;
+            Point3d LocalLineStartPoint = new Point3d();
+            Refside.RefPlane.RemapToPlaneSpace(intersectPoint, out localPlaneInsertPoint);
+            Refside.RefPlane.RemapToPlaneSpace(LineStartPoint, out LocalLineStartPoint);
+            Line AlignedDrillLine = DrillLine;
+            if (LocalLineStartPoint.Z < 0)
+            {
+                AlignedDrillLine = new Line(DrillLine.To, DrillLine.From);
+            }
+
+            //Get endpoint in localAxis
+
+            Point3d localPlaneEndPoint = new Point3d();
+            Refside.RefPlane.RemapToPlaneSpace(AlignedDrillLine.To, out localPlaneEndPoint);
+            Point3d localpPlaneProjectedEndPoint = new Point3d(localPlaneEndPoint);
+            localpPlaneProjectedEndPoint.Z = 0;
+
+            DrillingType Drill = new DrillingType();
+            Drill.StartX = localPlaneInsertPoint.X;
+            Drill.StartY = localPlaneInsertPoint.Y;
+
+
+            if (Math.Abs(localPlaneEndPoint.Z) < Refside.RefSideZLength)
+            {
+                Drill.Depth = -localPlaneEndPoint.Z;
+                Drill.DepthLimited = BooleanType.yes;
+            }
+            else
+            {
+                Drill.DepthLimited = BooleanType.no;
+                
+            }
+
+            
+
+            Drill.Diameter = Radius * 2;
+
+
+            Point3d LocaldirectionPoint = new Point3d(localPlaneInsertPoint);
+            LocaldirectionPoint.X = LocaldirectionPoint.X - 10;
+
+
+            Line ProjectedLine = new Line(localPlaneInsertPoint, localpPlaneProjectedEndPoint);
+            Line drillAngleLine = new Line(localPlaneInsertPoint, localPlaneEndPoint);
+            Line DirectionLine = new Line(localPlaneInsertPoint, LocaldirectionPoint);
+
+            if (ProjectedLine.Length < CommonProps.tolerances)
+            {
+                Drill.Angle = 0;
+                Drill.Inclination = 90;
+            }
+            else
+            {
+                Drill.Angle = Rhino.RhinoMath.ToDegrees( Vector3d.VectorAngle(DirectionLine.Direction, ProjectedLine.Direction ,new Plane(Refside.RefPlane.Origin,- Refside.RefPlane.XAxis, -Refside.RefPlane.YAxis )));
+                Drill.Inclination = Rhino.RhinoMath.ToDegrees(Vector3d.VectorAngle(drillAngleLine.Direction, ProjectedLine.Direction));
+            }
+
+            
+
+            Drill.ReferencePlaneID = Refside.RefSideID;
+            Drill.Name = "Drill";
+            
+
+            //Making NURBS GEOMETRY
+            Circle Circle = new Circle(new Plane(DrillLine.From, DrillLine.Direction), Radius);
+
+
+            Cylinder Cylinder = new Cylinder(Circle, DrillLine.Length);
+
+            return new PerformedProcess(Drill, Brep.CreateFromCylinder(Cylinder, true, true));
+        }
+
+
+    }
+
+
+
+
 
 
     public class BTLCut
@@ -282,6 +429,7 @@ namespace PTK
             JackRafterCut.Inclination = Vector3d.VectorAngle(RefVector, Cutvector, new Plane(directionLine.From, directionLine.Direction));
             JackRafterCut.Inclination = Convert.ToDouble(Rhino.RhinoMath.ToDegrees(JackRafterCut.Inclination));
             JackRafterCut.StartDepth = 0.0;
+            JackRafterCut.Name= "Cut";
 
 
             return new PerformedProcess(JackRafterCut, Brep.CreateFromBox(box));

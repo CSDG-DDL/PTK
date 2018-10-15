@@ -65,6 +65,7 @@ namespace PTK.Components
             Project.Architect = "JOHNBUNJIMarcin";
             Project.Comment = "YeaaaahhH! Finally. ";
             
+            
 
             DataTree<Brep> dataTree = GrasshopperProject.GetBreps();
 
@@ -74,17 +75,22 @@ namespace PTK.Components
 
             BTLx.Project = Project;
             BTLx.Language = "Norsk";
+            
+            
 
 
             // Create a new XmlSerializer instance with the type of the test class
 
 
             XmlSerializer SerializerObj = new XmlSerializer(typeof(BTLx));
-
+            
+            
+            
 
             // Create a new file stream to write the serialized object to a file
             TextWriter WriteFileStream = new StreamWriter(filepath);
 
+            
             SerializerObj.Serialize(WriteFileStream, BTLx);
             WriteFileStream.Close();
 

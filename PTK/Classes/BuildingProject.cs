@@ -43,14 +43,23 @@ namespace PTK
         //全ビルディングエレメントにManufactureModeを設定
         public void ManufactureProject(ManufactureMode _mode)
         {
-            foreach(BuildingElement buildingElement in BuildingElements)
+            List<PartType> AllParts = new List<PartType>();
+            
+            foreach (BuildingElement buildingElement in BuildingElements)
             {
                 buildingElement.ManufactureElement(_mode);
                 if (_mode == ManufactureMode.BTL || _mode == ManufactureMode.BOTH)
                 {
-                    BTLProject.Parts.Part.AddRange(buildingElement.BTLParts);
+                    AllParts.AddRange(buildingElement.BTLParts);
+                    
+ 
                 }
             }
+
+            BTLProject.Parts = new ProjectTypeParts();
+
+            BTLProject.Parts.Part = AllParts.ToArray();
+            
         }
 
 
@@ -132,13 +141,20 @@ namespace PTK
 
         public Sub3DElement(Element1D _element, Sub2DElement _Sub2DElement, List<PerformTimberProcessDelegate> _processDelegate)     //PHASE1: PREPAIR
         {
-            BTLPart = new PartType();
             ProcessedStock = new List<Brep>();
             VoidProcess = new List<Brep>();
 
             height = _Sub2DElement.CrossSection.GetHeight();
             width = _Sub2DElement.CrossSection.GetWidth();
             length = _element.BaseCurve.GetLength();
+
+            BTLPart = new PartType();
+            BTLPart.Height = height;
+            BTLPart.Width = width;
+            BTLPart.Length = length;
+            
+
+
 
             CoordinateSystemType CoordinateSystem = new CoordinateSystemType();
 
@@ -184,10 +200,10 @@ namespace PTK
             refPlane4.Translate(btlPlane.ZAxis * width);
             refPlane4 = new Plane(refPlane4.Origin, btlPlane.XAxis, btlPlane.YAxis);
 
-            refSides.Add(new Refside(1, refPlane1, length));
-            refSides.Add(new Refside(2, refPlane2, length));
-            refSides.Add(new Refside(3, refPlane3, length));
-            refSides.Add(new Refside(4, refPlane4, length));
+            refSides.Add(new Refside(1, refPlane1, length, width,height));
+            refSides.Add(new Refside(2, refPlane2, length, height, width));
+            refSides.Add(new Refside(3, refPlane3, length, width, height));
+            refSides.Add(new Refside(4, refPlane4, length, height, width));
 
             foreach (Refside side in refSides)
             {
@@ -203,6 +219,9 @@ namespace PTK
             cornerPoints.AddRange(startPoints);
             cornerPoints.AddRange(endPoints);
 
+            CoordinateSystem.XVector = new CoordinateType();
+            CoordinateSystem.YVector = new CoordinateType();
+            CoordinateSystem.ReferencePoint = new PointType();
 
 
             CoordinateSystem.XVector.X = btlPlane.XAxis.X;
@@ -217,20 +236,33 @@ namespace PTK
 
             ReferenceType Reference = new ReferenceType();
             Reference.Position = CoordinateSystem;
+            
 
-             
+            Reference.GUID ="{"+ Convert.ToString(Guid.NewGuid())+"}";
+
+            ReferenceType[] refe = new ReferenceType[1];
 
 
-            BTLPart.Transformations.Transformation.Add(Reference);
 
-            BTLPart.Length = length;
+            refe[0] = Reference;
+            BTLPart.Transformations = new ComponentTypeTransformations();
+
+
+            BTLPart.Transformations.Transformation = refe;
+   
+            
+
+
+
             BTLPart.Width = width;
+            BTLPart.Length = length;
             BTLPart.Height = height;
             BTLPart.StartOffset = 0.3;
             BTLPart.EndOffset = 0.3;
 
+
             BTLPartGeometry = new BTLPartGeometry(refSides, cornerPoints, endPoints, startPoints);
-            
+
 
 
             /////////////////////////////////////////////////////////7
@@ -248,6 +280,7 @@ namespace PTK
         {
             if (ready)
             {
+                List<ProcessingType> AllProcessings = new List<ProcessingType>();
                 
                 foreach (PerformTimberProcessDelegate Perform in PerformTimberProcesses)
                 {
@@ -256,9 +289,9 @@ namespace PTK
 
                     if (_mode == ManufactureMode.BTL || _mode==ManufactureMode.BOTH)
                     {
-                        
 
-                        BTLPart.Processings.Items.Add(PerformedProcess.BTLProcess);
+                        AllProcessings.Add(PerformedProcess.BTLProcess);
+                        
                     }
 
                     if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
@@ -268,6 +301,11 @@ namespace PTK
                     }
                  
                 }
+
+                BTLPart.Processings = new ComponentTypeProcessings();
+                
+
+                BTLPart.Processings.Items = AllProcessings.ToArray();
 
                 if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
                 {
@@ -322,12 +360,14 @@ namespace PTK
         public List<Point3d> Endpoints { get; private set; }
         public List<Point3d> StartPoints { get; private set; }
 
+
         public BTLPartGeometry(List<Refside> _refsides, List<Point3d> _cornerPoints, List<Point3d> _endpoints, List<Point3d> _startPoints)
         {
             Refsides = _refsides;
             CornerPoints = _cornerPoints;
             Endpoints = _endpoints;
             StartPoints = _startPoints;
+
         }
     } 
 

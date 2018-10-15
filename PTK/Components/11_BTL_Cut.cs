@@ -9,7 +9,7 @@ namespace PTK
     public class PTK_BTL_Cut : GH_Component
     {
         public PTK_BTL_Cut()
-          : base("BTL Cut", "Cut",
+          : base("Cut", "Cut",
               "Define the Cut process",
               CommonProps.category, CommonProps.subcate11)
         {
