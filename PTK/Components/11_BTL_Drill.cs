@@ -12,7 +12,7 @@ namespace PTK.Components
         /// Initializes a new instance of the _11_BTL_Drill class.
         /// </summary>
         public _11_BTL_Drill()
-          : base("Drill", "Nickname",
+          : base("Drill", "D",
               "Define the Drill process",
               CommonProps.category, CommonProps.subcate11)
         {

@@ -47,6 +47,79 @@ namespace PTK
 
             return _cutPlane;
         }
+
+        public static Vector3d AlignVector (Vector3d _AlignmentVector, Line _line)
+        {
+            Vector3d AlignVector = new Vector3d();
+            if (Vector3d.VectorAngle(_AlignmentVector, _line.Direction) < Math.PI / 2)
+            {
+                AlignVector = _line.Direction;
+            }
+            else
+            {
+                AlignVector = -_line.Direction;
+            }
+
+            return AlignVector;
+
+
+        }
+
+
+        public static OrientationType GeneratePlaneAngles(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double rotation)
+        {
+
+            
+            Line AngleLine = new Line();
+            Line InclinationLine = new Line();
+            Plane AnglePlane = Inputplane;
+            OrientationType orientationtype; 
+
+            if(Rhino.Geometry.Intersect.Intersection.PlanePlane(RefPlane, AnglePlane, out AngleLine))
+            {
+                Vector3d AngleVector = AlignVector(RefPlane.YAxis, AngleLine);
+
+                angle = Vector3d.VectorAngle(RefPlane.XAxis, AngleVector, RefPlane);
+
+                Plane Inclinationplane = new Plane(AngleLine.From, AngleVector);
+
+                if (Rhino.Geometry.Intersect.Intersection.PlanePlane(AnglePlane, Inclinationplane, out InclinationLine));
+                
+                Vector3d InclinationVector = AlignVector(-RefPlane.ZAxis, InclinationLine);
+
+                inclination = Vector3d.VectorAngle(RefPlane.XAxis, InclinationVector, Inclinationplane);
+
+                rotation = Vector3d.VectorAngle(AnglePlane.XAxis, -AngleVector, AnglePlane);
+
+                if (Vector3d.VectorAngle(RefPlane.XAxis, AnglePlane.ZAxis) < Math.PI / 2)
+                {
+                    orientationtype = OrientationType.end;
+                    angle = Math.PI - angle;
+                    inclination = Math.PI - angle;
+                    return orientationtype;
+
+                }
+                   
+                else
+                {
+                    orientationtype = OrientationType.start;
+                    return orientationtype;
+                }
+
+
+            }
+            else
+            {
+                angle = inclination = rotation = 0;
+                return OrientationType.start;
+            }
+
+
+
+        }
+
+        
+
         public static Line FlipLine(Vector3d _guide, Line _line)
         {
             List<double> angle = new List<double>();
@@ -439,6 +512,169 @@ namespace PTK
 
 
     }
+
+    public enum TenonMode
+    {
+        PlaneMode,RectangleMode
+    }
+
+    
+
+
+
+    public class BTLTenon
+    {
+        // --- field ---
+        public TenonMode TenonMode { get; private set; }
+        public Plane TenonPlane { get; private set; } //Xaxis is the lengthDirection of the tenon
+        public double Width { get; private set; }
+        public double Length { get; private set; }
+        public double Height { get; private set; }
+        public BooleanType LengthLimitedTop { get; private set; }
+        public BooleanType LengthLimitedBottom { get; private set; }
+        public BooleanType Chamfer { get; private set; }
+        public double ShapeRadius { get; private set; }
+        public TenonShapeType Shapetype { get; private set; }
+
+
+        public BTLTenon(Plane _tenonPlane, double _width, double _length, double _height, BooleanType _lengthLimitedTop, BooleanType _lengthLimitedBottom, BooleanType _chamfer, int _shapetype, double _radius)
+        {
+            TenonPlane = _tenonPlane;
+            Width = _width;
+            Height = _height;
+            Length = _length;
+            LengthLimitedTop = _lengthLimitedTop;
+            LengthLimitedBottom = _lengthLimitedBottom;
+            Chamfer = _chamfer;
+            ShapeRadius = _radius;
+
+            TenonMode = TenonMode.PlaneMode;
+            if(_shapetype < 0 || _shapetype > 4)
+            {
+                _shapetype = 0;
+            }
+            if (_shapetype == 0) { Shapetype = TenonShapeType.automatic; }
+            if (_shapetype == 1) { Shapetype = TenonShapeType.square; }
+            if (_shapetype == 2) { Shapetype = TenonShapeType.round; }
+            if (_shapetype == 3) { Shapetype = TenonShapeType.rounded; }
+            if (_shapetype == 4) { Shapetype = TenonShapeType.radius; }
+
+
+            
+
+        }
+        
+
+
+
+
+        public PerformedProcess DelegateProcess(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode)
+        {
+
+
+
+            //Calculating tenontplane, width/ height depth here if needed
+
+            //Finding the refside's negative z-axis that has a has the smallest angle compared to the x-axis of the tenon-plane
+            List<Refside> Refsides = _BTLPartGeometry.Refsides;
+
+
+            Refside Refside = Refsides[0];
+            Vector3d TenonLengthVector = TenonPlane.XAxis;
+            Vector3d RefsideAngle = new Vector3d();
+            double smallestAngle = 1000;
+            foreach (Refside side in Refsides)  //Cycling through refsides and choosing the one with smallest angle
+            {
+                RefsideAngle = -side.RefPlane.ZAxis;
+
+                double angle = Vector3d.VectorAngle(TenonLengthVector, RefsideAngle);
+                if (angle < smallestAngle)
+                {
+                    smallestAngle = angle;
+                    Refside = side;
+                }
+            }
+
+
+
+            Plane RefPlane = Refside.RefPlane;
+            Point3d LocalStartPoint = new Point3d();
+            RefPlane.RemapToPlaneSpace(TenonPlane.Origin, out LocalStartPoint);
+
+
+            double Angle;
+            double Inclination;
+            double Rotation;
+
+            BTLFunctions.GeneratePlaneAngles(RefPlane, TenonPlane, out Angle, out Inclination, out Rotation);
+
+
+            TenonType Tenon = new TenonType();
+            Tenon.Name = "Tenon";
+            Tenon.StartX = LocalStartPoint.X;
+            Tenon.StartY = LocalStartPoint.Y;
+            Tenon.StartDepth = Math.Abs(LocalStartPoint.Z);
+            Tenon.Orientation = OrientationType.start;
+            Tenon.LengthLimitedBottom = LengthLimitedBottom;
+            Tenon.LengthLimitedTop = LengthLimitedTop;
+            Tenon.Length = Length;
+            Tenon.Width = Width;
+            Tenon.Height = Height;
+            Tenon.Shape = Shapetype;
+            Tenon.ShapeRadius = ShapeRadius;
+            Tenon.Chamfer = Chamfer;
+            Tenon.Angle = Rhino.RhinoMath.ToDegrees(Angle);
+            Tenon.Inclination = Rhino.RhinoMath.ToDegrees(Inclination);
+            Tenon.Rotation = Rhino.RhinoMath.ToDegrees(Rotation);
+            Tenon.ReferencePlaneID = Refside.RefSideID;
+
+
+            Interval y = new Interval(-Width / 2, Width / 2);
+            Interval x = new Interval(0, Length);
+            Rectangle3d tenonRectangle = new Rectangle3d(TenonPlane, x, y);
+
+            List<Point3d> voidpoints = new List<Point3d>();
+            voidpoints.AddRange(BTLFunctions.GetCutPoints(TenonPlane, Refsides));  //adding the four points where the refEdge and the cutplane intersects
+            voidpoints.AddRange(_BTLPartGeometry.CornerPoints);
+            voidpoints = BTLFunctions.GetValidVoidPoints(TenonPlane, voidpoints);
+
+            Box box = new Box(TenonPlane, voidpoints);
+
+            Brep Boxa = Brep.CreateFromBox(box);
+            
+            Extrusion TenonShape = Extrusion.Create(tenonRectangle.ToNurbsCurve(), Height, true);
+            
+
+            double tolerance = CommonProps.tolerances;
+            Rhino.Geometry.Brep[] breps = Rhino.Geometry.Brep.CreateBooleanDifference(Boxa, TenonShape.ToBrep(), tolerance);
+            
+
+
+
+            return new PerformedProcess(Tenon, breps[0] );
+
+
+
+
+
+
+        }
+
+
+
+}
+
+        
+    
+
+    
+
+
+
+        
+    
+
+
 }
 
 
