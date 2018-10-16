@@ -73,7 +73,7 @@ namespace PTK
                     //複合断面暫定対応
                     if(e.CrossSection is Composite comp)
                     {
-                        elem.crosec = crosecMap[comp.SubCrossSections[0].Item1];
+                        elem.crosec = crosecMap[comp.SubCrossSections[0]];
                     }
                     else
                     {

@@ -24,7 +24,7 @@ namespace PTK.Components
         {
             pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item, "Not Named Composite");
             pManager.AddParameter(new Param_CroSec(), "Cross-sections", "S", "Sub CrossSections", GH_ParamAccess.list);
-            pManager.AddParameter(new Param_Alignment(), "Alignments", "A", "Alignmnet", GH_ParamAccess.list);
+            pManager.AddParameter(new Param_Alignment(), "Alignments", "A", "Local Alignmnet", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -41,40 +41,40 @@ namespace PTK.Components
             string name = null;
             List<GH_CroSec> gCrossSections = new List<GH_CroSec>();
             List<CrossSection> crossSections = null;
-            List<GH_Alignment> gAlignmnet = new List<GH_Alignment>();
-            List<Alignment> alignments = null;
+            GH_Alignment gAlignmnet = null;
+            Alignment alignment = null;
             Composite composite = null;
 
             // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetDataList(1, gCrossSections)) { return; }
             crossSections = gCrossSections.ConvertAll(s => s.Value);
-            if (!DA.GetDataList(2, gAlignmnet)) { return; }
-            alignments = gAlignmnet.ConvertAll(a => a.Value);
+            if (!DA.GetData(2, ref gAlignmnet)) { return; }
+            alignment = gAlignmnet.Value;
 
             // --- solve ---
-            if (crossSections.Count == 0 || alignments.Count == 0) { return; }
+            if (crossSections.Count == 0) { return; }
 
-            composite = new Composite(name);
-            if (crossSections.Count > alignments.Count)
-            {
-                while (crossSections.Count>alignments.Count)
-                {
-                    alignments.Add(alignments.Last());
-                }
-            }
-            if (crossSections.Count < alignments.Count)
-            {
-                while (crossSections.Count < alignments.Count)
-                {
-                    crossSections.Add(crossSections.Last());
-                }
-            }
+            composite = new Composite(name, null, crossSections, alignment);
+            //if (crossSections.Count > alignment.Count)
+            //{
+            //    while (crossSections.Count>alignment.Count)
+            //    {
+            //        alignment.Add(alignment.Last());
+            //    }
+            //}
+            //if (crossSections.Count < alignment.Count)
+            //{
+            //    while (crossSections.Count < alignment.Count)
+            //    {
+            //        crossSections.Add(crossSections.Last());
+            //    }
+            //}
 
-            for (int i = 0; i < crossSections.Count; i++)
-            {
-                composite.AddCrossSection(crossSections[i], alignments[i]);
-            }
+            //for (int i = 0; i < crossSections.Count; i++)
+            //{
+            //    composite.AddCrossSection(crossSections[i], alignment[i]);
+            //}
 
             GH_CroSec sec = new GH_CroSec(composite);
 

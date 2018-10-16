@@ -22,10 +22,12 @@ namespace PTK
             pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item, "Not Named CirCroSec");
             pManager.AddNumberParameter("Radius", "R", "", GH_ParamAccess.item,100);
             pManager.AddParameter(new Param_MaterialProperty(), "Material properties", "M", "Add material properties", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Alignment(), "Alignment", "A", "Local Alignment", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
+            pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -40,15 +42,19 @@ namespace PTK
             double radius = new double();
             GH_MaterialProperty gMaterial = null;
             MaterialProperty material = null;
+            GH_Alignment gAlignment = null;
+            Alignment alignment = null;
 
             // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref radius)) { return; }
             if (!DA.GetData(2, ref gMaterial)) { return; }
             material = gMaterial.Value;
+            if (!DA.GetData(3, ref gAlignment)) { return; }
+            alignment = gAlignment.Value;
 
             // --- solve ---
-            GH_CroSec sec = new GH_CroSec(new CircularCroSec(name, material, radius));
+            GH_CroSec sec = new GH_CroSec(new CircularCroSec(name, material, radius, alignment));
 
             // --- output ---
             DA.SetData(0, sec);

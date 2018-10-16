@@ -44,12 +44,13 @@ namespace PTK
         {
             InitializeLocalPlane();
         }
-        public Element1D(string _tag, Curve _curve, CrossSection _crossSection, List<Force> _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
+        public Element1D(string _tag, Curve _curve, CrossSection _crossSection, Alignment _alignmnet, List<Force> _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
         {
             BaseCurve = _curve;
             PointAtStart = _curve.PointAtStart;
             PointAtEnd = _curve.PointAtEnd;
             CrossSection = _crossSection;
+            Alignment = _alignmnet;
             Forces = _forces;
             Joints = _joints;
             IsIntersectWithOther = _intersect;

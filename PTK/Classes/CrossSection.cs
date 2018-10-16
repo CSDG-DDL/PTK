@@ -12,7 +12,8 @@ namespace PTK
     {
         // --- field ---
         public string Name { get; private set; } = "N/A";
-        public MaterialProperty MaterialProperty { get; private set; } = new MaterialProperty("Material");
+        public MaterialProperty MaterialProperty { get; private set; } = new MaterialProperty("Not Named Material");
+        public Alignment Alignment { get; private set; } = new Alignment("Not Named Alignment");
 
         // --- constructors --- 
         public CrossSection() { }
@@ -20,10 +21,11 @@ namespace PTK
         {
             Name = _name;
         }
-        public CrossSection(string _name, MaterialProperty _material)
+        public CrossSection(string _name, MaterialProperty _material, Alignment _alignment)
         {
             Name = _name;
             MaterialProperty = _material;
+            Alignment = _alignment;
         }
 
         // --- methods ---
@@ -58,7 +60,7 @@ namespace PTK
         // --- constructors --- 
         public RectangleCroSec() : base() { }
         public RectangleCroSec(string _name) : base(_name) { }
-        public RectangleCroSec(string _name, MaterialProperty _material, double _height, double _width) : base(_name, _material)
+        public RectangleCroSec(string _name, MaterialProperty _material, double _height, double _width, Alignment _alignment) : base(_name, _material, _alignment)
         {
             SetHeight(_height);
             SetWidth(_width);
@@ -114,7 +116,7 @@ namespace PTK
         // --- constructors --- 
         public CircularCroSec() : base() { }
         public CircularCroSec(string _name) : base(_name) { }
-        public CircularCroSec(string _name, MaterialProperty _material, double _radius) : base(_name, _material)
+        public CircularCroSec(string _name, MaterialProperty _material, double _radius, Alignment _alignment) : base(_name, _material, _alignment)
         {
             SetRadius(_radius);
         }
@@ -160,21 +162,21 @@ namespace PTK
     public class Composite : CrossSection
     {
         // --- field ---
-        public List<Tuple<CrossSection, Alignment>> SubCrossSections { get; private set; } = new List<Tuple<CrossSection, Alignment>>();
+        public List<CrossSection> SubCrossSections { get; private set; } = new List<CrossSection>();
 
         // --- constructors --- 
         public Composite() : base() { }
         public Composite(string _name) : base(_name) { }
-        public Composite(string _name, MaterialProperty _material) : base(_name, _material) { }
+        public Composite(string _name, MaterialProperty _material, List<CrossSection> _subCrossSections, Alignment _alignment) : base(_name, _material, _alignment) { }
 
-        public bool AddCrossSection(CrossSection _crossSection, Alignment _alignment)
-        {
-            if (_crossSection.IsValid() && _alignment.IsValid())
-            {
-                SubCrossSections.Add(new Tuple<CrossSection, Alignment>(_crossSection, _alignment));
-            }
-            return false;
-        }
+        //public bool AddCrossSection(CrossSection _crossSection, Alignment _alignment)
+        //{
+        //    if (_crossSection.IsValid() && _alignment.IsValid())
+        //    {
+        //        SubCrossSections.Add(new Tuple<CrossSection, Alignment>(_crossSection, _alignment));
+        //    }
+        //    return false;
+        //}
         // --- methods ---
         public List<Tuple<CrossSection, Alignment>> RecursionCrossSectionSearch()
         {
@@ -182,13 +184,13 @@ namespace PTK
             List<Tuple<CrossSection, Alignment>> crossSections = new List<Tuple<CrossSection, Alignment>>(); 
             foreach (var s in SubCrossSections)
             {
-                if(s.Item1 is Composite comp)
+                if(s is Composite comp)
                 {
                     crossSections.AddRange(comp.RecursionCrossSectionSearch());
                 }
                 else
                 {
-                    crossSections.Add(s);
+                    crossSections.Add(new Tuple<CrossSection, Alignment>(s,s.Alignment));
                 }
             }
             return crossSections;
@@ -216,28 +218,28 @@ namespace PTK
                 double tempVal;
 
                 // update maxHeight 
-                tempVal = s.Item2.OffsetZ + s.Item1.GetHeight() / 2;
+                tempVal = s.Alignment.OffsetZ + s.GetHeight() / 2;
                 if (tempVal > maxHeight)
                 {
                     maxHeight = tempVal;
                 }
 
                 // update minHeight 
-                tempVal = s.Item2.OffsetZ - s.Item1.GetHeight() / 2;
+                tempVal = s.Alignment.OffsetZ - s.GetHeight() / 2;
                 if (tempVal < minHeight)
                 {
                     minHeight = tempVal;
                 }
 
                 // update maxWidth 
-                tempVal = s.Item2.OffsetY + s.Item1.GetWidth() / 2;
+                tempVal = s.Alignment.OffsetY + s.GetWidth() / 2;
                 if (tempVal > maxWidth)
                 {
                     maxWidth = tempVal;
                 }
 
                 // update minWidth 
-                tempVal = s.Item2.OffsetY - s.Item1.GetWidth() / 2;
+                tempVal = s.Alignment.OffsetY - s.GetWidth() / 2;
                 if (tempVal < minWidth)
                 {
                     minWidth = tempVal;
