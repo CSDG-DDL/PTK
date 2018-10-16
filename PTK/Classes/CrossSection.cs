@@ -167,7 +167,10 @@ namespace PTK
         // --- constructors --- 
         public Composite() : base() { }
         public Composite(string _name) : base(_name) { }
-        public Composite(string _name, MaterialProperty _material, List<CrossSection> _subCrossSections, Alignment _alignment) : base(_name, _material, _alignment) { }
+        public Composite(string _name, MaterialProperty _material, List<CrossSection> _subCrossSections, Alignment _alignment) : base(_name, _material, _alignment)
+        {
+            SubCrossSections = _subCrossSections;
+        }
 
         //public bool AddCrossSection(CrossSection _crossSection, Alignment _alignment)
         //{
