@@ -784,6 +784,8 @@ namespace PTK {
         
         /// <remarks/>
         end,
+
+        parallell,
     }
     
     /// <remarks/>

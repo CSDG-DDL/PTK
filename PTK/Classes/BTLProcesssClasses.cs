@@ -66,10 +66,18 @@ namespace PTK
         }
 
 
-        public static OrientationType GeneratePlaneAngles(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double rotation)
+        public static OrientationType GeneratePlaneAnglesPerp(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double rotation)  //used when when plane is closed to perpendicular to refplane
         {
+            double PlaneANgle = Math.Abs( Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
+            if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances);
+            {
+                angle = 0;
+                inclination = 0;
+                rotation = 0;
+                return OrientationType.parallell;
+            }
 
-            
+
             Line AngleLine = new Line();
             Line InclinationLine = new Line();
             Plane AnglePlane = Inputplane;
@@ -118,7 +126,41 @@ namespace PTK
 
         }
 
-        
+
+        public static OrientationType GeneratePlaneAnglesParallell(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double slope)  //used when when plane is closed to parallell to refplane
+        {
+            double PlaneANgle = Math.Abs(Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
+            if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances) ;
+            {
+                slope = 90;
+                inclination = 90;
+                angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis);
+                return OrientationType.parallell;
+            }
+
+            angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis);
+
+            Plane AlignedRefPlane = new Plane(RefPlane);
+            AlignedRefPlane.Rotate(angle, AlignedRefPlane.ZAxis);
+
+            Plane SlopePlane = new Plane(Inputplane.Origin, AlignedRefPlane.YAxis);
+            slope = Vector3d.VectorAngle(Inputplane.ZAxis, -RefPlane.XAxis, SlopePlane);
+
+            Plane inclinationPlane = new Plane(Inputplane.Origin, Inputplane.XAxis);
+            inclination = Vector3d.VectorAngle(Inputplane.ZAxis, SlopePlane.ZAxis, inclinationPlane);
+
+            return OrientationType.start;
+
+
+
+
+            
+
+
+
+        }
+
+
 
         public static Line FlipLine(Vector3d _guide, Line _line)
         {
@@ -606,7 +648,7 @@ namespace PTK
             double Inclination;
             double Rotation;
 
-            BTLFunctions.GeneratePlaneAngles(RefPlane, TenonPlane, out Angle, out Inclination, out Rotation);
+            BTLFunctions.GeneratePlaneAnglesPerp(RefPlane, TenonPlane, out Angle, out Inclination, out Rotation);
 
 
             TenonType Tenon = new TenonType();
@@ -628,31 +670,361 @@ namespace PTK
             Tenon.Rotation = Rhino.RhinoMath.ToDegrees(Rotation);
             Tenon.ReferencePlaneID = Refside.RefSideID;
 
+            //Making intervals for tenonshape
+            Interval Topwidth = new Interval(-Width / 2, Width / 2);
+            Interval BtmWidth = Topwidth; //Not relevant for tenon, but simplifies the code
+            Interval LengthInterval = new Interval(0, Length);
 
-            Interval y = new Interval(-Width / 2, Width / 2);
-            Interval x = new Interval(0, Length);
-            Rectangle3d tenonRectangle = new Rectangle3d(TenonPlane, x, y);
 
+            //Generating points for boundingbox
             List<Point3d> voidpoints = new List<Point3d>();
             voidpoints.AddRange(BTLFunctions.GetCutPoints(TenonPlane, Refsides));  //adding the four points where the refEdge and the cutplane intersects
             voidpoints.AddRange(_BTLPartGeometry.CornerPoints);
             voidpoints = BTLFunctions.GetValidVoidPoints(TenonPlane, voidpoints);
 
             Box box = new Box(TenonPlane, voidpoints);
+            double extra = 1000;
+            box.X = new Interval(box.X.T0 - extra, box.X.T1 + extra);
+            box.Y = new Interval(box.Y.T0 - extra, box.Y.T1 + extra);
+            box.Z = new Interval(box.Z.T0, box.Z.T1 + extra);
+            
 
             Brep Boxa = Brep.CreateFromBox(box);
             
-            Extrusion TenonShape = Extrusion.Create(tenonRectangle.ToNurbsCurve(), Height, true);
-            
+
+
+            Brep TenonShape = GenerateTenonShape(TenonPlane, Height, BtmWidth, Topwidth, LengthInterval, Shapetype, ShapeRadius);
 
             double tolerance = CommonProps.tolerances;
-            Rhino.Geometry.Brep[] breps = Rhino.Geometry.Brep.CreateBooleanDifference(Boxa, TenonShape.ToBrep(), tolerance);
-            
-
+            Rhino.Geometry.Brep[] breps = Rhino.Geometry.Brep.CreateBooleanDifference(Boxa, TenonShape, tolerance);
 
 
             return new PerformedProcess(Tenon, breps[0] );
 
+        }
+
+        public static Brep GenerateTenonShape(Plane _localPlane, double _height, Interval _BottomWidth, Interval _TopWidth , Interval _length, TenonShapeType Type, double Radius)
+        {
+            Point3d CenterTopPt = _localPlane.Origin;
+            _localPlane.RemapToPlaneSpace(_localPlane.Origin,out CenterTopPt);
+            Point3d LeftTopPt = new Point3d(CenterTopPt);
+            Point3d RightTopPt = new Point3d(CenterTopPt);
+            Point3d LeftBtmPt = new Point3d(CenterTopPt);
+            Point3d RightBtmPt = new Point3d(CenterTopPt);
+
+            LeftTopPt.X = RightTopPt.X = _length.T0;
+            LeftBtmPt.X = RightBtmPt.X = _length.T1;
+
+            LeftTopPt.Y = _TopWidth.T0;
+            RightTopPt.Y = _TopWidth.T1;
+            LeftBtmPt.Y = _BottomWidth.T0;
+            RightBtmPt.Y = _BottomWidth.T1;
+
+            List<double> widhts = new List<double>();
+            widhts.Add(_TopWidth.T1);
+            widhts.Add(_BottomWidth.T1);
+            widhts.Sort();
+
+            if (Type == TenonShapeType.round || Radius>=widhts[0])
+            {
+                
+                Radius = widhts[0]-.01;
+            }
+
+            
+            
+
+
+            Interval NormalizedInterval = new Interval(0, 1);
+            Curve Topline = new Line(LeftTopPt, RightTopPt).ToNurbsCurve();
+            Curve BtmLine = new Line(LeftBtmPt, RightBtmPt).ToNurbsCurve();
+            Curve LeftLine = new Line(LeftBtmPt, LeftTopPt).ToNurbsCurve();
+            Curve RightLine = new Line(RightBtmPt, RightTopPt).ToNurbsCurve();
+
+            List<Curve> AllCurves = new List<Curve>();
+
+            if (Type == TenonShapeType.square)
+            {
+                AllCurves.Add(Topline);
+                AllCurves.Add(BtmLine);
+                AllCurves.Add(LeftLine);
+                AllCurves.Add(RightLine);
+            }
+
+            
+
+            else
+            {
+                Topline.Domain = BtmLine.Domain = LeftLine.Domain = RightLine.Domain = NormalizedInterval;
+
+                Curve[] Toplines = Topline.Split(0.5);
+                Curve[] BtmLines = BtmLine.Split(0.5);
+                Curve[] LeftLines = LeftLine.Split(0.5);
+                Curve[] RightLines = RightLine.Split(0.5);
+                Toplines[0].Reverse();
+                RightLines[0].Reverse();
+                BtmLines[0].Reverse();
+                LeftLines[0].Reverse();
+
+                Curve[] TopRight = Curve.CreateFilletCurves(Toplines[1], RightTopPt, RightLines[1], RightTopPt, Radius, true, true, false, CommonProps.tolerances, CommonProps.tolerances);
+                Curve[] TopLeft = Curve.CreateFilletCurves(Toplines[0], Toplines[0].PointAtStart, LeftLines[1], LeftLines[1].PointAtEnd, Radius, true, true, false, CommonProps.tolerances, CommonProps.tolerances);
+                Curve[] BtmRight = Curve.CreateFilletCurves(BtmLines[1], RightBtmPt, RightLines[0], RightBtmPt, Radius, true, true, false, CommonProps.tolerances, CommonProps.tolerances);
+                Curve[] BtmLeft = Curve.CreateFilletCurves(BtmLines[0], LeftBtmPt, LeftLines[0], LeftBtmPt, Radius, true, true, false, CommonProps.tolerances, CommonProps.tolerances);
+
+
+
+                AllCurves.Add(TopRight[0]);
+                AllCurves.Add(TopLeft[0]);
+                AllCurves.Add(BtmRight[0]);
+                AllCurves.Add(BtmLeft[0]);
+            }
+
+
+            
+            
+
+
+            Curve[] JoinedCurve = Curve.JoinCurves(AllCurves);
+            if (JoinedCurve[0].IsClosed)
+            {
+                Extrusion Tenonshape = Extrusion.Create(JoinedCurve[0], -_height, true);
+
+                Tenonshape.Transform( Transform.PlaneToPlane(Plane.WorldXY, _localPlane));
+                return Tenonshape.ToBrep();
+            }
+            else
+            {
+                return new Brep();
+            }
+             
+
+            
+            
+
+        }
+
+
+
+}
+
+
+    public class BTLMortise
+    {
+        // --- field ---
+        public TenonMode TenonMode { get; private set; }
+        public Plane WorkPlane { get; private set; } //Xaxis is the lengthDirection of the tenon
+        public double Width { get; private set; }
+        public double Length { get; private set; }
+        public double Depth { get; private set; }
+        public BooleanType LengthLimitedTop { get; private set; }
+        public BooleanType LengthLimitedBottom { get; private set; }
+
+        public double ShapeRadius { get; private set; }
+        public TenonShapeType Shapetype { get; private set; }
+
+
+        public BTLMortise(Plane _workPlane, double _width, double _length, double _depth, BooleanType _lengthLimitedTop, BooleanType _lengthLimitedBottom, int _shapetype, double _radius)
+        {
+            WorkPlane = _workPlane;
+            Width = _width;
+            Depth = _depth;
+            Length = _length;
+            LengthLimitedTop = _lengthLimitedTop;
+            LengthLimitedBottom = _lengthLimitedBottom;
+            ShapeRadius = _radius;
+
+            TenonMode = TenonMode.PlaneMode;
+            if (_shapetype < 0 || _shapetype > 4)
+            {
+                _shapetype = 0;
+            }
+            if (_shapetype == 0) { Shapetype = TenonShapeType.automatic; }
+            if (_shapetype == 1) { Shapetype = TenonShapeType.square; }
+            if (_shapetype == 2) { Shapetype = TenonShapeType.round; }
+            if (_shapetype == 3) { Shapetype = TenonShapeType.rounded; }
+            if (_shapetype == 4) { Shapetype = TenonShapeType.radius; }
+
+
+
+
+        }
+
+
+
+
+
+        public PerformedProcess DelegateProcess(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode)
+        {
+
+
+
+            //Calculating tenontplane, width/ height depth here if needed
+
+            //Finding the refside's negative z-axis that has a has the smallest angle compared to the Z-axis of the Mortise-plane
+            List<Refside> Refsides = _BTLPartGeometry.Refsides;
+
+
+            Refside Refside = Refsides[0];
+            Vector3d TenonLengthVector = WorkPlane.ZAxis;  
+            Vector3d RefsideAngle = new Vector3d();
+            double smallestAngle = 1000;
+            foreach (Refside side in Refsides)  //Cycling through refsides and choosing the one with smallest angle
+            {
+                RefsideAngle = -side.RefPlane.ZAxis;
+
+                double angle = Vector3d.VectorAngle(TenonLengthVector, RefsideAngle);
+                if (angle < smallestAngle)
+                {
+                    smallestAngle = angle;
+                    Refside = side;
+                }
+            }
+
+
+
+            Plane RefPlane = Refside.RefPlane;
+            Point3d LocalStartPoint = new Point3d();
+            RefPlane.RemapToPlaneSpace(WorkPlane.Origin, out LocalStartPoint);
+
+
+            
+
+
+            MortiseType Mortise = new MortiseType();
+            Mortise.Name = "Tenon";
+            Mortise.StartX = LocalStartPoint.X;
+            Mortise.StartY = LocalStartPoint.Y;
+            Mortise.StartDepth = Math.Abs(LocalStartPoint.Z);
+            Mortise.LengthLimitedBottom = LengthLimitedBottom;
+            Mortise.LengthLimitedTop = LengthLimitedTop;
+            Mortise.Length = Length;
+            Mortise.Width = Width;
+            Mortise.Depth = Depth;
+            Mortise.Shape = Shapetype;
+            Mortise.ShapeRadius = ShapeRadius;
+
+            double Angle;
+            double Inclination;
+            double Slope;
+            OrientationType test = BTLFunctions.GeneratePlaneAnglesParallell(RefPlane, WorkPlane, out Angle, out Inclination, out Slope);
+
+
+            Mortise.Angle = Angle;
+            Mortise.Inclination = Inclination;
+            Mortise.Slope = Slope;
+            Mortise.ReferencePlaneID = Refside.RefSideID;
+
+            //Making intervals for tenonshape
+            Interval Topwidth = new Interval(-Width / 2, Width / 2);
+            Interval BtmWidth = Topwidth; //Not Mortise for tenon, but simplifies the code
+            Interval LengthInterval = new Interval(-500, Length);
+
+
+
+
+            
+
+            Brep MortiseShape = GenerateTenonShape(WorkPlane, Depth, BtmWidth, Topwidth, LengthInterval, Shapetype, ShapeRadius);
+
+            
+
+            return new PerformedProcess(Mortise, MortiseShape);
+
+        }
+
+        public static Brep GenerateTenonShape(Plane _localPlane, double _height, Interval _BottomWidth, Interval _TopWidth, Interval _length, TenonShapeType Type, double Radius)
+        {
+            Point3d CenterTopPt = _localPlane.Origin;
+            _localPlane.RemapToPlaneSpace(_localPlane.Origin, out CenterTopPt);
+            Point3d LeftTopPt = new Point3d(CenterTopPt);
+            Point3d RightTopPt = new Point3d(CenterTopPt);
+            Point3d LeftBtmPt = new Point3d(CenterTopPt);
+            Point3d RightBtmPt = new Point3d(CenterTopPt);
+
+            LeftTopPt.X = RightTopPt.X = _length.T0;
+            LeftBtmPt.X = RightBtmPt.X = _length.T1;
+
+            LeftTopPt.Y = _TopWidth.T0;
+            RightTopPt.Y = _TopWidth.T1;
+            LeftBtmPt.Y = _BottomWidth.T0;
+            RightBtmPt.Y = _BottomWidth.T1;
+
+            List<double> widhts = new List<double>();
+            widhts.Add(_TopWidth.T1);
+            widhts.Add(_BottomWidth.T1);
+            widhts.Sort();
+
+            if (Type == TenonShapeType.round || Radius >= widhts[0])
+            {
+
+                Radius = widhts[0] - .01;
+            }
+
+
+
+
+
+            Interval NormalizedInterval = new Interval(0, 1);
+            Curve Topline = new Line(LeftTopPt, RightTopPt).ToNurbsCurve();
+            Curve BtmLine = new Line(LeftBtmPt, RightBtmPt).ToNurbsCurve();
+            Curve LeftLine = new Line(LeftBtmPt, LeftTopPt).ToNurbsCurve();
+            Curve RightLine = new Line(RightBtmPt, RightTopPt).ToNurbsCurve();
+
+            List<Curve> AllCurves = new List<Curve>();
+
+            if (Type == TenonShapeType.square)
+            {
+                AllCurves.Add(Topline);
+                AllCurves.Add(BtmLine);
+                AllCurves.Add(LeftLine);
+                AllCurves.Add(RightLine);
+            }
+
+
+
+            else
+            {
+                Topline.Domain = BtmLine.Domain = LeftLine.Domain = RightLine.Domain = NormalizedInterval;
+
+                Curve[] Toplines = Topline.Split(0.5);
+                Curve[] BtmLines = BtmLine.Split(0.5);
+                Curve[] LeftLines = LeftLine.Split(0.5);
+                Curve[] RightLines = RightLine.Split(0.5);
+                Toplines[0].Reverse();
+                RightLines[0].Reverse();
+                BtmLines[0].Reverse();
+                LeftLines[0].Reverse();
+
+                Curve[] TopRight = Curve.CreateFilletCurves(Toplines[1], RightTopPt, RightLines[1], RightTopPt, Radius, true, true, false, CommonProps.tolerances, CommonProps.tolerances);
+                Curve[] TopLeft = Curve.CreateFilletCurves(Toplines[0], Toplines[0].PointAtStart, LeftLines[1], LeftLines[1].PointAtEnd, Radius, true, true, false, CommonProps.tolerances, CommonProps.tolerances);
+                Curve[] BtmRight = Curve.CreateFilletCurves(BtmLines[1], RightBtmPt, RightLines[0], RightBtmPt, Radius, true, true, false, CommonProps.tolerances, CommonProps.tolerances);
+                Curve[] BtmLeft = Curve.CreateFilletCurves(BtmLines[0], LeftBtmPt, LeftLines[0], LeftBtmPt, Radius, true, true, false, CommonProps.tolerances, CommonProps.tolerances);
+
+
+
+                AllCurves.Add(TopRight[0]);
+                AllCurves.Add(TopLeft[0]);
+                AllCurves.Add(BtmRight[0]);
+                AllCurves.Add(BtmLeft[0]);
+            }
+
+
+
+
+
+
+            Curve[] JoinedCurve = Curve.JoinCurves(AllCurves);
+            if (JoinedCurve[0].IsClosed)
+            {
+                Extrusion Tenonshape = Extrusion.Create(JoinedCurve[0], -_height, true);
+
+                Tenonshape.Transform(Transform.PlaneToPlane(Plane.WorldXY, _localPlane));
+                return Tenonshape.ToBrep();
+            }
+            else
+            {
+                return new Brep();
+            }
 
 
 
@@ -662,17 +1034,15 @@ namespace PTK
 
 
 
-}
-
-        
-    
-
-    
+    }
 
 
 
-        
-    
+
+
+
+
+
 
 
 }

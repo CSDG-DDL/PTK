@@ -287,18 +287,23 @@ namespace PTK
                     
                     PerformedProcess PerformedProcess = Perform(BTLPartGeometry, _mode);
 
-                    if (_mode == ManufactureMode.BTL || _mode==ManufactureMode.BOTH)
+                    if (PerformedProcess != null)
                     {
+                        if (_mode == ManufactureMode.BTL || _mode == ManufactureMode.BOTH)
+                        {
 
-                        AllProcessings.Add(PerformedProcess.BTLProcess);
-                        
+                            AllProcessings.Add(PerformedProcess.BTLProcess);
+
+                        }
+
+                        if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
+                        {
+                            VoidProcess.Add(PerformedProcess.VoidProcess);
+
+                        }
                     }
 
-                    if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
-                    {
-                        VoidProcess.Add(PerformedProcess.VoidProcess);
-                        
-                    }
+                    
                  
                 }
 
