@@ -25,15 +25,15 @@ namespace PTK
             var elemset = new List<Karamba.Utilities.ElemSet>();
 
 
-            points = _strAssembly.Assembly.Nodes.ConvertAll(n => n.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters));
+            points = _strAssembly.Nodes.ConvertAll(n => n.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters));
             
-            foreach(KeyValuePair<CrossSection,MaterialProperty> kvp in _strAssembly.Assembly.CrossSectionMap)
+            foreach(var sec in _strAssembly.CrossSections)
             {
-                if (!materialMap.ContainsKey(kvp.Value))
+                if (!materialMap.ContainsKey(sec.MaterialProperty))
                 {
-                    materialMap.Add(kvp.Value, MakeFemMaterial(kvp.Value));
+                    materialMap.Add(sec.MaterialProperty, MakeFemMaterial(sec.MaterialProperty));
                 }
-                crosecMap.Add(kvp.Key, MakeCrossSection(kvp.Key, materialMap[kvp.Value]));
+                crosecMap.Add(sec, MakeCrossSection(sec, materialMap[sec.MaterialProperty]));
             }
 
             foreach(Support s in _strAssembly.Supports)
@@ -61,20 +61,24 @@ namespace PTK
                 }
             }
 
-            foreach(Element1D e in _strAssembly.Assembly.Elements)
+            foreach(Element1D e in _strAssembly.Elements)
             {
-                var paramList = _strAssembly.Assembly.SearchNodeParamsAtElement(e);
+                var paramList = _strAssembly.SearchNodeParamsAtElement(e);
                 for (int i = 0; i <= paramList.Count-2; i++ )
                 {
                     var elem = new Karamba.Elements.GrassBeam(
                         e.BaseCurve.PointAt(paramList[i]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters), 
                         e.BaseCurve.PointAt(paramList[i + 1]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)
                         );
-                    //var s = crosecMap[e.Element.Sections[0]];
-                    //s.ecce_loc = new Vector3d(e.Element.Align.OffsetY, e.Element.Align.OffsetZ,0);
-                    elem.crosec = crosecMap[e.CrossSections[0]]; 
-                    //At present it is supposed to be one section material
-                    //elem.z_ori
+                    //複合断面暫定対応
+                    if(e.CrossSection is Composite comp)
+                    {
+                        elem.crosec = crosecMap[comp.SubCrossSections[0]];
+                    }
+                    else
+                    {
+                        elem.crosec = crosecMap[e.CrossSection]; 
+                    }
                     elems.Add(elem);
                 }
             }

@@ -7,10 +7,10 @@ using Rhino.Geometry;
 
 namespace PTK
 {
-    public class PTK_RectangularCrossSection : GH_Component
+    public class PTK_CircularCrossSection : GH_Component
     {
-        public PTK_RectangularCrossSection()
-          : base("Rectangular Cross Section", "RectSec",
+        public PTK_CircularCrossSection()
+          : base("Circular Cross Section", "CirCroSec",
               "CrossSection is being generated based on width, height, alignment and height-direction ",
               CommonProps.category, CommonProps.subcate2)
         {
@@ -19,9 +19,8 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item, "Not Named RectCroSec");
-            pManager.AddNumberParameter("Width", "W", "", GH_ParamAccess.item,100);  
-            pManager.AddNumberParameter("Height", "H", "", GH_ParamAccess.item,100);
+            pManager.AddTextParameter("Name", "N", "Add Cross Section Name", GH_ParamAccess.item, "Not Named CirCroSec");
+            pManager.AddNumberParameter("Radius", "R", "", GH_ParamAccess.item,100);
             pManager.AddParameter(new Param_MaterialProperty(), "Material properties", "M", "Add material properties", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Alignment(), "Alignment", "A", "Local Alignment", GH_ParamAccess.item);
 
@@ -29,7 +28,6 @@ namespace PTK
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
-            pManager[4].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -41,8 +39,7 @@ namespace PTK
         {
             // --- variables ---
             string name = null;
-            double width = new double();
-            double height = new double();
+            double radius = new double();
             GH_MaterialProperty gMaterial = null;
             MaterialProperty material = null;
             GH_Alignment gAlignment = null;
@@ -50,15 +47,14 @@ namespace PTK
 
             // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
-            if (!DA.GetData(1, ref width)) { return; }
-            if (!DA.GetData(2, ref height)) { return; }
-            if (!DA.GetData(3, ref gMaterial)) { return; }
+            if (!DA.GetData(1, ref radius)) { return; }
+            if (!DA.GetData(2, ref gMaterial)) { return; }
             material = gMaterial.Value;
-            if (!DA.GetData(4, ref gAlignment)) { return; }
+            if (!DA.GetData(3, ref gAlignment)) { return; }
             alignment = gAlignment.Value;
 
             // --- solve ---
-            GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, material, height, width, alignment));
+            GH_CroSec sec = new GH_CroSec(new CircularCroSec(name, material, radius, alignment));
 
             // --- output ---
             DA.SetData(0, sec);
@@ -68,13 +64,13 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.RectangleCS;
+                return PTK.Properties.Resources.CircularCS;
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("59eb5896-0ccb-4e37-be5e-ba4ee7931ee1"); }
+            get { return new Guid("0CE57537-D208-4F70-93F2-055616F37675"); }
         }
     }
 }

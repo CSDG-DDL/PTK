@@ -18,7 +18,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Alignment Name", GH_ParamAccess.item, "Alignment");
+            pManager.AddTextParameter("Name", "N", "Alignment Name", GH_ParamAccess.item, "Not Named Alignment");
             pManager.AddNumberParameter("Offset Y", "Y", "Offset length local y", GH_ParamAccess.item, 0.0);
             pManager.AddNumberParameter("Offset Z", "Z", "Offset length local z", GH_ParamAccess.item, 0.0);
             pManager.AddNumberParameter("Rotation Angle", "R", "Rotational angle in degree", GH_ParamAccess.item, 0.0);

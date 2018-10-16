@@ -21,9 +21,10 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Element");
+            pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Not Named Element");
             pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Composite(), "Composite", "CP", "Add the sub-element component here", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_CroSec(), "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Alignment(), "Alignment", "A", "Global Alignment", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.list);
             pManager.AddParameter(new Param_Joint(), "Joint", "J", "Add joint", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Structural Priority", "P", "Add integer value to set the priority of the member", GH_ParamAccess.item, 0);
@@ -36,6 +37,7 @@ namespace PTK
             pManager[4].Optional = true;
             pManager[5].Optional = true;
             pManager[6].Optional = true;
+            pManager[7].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -48,8 +50,10 @@ namespace PTK
             // --- variables ---
             string tag = null;
             Curve curve = null;
-            GH_Composite gComposite = null;
-            Composite composite = null;
+            GH_CroSec gCroSec = null;
+            CrossSection crossSection = null;
+            GH_Alignment gAlignment = null;
+            Alignment alignment = null;
             List<GH_Force> gForces = new List<GH_Force>();
             List<Force> forces = null;
             List<GH_Joint> gJoints = new List<GH_Joint>();
@@ -60,9 +64,11 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
             if (!DA.GetData(1, ref curve)) { return; }
-            if (!DA.GetData(2, ref gComposite)) { return; }
-            composite = gComposite.Value;
-            if (!DA.GetDataList(3, gForces))
+            if (!DA.GetData(2, ref gCroSec)) { return; }
+            crossSection = gCroSec.Value;
+            if (!DA.GetData(3, ref gAlignment)) { return; }
+            alignment = gAlignment.Value;
+            if (!DA.GetDataList(4, gForces))
             {
                 forces = new List<Force>();
             }
@@ -70,7 +76,7 @@ namespace PTK
             {
                 forces = gForces.ConvertAll(f => f.Value);
             }
-            if (!DA.GetDataList(4, gJoints))
+            if (!DA.GetDataList(5, gJoints))
             {
                 joints = new List<Joint>();
             }
@@ -78,11 +84,11 @@ namespace PTK
             {
                 joints = gJoints.ConvertAll(j => j.Value);
             }
-            if (!DA.GetData(5, ref priority)) { return; }
-            if (!DA.GetData(6, ref intersect)) { return; }
+            if (!DA.GetData(6, ref priority)) { return; }
+            if (!DA.GetData(7, ref intersect)) { return; }
 
             // --- solve ---
-            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, forces, joints, composite, priority, intersect));
+            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, crossSection, alignment, forces, joints, priority, intersect));
 
             // --- output ---
             DA.SetData(0, elem);
