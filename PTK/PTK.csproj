@@ -74,7 +74,8 @@
     <Compile Include="Classes\Alignment.cs" />
     <Compile Include="Classes\Assembly.cs" />
     <Compile Include="Classes\BTLProcesssClasses.cs" />
-    <Compile Include="Classes\btlx_10.DesignerNew.cs" />
+    <Compile Include="Classes\btlx_10.cs" />
+   
     <Compile Include="Classes\Detail.cs" />
     <Compile Include="Classes\DetailingGroup.cs" />
     <Compile Include="Classes\DetailingGroupRules.cs" />
@@ -92,6 +93,8 @@
     <Compile Include="Classes\ParetoSolution.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
+    <Compile Include="Components\11_BTL_Drill.cs" />
+
     <Compile Include="Components\2_CompositeCrossSection.cs" />
     <Compile Include="Components\10_DefinitionDetailingGroup.cs" />
     <Compile Include="Components\10_Rule_ElementAmount.cs" />
@@ -171,9 +174,11 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\F01_Supports.resx">
       <DependentUpon>F01_Supports.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\F02_GAForm.resx">
       <DependentUpon>F02_GAForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ParaCoorForm.resx" />
     <EmbeddedResource Include="Forms\PSOForm.resx" />
