@@ -134,7 +134,7 @@ namespace PTK
             {
                 slope = 90;
                 inclination = 90;
-                angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis);
+                angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis,RefPlane);
                 return OrientationType.parallell;
             }
 
@@ -909,15 +909,24 @@ namespace PTK
             OrientationType test = BTLFunctions.GeneratePlaneAnglesParallell(RefPlane, WorkPlane, out Angle, out Inclination, out Slope);
 
 
-            Mortise.Angle = Angle;
-            Mortise.Inclination = Inclination;
-            Mortise.Slope = Slope;
+            if (Angle > Math.PI)
+            {
+                Angle = Math.PI - Angle;
+                if (Angle < 0)
+                {
+                    Angle = 0;
+                }
+            }
+
+            Mortise.Angle = Rhino.RhinoMath.ToDegrees(Angle);
+            Mortise.Inclination = Rhino.RhinoMath.ToDegrees(Inclination);
+            Mortise.Slope = Rhino.RhinoMath.ToDegrees(Slope);
             Mortise.ReferencePlaneID = Refside.RefSideID;
 
             //Making intervals for tenonshape
             Interval Topwidth = new Interval(-Width / 2, Width / 2);
             Interval BtmWidth = Topwidth; //Not Mortise for tenon, but simplifies the code
-            Interval LengthInterval = new Interval(-500, Length);
+            Interval LengthInterval = new Interval(0, Length);
 
 
 

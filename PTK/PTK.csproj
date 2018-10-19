@@ -115,6 +115,7 @@
     <Compile Include="Components\8_ExtractDetail.cs" />
     <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
     <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
+    <Compile Include="Components\11_BTL_Mortise.cs" />
     <Compile Include="Forms\F01_Supports.cs">
       <SubType>Form</SubType>
     </Compile>
