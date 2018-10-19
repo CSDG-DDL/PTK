@@ -144,6 +144,7 @@ namespace PTK
                     break;
             }
         }
+        //MARCINMATKA
 
         private bool IsNodeEndPointAtElement(Element1D _element)
         {
