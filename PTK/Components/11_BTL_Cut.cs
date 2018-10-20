@@ -20,6 +20,9 @@ namespace PTK
         {
             pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Cut Plane", "P", "Cut Plane", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Flip Plane?", "F", "True flip plane", GH_ParamAccess.item);
+
+            pManager[0].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -32,11 +35,23 @@ namespace PTK
             // --- variables ---
             GH_Element1D gElement = null;
             Plane Plane = new Plane();
+            bool Flip = false;
 
             // --- input --- 
             if (!DA.GetData(0, ref gElement)) { return; }
             Element1D element = gElement.Value;
             if (!DA.GetData(1, ref Plane)) { return; }
+
+            DA.GetData(0, ref Flip);
+
+            if (Flip)
+            {
+                Plane = new Plane(Plane.Origin, -Plane.ZAxis);
+            }
+
+
+
+
 
             // --- solve ---
             BTLCut cut = new BTLCut(Plane);

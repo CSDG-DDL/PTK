@@ -13,8 +13,10 @@
 // 
 namespace PTK {
     using System.Xml.Serialization;
+    using System.Xml.Schema;
+
     
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
     [System.SerializableAttribute()]
@@ -23,6 +25,13 @@ namespace PTK {
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.design2machine.com")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.design2machine.com", IsNullable=false)]
     
+
+
+
+
+
+
+
     public partial class BTLx {
         
         private BTLxFileHistory fileHistoryField;
@@ -32,7 +41,11 @@ namespace PTK {
         private BTLxVersion versionField;
         
         private string languageField;
+
         
+
+        
+
         /// <remarks/>
         public BTLxFileHistory FileHistory {
             get {
@@ -52,7 +65,27 @@ namespace PTK {
                 this.projectField = value;
             }
         }
-        
+
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(Form = System.Xml.Schema.XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
+        public string schemaLocation
+        {
+            get
+            {
+                return "http://www.design2machine.com http://www.design2machine.com/btlx/btlx_10.xsd";
+            }
+            set
+            {
+                
+            }
+        }
+
+
+
+        //[System.Xml.Serialization.XmlAttributeAttribute( Namespace = "xsi" ,AttributeName = "schemaLocation")]
+        //public string schemaLocation = "http://www.design2machine.com http://www.design2machine.com/btlx/btlx_10.xsd";
+
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public BTLxVersion Version {
@@ -74,6 +107,10 @@ namespace PTK {
                 this.languageField = value;
             }
         }
+
+        
+
+
     }
     
     /// <remarks/>
@@ -82,6 +119,8 @@ namespace PTK {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.design2machine.com")]
+    
+
     public partial class BTLxFileHistory {
         
         private ProgramInfoType initialExportProgramField;
@@ -775,7 +814,7 @@ namespace PTK {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
-    [System.SerializableAttribute()]
+    [System.SerializableAttribute( )]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.design2machine.com")]
     public enum OrientationType {
         
