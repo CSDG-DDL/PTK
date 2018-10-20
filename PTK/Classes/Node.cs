@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Karamba.Utilities;
 using Rhino.Geometry;
 
 
@@ -12,14 +13,17 @@ namespace PTK
     {
         // --- field ---
         public Point3d Point { get; private set; } = new Point3d();
+        public Plane NodePlane { get; private set;}
 
-        // --- constructors --- 
-        public Node() { }
+
+    // --- constructors --- 
+    public Node() { }
         public Node(Point3d _point)
         {
             Point = _point;
+            NodePlane = new Plane(Point, new Vector3d(0,0,1));
         }
-
+        
         // --- methods ---
         public bool Equals(Node _other)
         {

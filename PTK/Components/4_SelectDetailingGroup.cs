@@ -39,10 +39,10 @@ namespace PTK.Components
             int priorityKey = 0;
 
             // --- input --- 
-            if (DA.GetData(0, ref ghAssembly)) { return; }
+            if (!DA.GetData(0, ref ghAssembly)) { return; }
             assembly = ghAssembly.Value;
-            if (DA.GetData(1, ref name)) { return; }
-            if (DA.GetData(2, ref priorityKey)) { return; }
+            if (!DA.GetData(1, ref name)) { return; }
+            if (!DA.GetData(2, ref priorityKey)) { return; }
 
             //Until now, the slider is a hypothetical object.
             // This command makes it 'real' and adds it to the canvas.
