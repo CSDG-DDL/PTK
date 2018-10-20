@@ -36,6 +36,9 @@
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GH_IO">
       <HintPath>..\..\Library\GH_IO.dll</HintPath>
@@ -50,7 +53,10 @@
       <HintPath>..\..\Library\karamba.gha</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="RhinoCommon">
       <HintPath>..\..\Library\RhinoCommon.dll</HintPath>
       <Private>False</Private>
@@ -92,6 +98,7 @@
     <Compile Include="Classes\CommonProps.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
     <Compile Include="Classes\SubElement.cs" />
+    <Compile Include="Components\10_Rule_ElementTag.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
@@ -116,6 +123,7 @@
     <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
     <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
     <Compile Include="Components\11_BTL_Mortise.cs" />
+    <Compile Include="Components\10_Rule_ElementAngle.cs" />
     <Compile Include="Forms\F01_Supports.cs">
       <SubType>Form</SubType>
     </Compile>
