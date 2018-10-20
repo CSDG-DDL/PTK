@@ -69,7 +69,7 @@ namespace PTK
         public static OrientationType GeneratePlaneAnglesPerp(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double rotation)  //used when when plane is closed to perpendicular to refplane
         {
             double PlaneANgle = Math.Abs( Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
-            if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances);
+            if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances)
             {
                 angle = 0;
                 inclination = 0;
@@ -130,32 +130,26 @@ namespace PTK
         public static OrientationType GeneratePlaneAnglesParallell(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double slope)  //used when when plane is closed to parallell to refplane
         {
             double PlaneANgle = Math.Abs(Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
-            if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances) ;
+            if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances)
             {
-                slope = 90;
-                inclination = 90;
+                slope = Math.PI/2;
+                inclination = Math.PI/2;
                 angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis,RefPlane);
                 return OrientationType.parallell;
             }
 
-            angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis);
+            angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis,RefPlane);
 
             Plane AlignedRefPlane = new Plane(RefPlane);
             AlignedRefPlane.Rotate(angle, AlignedRefPlane.ZAxis);
 
-            Plane SlopePlane = new Plane(Inputplane.Origin, AlignedRefPlane.YAxis);
-            slope = Vector3d.VectorAngle(Inputplane.ZAxis, -RefPlane.XAxis, SlopePlane);
+            Plane SlopePlane = new Plane(Inputplane.Origin, -AlignedRefPlane.YAxis);
+            slope = Vector3d.VectorAngle(-RefPlane.XAxis, Inputplane.ZAxis, SlopePlane);
 
-            Plane inclinationPlane = new Plane(Inputplane.Origin, Inputplane.XAxis);
-            inclination = Vector3d.VectorAngle(Inputplane.ZAxis, SlopePlane.ZAxis, inclinationPlane);
+            Plane inclinationPlane = new Plane(Inputplane.Origin, -Inputplane.XAxis);
+            inclination = Vector3d.VectorAngle(-SlopePlane.ZAxis, Inputplane.ZAxis , inclinationPlane);
 
             return OrientationType.start;
-
-
-
-
-            
-
 
 
         }
@@ -358,6 +352,8 @@ namespace PTK
             {
                 return null;
             }
+
+            
 
 
             //Flipping line if incorrect direction. 
@@ -880,9 +876,21 @@ namespace PTK
                 }
             }
 
+            
+
 
 
             Plane RefPlane = Refside.RefPlane;
+
+            if (Math.PI< Vector3d.VectorAngle(RefPlane.XAxis, WorkPlane.XAxis, RefPlane))
+            {
+                WorkPlane.Translate(WorkPlane.XAxis * Length);
+                WorkPlane.Rotate(Math.PI, WorkPlane.ZAxis);
+                
+
+            }
+
+
             Point3d LocalStartPoint = new Point3d();
             RefPlane.RemapToPlaneSpace(WorkPlane.Origin, out LocalStartPoint);
 
@@ -890,8 +898,10 @@ namespace PTK
             
 
 
-            MortiseType Mortise = new MortiseType();
-            Mortise.Name = "Tenon";
+
+
+                MortiseType Mortise = new MortiseType();
+            Mortise.Name = "Mortise";
             Mortise.StartX = LocalStartPoint.X;
             Mortise.StartY = LocalStartPoint.Y;
             Mortise.StartDepth = Math.Abs(LocalStartPoint.Z);
