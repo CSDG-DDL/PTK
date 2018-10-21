@@ -26,8 +26,7 @@ namespace PTK.Components
             pManager.AddIntegerParameter("Min Amount", "<", "Minimum element amount allowed", GH_ParamAccess.item, -1);
             pManager.AddIntegerParameter("Max Amount", ">", "Maximum element amount allowed", GH_ParamAccess.item, 10000000);
         }
-
-
+        
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>

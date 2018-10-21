@@ -8,6 +8,8 @@ using feb;
 using Rhino.Geometry;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Rhino.DocObjects;
+using Rhino.Geometry.Intersect;
 
 namespace PTK.Rules
 
@@ -104,39 +106,54 @@ namespace PTK.Rules
     {
         // --- field ---
         public List<Curve> Polycurves { get; private set; }
+        public double MaxDist = 9999999;
 
         // --- constructors --- 
-        public NodeHitRegion(List<Curve> _polyCurves)
+        public NodeHitRegion(List<Curve> _polyCurves, double _maxDist)
         {
-            Polycurves = new List<Curve>();
+            Polycurves = _polyCurves;
+            MaxDist = _maxDist;
         }
 
         // --- methods ---
         public bool check(Detail _detail)
+        
         //This method checks if the node point is in the regions or not.
         {
             Detail detail = _detail;
             Node node = detail.Node;
             List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
-
-            double tolerance = CommonProps.tolerances; ;
+            Point3d point = node.Point;
+            Point3d point2;
+            double tolerance = CommonProps.tolerances;
             Plane Curveplane = new Plane();
 
             for (int i = 0; i < Polycurves.Count; i++)
             {
                 Curve polycurve = Polycurves[i];
+
+
                 if (polycurve.TryGetPlane(out Curveplane))
                 {
-                    PointContainment relationship = polycurve.Contains(node.Point, Curveplane, tolerance);
+                    point2 = Curveplane.ClosestPoint(point);
+
+                if (point.DistanceTo(point2) >= MaxDist)
+                {
+                    return false;
+                }
+                    {
+                    PointContainment relationship = polycurve.Contains(point2, Curveplane, tolerance);
                     if (relationship == PointContainment.Inside || relationship == PointContainment.Coincident)
                     {
-                        if (Curveplane.DistanceTo(node.Point) < tolerance)
+                        if (Curveplane.DistanceTo(point2) < tolerance)
                         {
                             return true;
                         }
                     }
+                    }
                 }
             }
+
             return false;
         }
     }
@@ -284,19 +301,19 @@ namespace PTK.Rules
    
             if (_elems.Count <= 1)
             {
-                return false;
+            return false;
             }
                 
             for (int i = 0; i < _elems.Count; i++)
             {
-                //Creates a unitized vector of each element, starting in the node,
-                Curve basecurve = _elems[i].BaseCurve;
-                basecurve.Domain = new Interval(0,1);
-                Point3d pointOnElement = basecurve.PointAt(0.5);
-                pointsOnElement.Add(pointOnElement);
-                Line elementLine = new Line(_node.Point, pointOnElement);
-                Vector3d _elementVector = elementLine.Direction;
-                elementVectors.Add(_elementVector);
+            //Creates a unitized vector of each element, starting in the node,
+            Curve basecurve = _elems[i].BaseCurve;
+            basecurve.Domain = new Interval(0,1);
+            Point3d pointOnElement = basecurve.PointAt(0.5);
+            pointsOnElement.Add(pointOnElement);
+            Line elementLine = new Line(_node.Point, pointOnElement);
+            Vector3d _elementVector = elementLine.Direction;
+            elementVectors.Add(_elementVector);
                 
             }
             //Creates a nodePlane 
@@ -326,9 +343,9 @@ namespace PTK.Rules
 
             foreach (Point3d point in pointsOnElement)
             {
-                double t;
-                sortingCircle.ClosestPoint(point, out t);
-                ts.Add(t);
+            double t;
+            sortingCircle.ClosestPoint(point, out t);
+            ts.Add(t);
             }
 
             var circleDictionoary = new Dictionary<double, Vector3d>();
@@ -339,7 +356,7 @@ namespace PTK.Rules
             List<Vector3d> sortVectors = new List<Vector3d>();
             for (int i = 0; i < count; i++)
             {
-                sortVectors.Add(circleDictionoary[ts[i]]);
+            sortVectors.Add(circleDictionoary[ts[i]]);
             }
             
             ////Finds angles between each element and the x-axis on the nodeplane. Adds to a dictionary and sorts according to the angle.
@@ -360,10 +377,8 @@ namespace PTK.Rules
             //{
             //    sortedVectors.Add(dictionary[angles[i]]);
             //}
-
-
-
-            //Adds anglesbetween to a list
+            
+            //Adding the angles between each element to a list
             List<double> anglesBetween = new List<double>();
 
             if (count == 2)
@@ -379,7 +394,7 @@ namespace PTK.Rules
                 double angleFirst = Vector3d.VectorAngle(sortVectors[count - 1], sortVectors[0]) * 180 / Math.PI;
                 anglesBetween.Add(angleFirst);
 
-                //Adds the angle between the others in a loop
+            //Adds the angle between the others in a loop
                 for (int i = 0; i < count - 1; i++)
                 {
                     double angleBetweenNext = Vector3d.VectorAngle(sortVectors[i], sortVectors[i + 1]) * 180 / Math.PI;
