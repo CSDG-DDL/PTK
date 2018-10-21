@@ -15,6 +15,8 @@ namespace PTK.Rules
     {
         public CheckGroupDelegate checkdelegate;
 
+
+
         public Rule(CheckGroupDelegate _checkdelegate)
         {
             checkdelegate = _checkdelegate;
@@ -334,62 +336,62 @@ namespace PTK.Rules
             {
                 sortedVectors.Add(pair.Value);
             }
-            //Check angle between last (count-1) and first(0) index manual
+            //Check angle between last(count-1) and first(0) index manual
 
-            //double angleBetweenNext = Vector3d.VectorAngle(sortedVectors[(sortedVectors.Count)-1], sortedVectors[0], nodePlane) * 180 / Math.PI;
-            //if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
-            //{
-            //    valid = true;
-            //}
-            //else
-            //{
-            //    return false;
-            //}
+            double angleBetweenNext = Vector3d.VectorAngle(sortedVectors[(sortedVectors.Count) - 1], sortedVectors[0], nodePlane) * 180 / Math.PI;
+            if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
+            {
+                valid = true;
+            }
+            else
+            {
+                return false;
+            }
 
-            ////Check angle between the others in loop
-            //for (int i = 0; i < sortedVectors.Count; i++)
-            //{
-            //    double _angleBetweenNext = 360;
-            //    Vector3d.VectorAngle(sortedVectors[i], sortedVectors[i + 1], nodePlane);
-            //    if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
-            //    {
-            //        valid = true;
-            //    }
-            //    else
-            //    {
-            //        return false;
-            //    }
+            //Check angle between the others in loop
+            for (int i = 0; i < sortedVectors.Count; i++)
+            {
+                double _angleBetweenNext = 360;
+                Vector3d.VectorAngle(sortedVectors[i], sortedVectors[i + 1], nodePlane);
+                if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
+                {
+                    valid = true;
+                }
+                else
+                {
+                    return false;
+                }
 
-            //}
+            }
 
-            //return valid;
+            return valid;
 
-            //angleBetweenNext = Math.Abs(Math.Atan2(sortedVectors[0].Y - sortedVectors[(sortedVectors.Count) - 1].Y, sortedVectors[0].X - sortedVectors[(sortedVectors.Count) - 1].X) * 180 / Math.PI);
-            //    if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
-            //    {
-            //        valid = true;
-            //    }
-            //    else
-            //    {
-            //        return false;
-            //    }
+            angleBetweenNext = Math.Abs(Math.Atan2(sortedVectors[0].Y - sortedVectors[(sortedVectors.Count) - 1].Y, sortedVectors[0].X - sortedVectors[(sortedVectors.Count) - 1].X) * 180 / Math.PI);
+            if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
+            {
+                valid = true;
+            }
+            else
+            {
+                return false;
+            }
 
-            //    for (int i = 0; i < sortedVectors.Count; i++)
-            //    {
-            //        angleBetweenNext = Math.Abs(Math.Atan2(sortedVectors[i + 1].Y - sortedVectors[i].Y, sortedVectors[i + 1].X - sortedVectors[i].X) * 180 / Math.PI);
-            //        if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
-            //        {
-            //            valid = true;
-            //        }
-            //        else
-            //        {
-            //            return false;
-            //        }
-            //    }
+            for (int i = 0; i < sortedVectors.Count; i++)
+            {
+                angleBetweenNext = Math.Abs(Math.Atan2(sortedVectors[i + 1].Y - sortedVectors[i].Y, sortedVectors[i + 1].X - sortedVectors[i].X) * 180 / Math.PI);
+                if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
+                {
+                    valid = true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
-            //    return valid;
+            return valid;
 
-            //
+
         }
     }
 

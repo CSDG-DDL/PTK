@@ -65,8 +65,100 @@ namespace PTK
 
         }
 
+        public static OrientationType GeneratePlaneAnglesPerp(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double rotation)
+        {
+            Line RefPlaneCutLine = new Line();
+            Vector3d RefPlaneCutVector = new Vector3d();
 
-        public static OrientationType GeneratePlaneAnglesPerp(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double rotation)  //used when when plane is closed to perpendicular to refplane
+            if (Rhino.Geometry.Intersect.Intersection.PlanePlane(RefPlane, Inputplane, out RefPlaneCutLine))
+            {
+                RefPlaneCutVector = RefPlaneCutLine.Direction;  //The intersectionline between the refplane and the inputplane
+
+                double RefXCutPlaneAngle = Vector3d.VectorAngle(RefPlane.YAxis, RefPlaneCutVector);
+
+                if (RefXCutPlaneAngle > Math.PI/2)    //Aligning the refplane line with the y-vector of the refplane
+                {
+                    RefPlaneCutVector = -RefPlaneCutVector;
+                }
+
+
+                OrientationType Type;
+                
+                Plane NormalCutLinePlane = new Plane(RefPlane.Origin, -RefPlaneCutVector);   //A plane with normalplane paralell to cutline. Facing towards refedge (oposite of refplane.yaxis)
+
+
+                double NormalAngle = Vector3d.VectorAngle(RefPlane.XAxis, -Inputplane.ZAxis);
+
+                if (NormalAngle<= Math.PI/2)
+                {
+                    
+                    angle = Vector3d.VectorAngle(RefPlane.XAxis, RefPlaneCutVector, RefPlane);
+                    if (angle > Math.PI)
+                    {
+                        int i = 12;
+                    }
+                    inclination = Vector3d.VectorAngle(Inputplane.XAxis, RefPlane.XAxis, NormalCutLinePlane);
+                    if (inclination > Math.PI)
+                    {
+                        int i = 12;
+                    }
+                    rotation = Vector3d.VectorAngle(Inputplane.XAxis, -RefPlaneCutVector);
+                    if (rotation > Math.PI)
+                    {
+                        int i = 12;
+                    }
+                    return OrientationType.start;
+
+                }
+                else
+                {
+                    
+                    angle = Vector3d.VectorAngle(RefPlaneCutVector, -RefPlane.XAxis, RefPlane);
+                    if (angle > Math.PI)
+                    {
+                        int i = 12;
+                    }
+
+                    inclination = Vector3d.VectorAngle(-RefPlane.XAxis, Inputplane.XAxis, NormalCutLinePlane);
+                    if (inclination > Math.PI)
+                    {
+                        int i = 12;
+                    }
+                    rotation = Vector3d.VectorAngle(-RefPlaneCutVector, Inputplane.XAxis);
+                    if (rotation > Math.PI)
+                    {
+                        int i = 12;
+                    }
+
+                    return OrientationType.end;
+                }
+                
+
+                
+
+
+            }
+            angle = 0;
+            inclination = 0;
+            rotation = 0;
+
+            return OrientationType.error;
+
+
+            
+
+            
+
+
+
+
+
+
+        }
+
+
+
+        public static OrientationType GeneratePlaneAnglesPerpOld(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double rotation)  //used when when plane is closed to perpendicular to refplane
         {
             double PlaneANgle = Math.Abs( Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
             if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances)
@@ -99,11 +191,17 @@ namespace PTK
 
                 rotation = Vector3d.VectorAngle(AnglePlane.XAxis, -AngleVector, AnglePlane);
 
-                if (Vector3d.VectorAngle(RefPlane.XAxis, AnglePlane.ZAxis) < Math.PI / 2)
+                //if (Vector3d.VectorAngle(RefPlane.XAxis, AnglePlane.ZAxis, RefPlane) < Math.PI / 2)
+                if (rotation > Math.PI)
+                {
+                    rotation = Math.PI - rotation;
+                }
+                if (angle>Math.PI)
                 {
                     orientationtype = OrientationType.end;
                     angle = Math.PI - angle;
                     inclination = Math.PI - angle;
+                    
                     return orientationtype;
 
                 }
@@ -130,7 +228,7 @@ namespace PTK
         public static OrientationType GeneratePlaneAnglesParallell(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double slope)  //used when when plane is closed to parallell to refplane
         {
             double PlaneANgle = Math.Abs(Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
-            if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances)
+            if (PlaneANgle < CommonProps.tolerances )
             {
                 slope = Math.PI/2;
                 inclination = Math.PI/2;
@@ -634,8 +732,11 @@ namespace PTK
             }
 
 
-
             Plane RefPlane = Refside.RefPlane;
+
+            
+
+
             Point3d LocalStartPoint = new Point3d();
             RefPlane.RemapToPlaneSpace(TenonPlane.Origin, out LocalStartPoint);
 
@@ -644,7 +745,7 @@ namespace PTK
             double Inclination;
             double Rotation;
 
-            BTLFunctions.GeneratePlaneAnglesPerp(RefPlane, TenonPlane, out Angle, out Inclination, out Rotation);
+            OrientationType type = BTLFunctions.GeneratePlaneAnglesPerp(RefPlane, TenonPlane, out Angle, out Inclination, out Rotation);
 
 
             TenonType Tenon = new TenonType();
@@ -652,7 +753,7 @@ namespace PTK
             Tenon.StartX = LocalStartPoint.X;
             Tenon.StartY = LocalStartPoint.Y;
             Tenon.StartDepth = Math.Abs(LocalStartPoint.Z);
-            Tenon.Orientation = OrientationType.start;
+            Tenon.Orientation = type;
             Tenon.LengthLimitedBottom = LengthLimitedBottom;
             Tenon.LengthLimitedTop = LengthLimitedTop;
             Tenon.Length = Length;
@@ -876,31 +977,30 @@ namespace PTK
                 }
             }
 
+
             
 
 
 
             Plane RefPlane = Refside.RefPlane;
 
-            if (Math.PI< Vector3d.VectorAngle(RefPlane.XAxis, WorkPlane.XAxis, RefPlane))
-            {
-                WorkPlane.Translate(WorkPlane.XAxis * Length);
-                WorkPlane.Rotate(Math.PI, WorkPlane.ZAxis);
-                
+            double TestAngle = Vector3d.VectorAngle(RefPlane.XAxis, WorkPlane.XAxis, RefPlane);
 
+            if (TestAngle > Math.PI)
+            {
+                WorkPlane.Translate(new Vector3d(WorkPlane.XAxis * Length));
+                WorkPlane.Rotate(-Math.PI, WorkPlane.ZAxis, WorkPlane.Origin);
+                
             }
 
+
+            double angled = Vector3d.VectorAngle(RefPlane.XAxis, WorkPlane.XAxis, RefPlane);
 
             Point3d LocalStartPoint = new Point3d();
             RefPlane.RemapToPlaneSpace(WorkPlane.Origin, out LocalStartPoint);
 
-
             
-
-
-
-
-                MortiseType Mortise = new MortiseType();
+            MortiseType Mortise = new MortiseType();
             Mortise.Name = "Mortise";
             Mortise.StartX = LocalStartPoint.X;
             Mortise.StartY = LocalStartPoint.Y;
@@ -919,14 +1019,7 @@ namespace PTK
             OrientationType test = BTLFunctions.GeneratePlaneAnglesParallell(RefPlane, WorkPlane, out Angle, out Inclination, out Slope);
 
 
-            if (Angle > Math.PI)
-            {
-                Angle = Math.PI - Angle;
-                if (Angle < 0)
-                {
-                    Angle = 0;
-                }
-            }
+            
 
             Mortise.Angle = Rhino.RhinoMath.ToDegrees(Angle);
             Mortise.Inclination = Rhino.RhinoMath.ToDegrees(Inclination);

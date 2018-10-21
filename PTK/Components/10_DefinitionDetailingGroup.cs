@@ -26,7 +26,7 @@ namespace PTK.Components
             pManager.AddTextParameter("DetailingGroup Name", "N", "Add Detailing Group Name. Used as key to select detailing groups", GH_ParamAccess.item,"N/A");
             pManager.AddGenericParameter("True Rules", "=", "Add rules that are true for the details in the detailing group", GH_ParamAccess.list);
             pManager.AddGenericParameter("False Rules", "≠", "Add rules that are false for the details in the detailing group", GH_ParamAccess.list);
-            pManager.AddGenericParameter("NodeProperties", "馬鹿 :`(", "Not implemented in 0.5", GH_ParamAccess.list);
+            pManager.AddGenericParameter("NodePlaneRule", "馬鹿 :`(", "Not implemented in 0.5", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -56,16 +56,18 @@ namespace PTK.Components
 
             List<CheckGroupDelegate> TrueRules = new List<CheckGroupDelegate>();
             List<CheckGroupDelegate> FalseRules = new List<CheckGroupDelegate>();
-
+            PlaneRules.PlaneRule PlaneRule = new PlaneRules.PlaneRule();
 
             //Input 
             DA.GetData(0, ref Name);
             DA.GetDataList(1, TrueRulesObjects);
             DA.GetDataList(2, FalseRulesObjects);
+            DA.GetData(3, ref PlaneRule);
+
 
 
             //Extracting delegates to list from objects
-            foreach(Rules.Rule R in TrueRulesObjects)
+            foreach (Rules.Rule R in TrueRulesObjects)
             {
                 TrueRules.Add(R.checkdelegate);
             }
@@ -75,7 +77,7 @@ namespace PTK.Components
             }
 
             //Solve 
-            DetailingGroupRulesDefinition Definition = new DetailingGroupRulesDefinition(Name, TrueRules, FalseRules);
+            DetailingGroupRulesDefinition Definition = new DetailingGroupRulesDefinition(Name, TrueRules, FalseRules, PlaneRule);
 
 
             //Output

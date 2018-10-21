@@ -825,6 +825,8 @@ namespace PTK {
         end,
 
         parallell,
+
+        error,
     }
     
     /// <remarks/>

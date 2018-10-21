@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rhino.Geometry;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 namespace PTK
 {
@@ -28,6 +31,7 @@ namespace PTK
     // ----------------
     //     Delegate    
     // ----------------
+    public delegate Plane GenerateNodeGroupPlane(Detail detail);
     public delegate bool CheckGroupDelegate(Detail detail);
     public delegate PerformedProcess PerformTimberProcessDelegate(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode);
 
