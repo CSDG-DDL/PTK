@@ -49,16 +49,16 @@
       <HintPath>Library\Grasshopper.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="karamba">
-      <HintPath>Library\karamba.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Library\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RhinoCommon">
       <HintPath>Library\RhinoCommon.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="karamba">
+      <HintPath>Library\karamba.gha</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -97,6 +97,7 @@
     <Compile Include="Classes\Node.cs" />
     <Compile Include="Classes\CommonProps.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
+    <Compile Include="Classes\StructuralReport.cs" />
     <Compile Include="Classes\SubElement.cs" />
     <Compile Include="Components\10_Rule_ElementTag.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
@@ -109,6 +110,9 @@
     <Compile Include="Components\10_Rule_ElementLength.cs" />
     <Compile Include="Components\3_GravityLoad.cs" />
     <Compile Include="Components\3_StructualAssembly.cs" />
+    <Compile Include="Components\5_KarambaTHI.cs" />
+    <Compile Include="Components\5_Utilization.cs" />
+    <Compile Include="Components\5_UtilizationPreview.cs" />
     <Compile Include="Components\6_FinishedModel.cs" />
     <Compile Include="Components\2_SimpleAlignment.cs" />
     <Compile Include="Components\2_Force.cs" />
@@ -158,7 +162,6 @@
     <Compile Include="PTKInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Components\2_Element.cs" />
-    <Compile Include="Components\5_KarambaExport.cs" />
     <Compile Include="Components\3_Assembly.cs" />
     <Compile Include="Components\1_LoadMaterialProp.cs" />
     <Compile Include="Components\1_MaterialProp.cs" />
