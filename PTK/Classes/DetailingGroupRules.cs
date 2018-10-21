@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using feb;
 using Rhino.Geometry;
@@ -250,6 +251,8 @@ namespace PTK.Rules
         }
 
     }
+
+
     public class ElementAngle
     {
         
@@ -257,139 +260,149 @@ namespace PTK.Rules
         private int minimumAngle = 0;
         private int maximumAngle = 360;
 
-
         // --- constructors ---
 
         public ElementAngle(int _minimumAngle = 0, int _maximumAngle = 360)
         {
             minimumAngle = _minimumAngle;
             maximumAngle = _maximumAngle;
-
         }
 
         // --- properties ---
-
         // --- methods ---
-
-
+    
         public bool check(Detail _detail)
         {
             Node _node = _detail.Node;
-            Plane nodePlane = _detail.Node.NodePlane;
             List<Element1D> _elems = _detail.Elements;
             List<Vector3d> elementVectors = new List<Vector3d>();
 
-
+            List<Point3d> pointsOnElement = new List<Point3d>();
+            bool valid = new bool();
+            int count = _elems.Count;
+            Plane nodePlane = Plane.WorldXY;
+   
+            if (_elems.Count <= 1)
+            {
+                return false;
+            }
+                
             for (int i = 0; i < _elems.Count; i++)
             {
-                //Creates a unitized vector of each element, starting in the node
-                Vector3d _elementVector = new Line(_node.Point, _elems[i].BaseCurve.PointAt(0.5)).UnitTangent;
-
+                //Creates a unitized vector of each element, starting in the node,
+                Curve basecurve = _elems[i].BaseCurve;
+                basecurve.Domain = new Interval(0,1);
+                Point3d pointOnElement = basecurve.PointAt(0.5);
+                pointsOnElement.Add(pointOnElement);
+                Line elementLine = new Line(_node.Point, pointOnElement);
+                Vector3d _elementVector = elementLine.Direction;
                 elementVectors.Add(_elementVector);
+                
             }
+            //Creates a nodePlane 
+            Plane.FitPlaneToPoints(pointsOnElement,out nodePlane);
+            nodePlane.Origin = _node.Point;
 
-            double x = 0f;
-            double y = 0f;
-            double z = 0f;
-
-            for (int i = 0; i < elementVectors.Count; i++)
-            {
-                x += elementVectors[i].X;
-                y += elementVectors[i].Y;
-                z += elementVectors[i].Z;
-            }
-
-            //Creates a plane in the node that has normal like the average of all elementvectors --- SAVED FOR ADDING TO NODE CLASS
-
-            //Vector3d nodeVector = new Vector3d(x / elementVectors.Count, y / elementVectors.Count, z / elementVectors.Count);
-            //Plane nodePlane = new Plane(_node.Point, nodeVector);
-
-
-            //Deconstructs nodePlane to construct a vector on the plane 
-            Vector3d nX = nodePlane.XAxis;
-            Vector3d nY = nodePlane.YAxis;
-            Vector3d nZ = nodePlane.ZAxis;
-
-
-            double angleToNodeVector = 0;
-            bool valid = false;
-            //Vector3d nodePlaneVector = (Vector3d.Add(nX));
-            var data = new Dictionary<double, Vector3d>();
-
-            //Finds angles between each element and the nodevector. Adds angles to a dictionary to sort according to the angle between element and nodeplane
-            for (int i = 0; i < elementVectors.Count; i++)
-            {
-                angleToNodeVector = (Vector3d.VectorAngle(nX, elementVectors[i], nodePlane) * 180 / Math.PI);
-                data.Add(angleToNodeVector, elementVectors[i]);
-            }
-
-            var myList = data.ToList();
-            myList.Sort((pair1, pair2) =>
-                pair1.Value.CompareTo(pair2
-                    .Value)); //Adds the dictionary to a keyvaluelist and sorts it according to angles. Returns sorted elementvectors
-
-            List<Vector3d> sortedVectors = new List<Vector3d>();
-
-            foreach (KeyValuePair<double, Vector3d> pair in myList)
-            {
-                sortedVectors.Add(pair.Value);
-            }
-            //Check angle between last (count-1) and first(0) index manual
-
-            //double angleBetweenNext = Vector3d.VectorAngle(sortedVectors[(sortedVectors.Count)-1], sortedVectors[0], nodePlane) * 180 / Math.PI;
-            //if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
+            //for (int i = 0; i < _elems.Count; i++)
             //{
-            //    valid = true;
+            ////Creates a unitized vector of each element, starting in the node, projected on the nodePlane
+            //    Point3d pointOnElement = _elems[i].BaseCurve.PointAt(0.5);
+            //    Point3d _pointOnElement = new Point3d(pointOnElement.X,pointOnElement.Y,nodePlane.OriginZ);
+            //    Line elementLine = new Line(_node.Point, _pointOnElement);
+            //    Vector3d _elementVector1 = elementLine.UnitTangent;
+            //    elementVectors2D.Add(_elementVector1);
             //}
-            //else
+            
+            //Deconstructs nodePlane to find the vectors on the plane 
+            //Vector3d nX = nodePlane.XAxis;
+            //Vector3d nY = nodePlane.YAxis;
+            //Vector3d nZ = nodePlane.ZAxis;
+
+            double angleToNodeVector;
+
+            //Creates a sortingCircle on the Nodeplane and sorts the pointsOnElements according to  parameter on sorting circle
+            Curve sortingCircle = new Circle(nodePlane, _node.Point, 10).ToNurbsCurve();
+            List<double> ts = new List<double>();
+
+            foreach (Point3d point in pointsOnElement)
+            {
+                double t;
+                sortingCircle.ClosestPoint(point, out t);
+                ts.Add(t);
+            }
+
+            var circleDictionoary = new Dictionary<double, Vector3d>();
+            for (int i = 0; i < count; i++) circleDictionoary.Add(ts[i], elementVectors[i]);
+
+            ts.Sort();
+
+            List<Vector3d> sortVectors = new List<Vector3d>();
+            for (int i = 0; i < count; i++)
+            {
+                sortVectors.Add(circleDictionoary[ts[i]]);
+            }
+            
+            ////Finds angles between each element and the x-axis on the nodeplane. Adds to a dictionary and sorts according to the angle.
+
+            //for (int i = 0; i < elementVectors.Count; i++)
             //{
-            //    return false;
+            //    angleToNodeVector = (Vector3d.VectorAngle(nX, elementVectors[i], nodePlane) * 180 / Math.PI);
+            //    angles.Add(angleToNodeVector);
             //}
 
-            ////Check angle between the others in loop
-            //for (int i = 0; i < sortedVectors.Count; i++)
-            //{
-            //    double _angleBetweenNext = 360;
-            //    Vector3d.VectorAngle(sortedVectors[i], sortedVectors[i + 1], nodePlane);
-            //    if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
-            //    {
-            //        valid = true;
-            //    }
-            //    else
-            //    {
-            //        return false;
-            //    }
+            //var dictionary = new Dictionary<double, Vector3d>();
+            //for (int i = 0; i < count; i++) dictionary.Add(angles[i], elementVectors[i]);
 
+            //angles.Sort();
+
+            //List<Vector3d> sortedVectors = new List<Vector3d>();
+            //for (int i = 0; i < count; i++)
+            //{
+            //    sortedVectors.Add(dictionary[angles[i]]);
             //}
 
-            //return valid;
 
-            //angleBetweenNext = Math.Abs(Math.Atan2(sortedVectors[0].Y - sortedVectors[(sortedVectors.Count) - 1].Y, sortedVectors[0].X - sortedVectors[(sortedVectors.Count) - 1].X) * 180 / Math.PI);
-            //    if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
-            //    {
-            //        valid = true;
-            //    }
-            //    else
-            //    {
-            //        return false;
-            //    }
 
-            //    for (int i = 0; i < sortedVectors.Count; i++)
-            //    {
-            //        angleBetweenNext = Math.Abs(Math.Atan2(sortedVectors[i + 1].Y - sortedVectors[i].Y, sortedVectors[i + 1].X - sortedVectors[i].X) * 180 / Math.PI);
-            //        if (minimumAngle <= angleBetweenNext && angleBetweenNext <= maximumAngle)
-            //        {
-            //            valid = true;
-            //        }
-            //        else
-            //        {
-            //            return false;
-            //        }
-            //    }
+            //Adds anglesbetween to a list
+            List<double> anglesBetween = new List<double>();
 
-            //    return valid;
+            if (count == 2)
+            {
+                double angleFirst = Vector3d.VectorAngle(sortVectors[1], sortVectors[0],nodePlane) * 180 / Math.PI;
+                anglesBetween.Add(angleFirst);
+                double angleSecond = Vector3d.VectorAngle(sortVectors[0], sortVectors[1],nodePlane) * 180 / Math.PI;
+                anglesBetween.Add(angleSecond);
+            }
+            else
+            {
+            //Add the angle between last(count-1) and first(0) index manually
+                double angleFirst = Vector3d.VectorAngle(sortVectors[count - 1], sortVectors[0]) * 180 / Math.PI;
+                anglesBetween.Add(angleFirst);
 
-            //
+                //Adds the angle between the others in a loop
+                for (int i = 0; i < count - 1; i++)
+                {
+                    double angleBetweenNext = Vector3d.VectorAngle(sortVectors[i], sortVectors[i + 1]) * 180 / Math.PI;
+                    anglesBetween.Add(angleBetweenNext);
+                }
+            }
+            
+            //Check each angleBetween with max and min
+            foreach (double angle in anglesBetween)
+            {
+                if (minimumAngle <= angle && angle <= maximumAngle)
+                {
+                    valid = true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+
+            return valid;
+
         }
     }
 
