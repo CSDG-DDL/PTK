@@ -7,14 +7,14 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _11_05_ElementAngle : GH_Component
+    public class _10_Rule_ElementAngle : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the _11_03_ElementTag class.
         /// </summary>
-        public _11_05_ElementAngle()
-          : base("EA", "ElementAngle",
-              "Checks the angle of the element and neighbouring elements",
+        public _10_Rule_ElementAngle()
+          : base("Element Angle", "EA",
+              "Checks the angle of the all neighbouring elements. Returns details with elements inside the range",
               CommonProps.category, CommonProps.subcate10)
         {
         }
@@ -26,10 +26,7 @@ namespace PTK.Components
         {
 
             pManager.AddIntegerParameter("Minimum Angle", "Min", "The minimum angle between two elements", GH_ParamAccess.item, 0);
-            pManager.AddIntegerParameter("Maximum Angle", "Max", "The maximum angle allowed between two elements",
-                GH_ParamAccess.item, 360);
-            //pManager.AddIntegerParameter("Tags Are", "Tags", "Input the tags the element must contain", GH_ParamAccess.list,0);
-            //pManager.AddIntegerParameter("Mode", "Mode", "Mode 0 - EitherOf - The detail must contain either of the inputted tags"  , GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Maximum Angle", "Max", "The maximum angle allowed between two elements",GH_ParamAccess.item, 360);
         }
 
         /// <summary>
@@ -49,7 +46,6 @@ namespace PTK.Components
             //Variables
             int minimumAngle = 0;
             int maximumAngle = 360;
-            //int mode = 0;
             //plane plane = Plane.WorldXY;
 
 
@@ -62,11 +58,10 @@ namespace PTK.Components
             
             //Solve 
             Rules.ElementAngle Rule = new Rules.ElementAngle(minimumAngle, maximumAngle);
-
+            
 
             //Output
-            DA.SetData(0, new Rules.Rule(new CheckGroupDelegate(Rule.check)));   //Sending a new checkgroupDelegate through a new rule object
-            
+            DA.SetData(0, new Rules.Rule(new CheckGroupDelegate(Rule.check)));
 
         }
 
