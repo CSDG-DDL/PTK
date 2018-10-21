@@ -7,14 +7,14 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _10_Rule_ElementTag : GH_Component
+    public class _10_Rule_ElementAngle : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the _11_03_ElementTag class.
         /// </summary>
-        public _10_Rule_ElementTag()
-          : base("ElementTagRule", "T",
-              "Checks the tag of the elements. Several tags can be inputted.",
+        public _10_Rule_ElementAngle()
+          : base("Element Angle", "EA",
+              "Checks the angle of the all neighbouring elements. Returns details with elements inside the range",
               CommonProps.category, CommonProps.subcate10)
         {
         }
@@ -24,11 +24,9 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tags Are", "T", "Input the tags the element must contain", GH_ParamAccess.list, "N/A");
-            pManager.AddIntegerParameter("Mode", "M", "Mode 0 - One of - The detail must contain one of the inputted tags. " +
-                                                         "Mode 1 - At least -  The detail must contain all the inputted tags, but can also contain other tags. " +
-                                                         "Mode 2 - Distinct - The detail must contain all the inputted tags and no other tags. " +
-                                                         "Mode 3 - Strict - The detai must contain all the inputted tags and the exact amount. ", GH_ParamAccess.item, 0);
+
+            pManager.AddIntegerParameter("Minimum Angle", "Min", "The minimum angle between two elements", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Maximum Angle", "Max", "The maximum angle allowed between two elements",GH_ParamAccess.item, 360);
         }
 
         /// <summary>
@@ -45,21 +43,25 @@ namespace PTK.Components
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
             //Variables
-            List<string> tagsAre = new List<string>();
-            int strict = 0;
+            int minimumAngle = 0;
+            int maximumAngle = 360;
+            //plane plane = Plane.WorldXY;
 
-            //Input
-            DA.GetDataList(0, tagsAre);
-            DA.GetData(1, ref strict);
 
-            //Solve
-            Rules.ElementTag Rule = new Rules.ElementTag(tagsAre, strict);
+            //Inputs
+            DA.GetData(0, ref minimumAngle);
+            DA.GetData(1, ref maximumAngle);
+            //    DA.GetData(2,ref mode);
+            //    DA.GetData(3, ref plane);
+
+            
+            //Solve 
+            Rules.ElementAngle Rule = new Rules.ElementAngle(minimumAngle, maximumAngle);
+            
 
             //Output
             DA.SetData(0, new Rules.Rule(new CheckGroupDelegate(Rule.check)));
-
 
         }
 
@@ -76,13 +78,12 @@ namespace PTK.Components
             }
         }
 
-
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("bd55f4e2-4775-4a03-b2e6-6209d3e8917e"); }
+            get { return new Guid("7dbd4d6c-34e1-4b54-98bc-d08d5178ae32"); }
         }
     }
 }

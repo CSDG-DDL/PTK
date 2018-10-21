@@ -80,8 +80,8 @@ namespace PTK.Components
             BooleanType bottom = BooleanType.no;
             BooleanType chamfer = BooleanType.no;
 
-            if (LengthLimitedTop) { top = BooleanType.yes; }
-            if (LengthLimitedBottom) { bottom = BooleanType.yes; }
+            if (!LengthLimitedTop) { top = BooleanType.yes; }
+            if (!LengthLimitedBottom) { bottom = BooleanType.yes; }
             if (Chamfer) { chamfer = BooleanType.yes; }
 
 

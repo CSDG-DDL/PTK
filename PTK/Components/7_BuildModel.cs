@@ -77,6 +77,7 @@ namespace PTK.Components
             BTLx.Language = "Norsk";
             
             
+            
 
 
             // Create a new XmlSerializer instance with the type of the test class
@@ -92,7 +93,10 @@ namespace PTK.Components
 
             
             SerializerObj.Serialize(WriteFileStream, BTLx);
-            WriteFileStream.Close();
+            
+
+
+            
 
             // --- output ---
             DA.SetDataList(0, "Yeahhhh");

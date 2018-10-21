@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using feb;
 using Rhino.Geometry;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Rhino.DocObjects;
+using Rhino.Geometry.Intersect;
 
 namespace PTK.Rules
 
@@ -102,39 +106,54 @@ namespace PTK.Rules
     {
         // --- field ---
         public List<Curve> Polycurves { get; private set; }
+        public double MaxDist = 9999999;
 
         // --- constructors --- 
-        public NodeHitRegion(List<Curve> _polyCurves)
+        public NodeHitRegion(List<Curve> _polyCurves, double _maxDist)
         {
-            Polycurves = new List<Curve>();
+            Polycurves = _polyCurves;
+            MaxDist = _maxDist;
         }
 
         // --- methods ---
         public bool check(Detail _detail)
+        
         //This method checks if the node point is in the regions or not.
         {
             Detail detail = _detail;
             Node node = detail.Node;
             List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
-
-            double tolerance = CommonProps.tolerances; ;
+            Point3d point = node.Point;
+            Point3d point2;
+            double tolerance = CommonProps.tolerances;
             Plane Curveplane = new Plane();
 
             for (int i = 0; i < Polycurves.Count; i++)
             {
                 Curve polycurve = Polycurves[i];
+
+
                 if (polycurve.TryGetPlane(out Curveplane))
                 {
-                    PointContainment relationship = polycurve.Contains(node.Point, Curveplane, tolerance);
+                    point2 = Curveplane.ClosestPoint(point);
+
+                if (point.DistanceTo(point2) >= MaxDist)
+                {
+                    return false;
+                }
+                    {
+                    PointContainment relationship = polycurve.Contains(point2, Curveplane, tolerance);
                     if (relationship == PointContainment.Inside || relationship == PointContainment.Coincident)
                     {
-                        if (Curveplane.DistanceTo(node.Point) < tolerance)
+                        if (Curveplane.DistanceTo(point2) < tolerance)
                         {
                             return true;
                         }
                     }
+                    }
                 }
             }
+
             return false;
         }
     }
@@ -249,6 +268,159 @@ namespace PTK.Rules
         }
 
     }
+
+
+    public class ElementAngle
+    {
+        
+        // --- field ---
+        private int minimumAngle = 0;
+        private int maximumAngle = 360;
+
+        // --- constructors ---
+
+        public ElementAngle(int _minimumAngle = 0, int _maximumAngle = 360)
+        {
+            minimumAngle = _minimumAngle;
+            maximumAngle = _maximumAngle;
+        }
+
+        // --- properties ---
+        // --- methods ---
+    
+        public bool check(Detail _detail)
+        {
+            Node _node = _detail.Node;
+            List<Element1D> _elems = _detail.Elements;
+            List<Vector3d> elementVectors = new List<Vector3d>();
+
+            List<Point3d> pointsOnElement = new List<Point3d>();
+            bool valid = new bool();
+            int count = _elems.Count;
+            Plane nodePlane = Plane.WorldXY;
+   
+            if (_elems.Count <= 1)
+            {
+            return false;
+            }
+                
+            for (int i = 0; i < _elems.Count; i++)
+            {
+            //Creates a unitized vector of each element, starting in the node,
+            Curve basecurve = _elems[i].BaseCurve;
+            basecurve.Domain = new Interval(0,1);
+            Point3d pointOnElement = basecurve.PointAt(0.5);
+            pointsOnElement.Add(pointOnElement);
+            Line elementLine = new Line(_node.Point, pointOnElement);
+            Vector3d _elementVector = elementLine.Direction;
+            elementVectors.Add(_elementVector);
+                
+            }
+            //Creates a nodePlane 
+            Plane.FitPlaneToPoints(pointsOnElement,out nodePlane);
+            nodePlane.Origin = _node.Point;
+
+            //for (int i = 0; i < _elems.Count; i++)
+            //{
+            ////Creates a unitized vector of each element, starting in the node, projected on the nodePlane
+            //    Point3d pointOnElement = _elems[i].BaseCurve.PointAt(0.5);
+            //    Point3d _pointOnElement = new Point3d(pointOnElement.X,pointOnElement.Y,nodePlane.OriginZ);
+            //    Line elementLine = new Line(_node.Point, _pointOnElement);
+            //    Vector3d _elementVector1 = elementLine.UnitTangent;
+            //    elementVectors2D.Add(_elementVector1);
+            //}
+            
+            //Deconstructs nodePlane to find the vectors on the plane 
+            //Vector3d nX = nodePlane.XAxis;
+            //Vector3d nY = nodePlane.YAxis;
+            //Vector3d nZ = nodePlane.ZAxis;
+
+            double angleToNodeVector;
+
+            //Creates a sortingCircle on the Nodeplane and sorts the pointsOnElements according to  parameter on sorting circle
+            Curve sortingCircle = new Circle(nodePlane, _node.Point, 10).ToNurbsCurve();
+            List<double> ts = new List<double>();
+
+            foreach (Point3d point in pointsOnElement)
+            {
+            double t;
+            sortingCircle.ClosestPoint(point, out t);
+            ts.Add(t);
+            }
+
+            var circleDictionoary = new Dictionary<double, Vector3d>();
+            for (int i = 0; i < count; i++) circleDictionoary.Add(ts[i], elementVectors[i]);
+
+            ts.Sort();
+
+            List<Vector3d> sortVectors = new List<Vector3d>();
+            for (int i = 0; i < count; i++)
+            {
+            sortVectors.Add(circleDictionoary[ts[i]]);
+            }
+            
+            ////Finds angles between each element and the x-axis on the nodeplane. Adds to a dictionary and sorts according to the angle.
+
+            //for (int i = 0; i < elementVectors.Count; i++)
+            //{
+            //    angleToNodeVector = (Vector3d.VectorAngle(nX, elementVectors[i], nodePlane) * 180 / Math.PI);
+            //    angles.Add(angleToNodeVector);
+            //}
+
+            //var dictionary = new Dictionary<double, Vector3d>();
+            //for (int i = 0; i < count; i++) dictionary.Add(angles[i], elementVectors[i]);
+
+            //angles.Sort();
+
+            //List<Vector3d> sortedVectors = new List<Vector3d>();
+            //for (int i = 0; i < count; i++)
+            //{
+            //    sortedVectors.Add(dictionary[angles[i]]);
+            //}
+            
+            //Adding the angles between each element to a list
+            List<double> anglesBetween = new List<double>();
+
+            if (count == 2)
+            {
+                double angleFirst = Vector3d.VectorAngle(sortVectors[1], sortVectors[0],nodePlane) * 180 / Math.PI;
+                anglesBetween.Add(angleFirst);
+                double angleSecond = Vector3d.VectorAngle(sortVectors[0], sortVectors[1],nodePlane) * 180 / Math.PI;
+                anglesBetween.Add(angleSecond);
+            }
+            else
+            {
+            //Add the angle between last(count-1) and first(0) index manually
+                double angleFirst = Vector3d.VectorAngle(sortVectors[count - 1], sortVectors[0]) * 180 / Math.PI;
+                anglesBetween.Add(angleFirst);
+
+            //Adds the angle between the others in a loop
+                for (int i = 0; i < count - 1; i++)
+                {
+                    double angleBetweenNext = Vector3d.VectorAngle(sortVectors[i], sortVectors[i + 1]) * 180 / Math.PI;
+                    anglesBetween.Add(angleBetweenNext);
+                }
+            }
+            
+            //Check each angleBetween with max and min
+            foreach (double angle in anglesBetween)
+            {
+                if (minimumAngle <= angle && angle <= maximumAngle)
+                {
+                    valid = true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+
+            return valid;
+
+        }
+    }
+
 
 
     /*

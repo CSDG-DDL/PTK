@@ -154,7 +154,7 @@ namespace PTK
                 return true;
             }
             return false;
-        }
+        }                              
 
         public double SearchNodeParamAtElement(Element1D _element)
         {
