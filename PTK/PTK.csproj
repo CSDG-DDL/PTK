@@ -41,24 +41,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GH_IO">
-      <HintPath>..\..\Library\GH_IO.dll</HintPath>
+      <HintPath>Library\GH_IO.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Grasshopper, Version=1.0.0.20, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\Grasshopper.dll</HintPath>
+      <HintPath>Library\Grasshopper.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="karamba">
-      <HintPath>..\..\Library\karamba.gha</HintPath>
+      <HintPath>Library\karamba.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\Newtonsoft.Json.dll</HintPath>
+      <HintPath>Library\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RhinoCommon">
-      <HintPath>..\..\Library\RhinoCommon.dll</HintPath>
+      <HintPath>Library\RhinoCommon.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
