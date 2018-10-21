@@ -37,6 +37,7 @@ namespace PTK
         {
             // --- variables ---
             string MaterialName = "N/A";
+            string MaterialClass = "N/A";
 
             // for glulam according LIMTREBOKA
             double fmgk = new double();
@@ -150,6 +151,7 @@ namespace PTK
 
             GH_MaterialProperty prop = new GH_MaterialProperty( new MaterialProperty(
                  MaterialName,
+                 MaterialClass,
                  fmgk,
                  ft0gk,
                  ft90gk,
