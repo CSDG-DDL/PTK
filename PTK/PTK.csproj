@@ -96,6 +96,7 @@
     <Compile Include="Classes\MaterialProp.cs" />
     <Compile Include="Classes\Node.cs" />
     <Compile Include="Classes\CommonProps.cs" />
+    <Compile Include="Classes\DetailingGroupPlaneRules.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
     <Compile Include="Classes\StructuralReport.cs" />
     <Compile Include="Classes\SubElement.cs" />
@@ -104,6 +105,9 @@
     <Compile Include="Components\11_BTL_Cut.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
     <Compile Include="Components\11_BTL_Tenon.cs" />
+    <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />
+    <Compile Include="Components\12_DGPlaneRule_NormalVectorFromElementName.cs" />
+    <Compile Include="Components\12_DGPlaneRule_SurfaceNormal.cs" />
     <Compile Include="Components\2_Composite.cs" />
     <Compile Include="Components\10_DefinitionDetailingGroup.cs" />
     <Compile Include="Components\10_Rule_ElementAmount.cs" />
