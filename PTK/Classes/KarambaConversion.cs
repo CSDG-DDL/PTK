@@ -25,7 +25,7 @@ namespace PTK
             var elemset = new List<Karamba.Utilities.ElemSet>();
 
 
-            points = _strAssembly.Assembly.Nodes.ConvertAll(n => n.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters));
+            points = _strAssembly.Assembly.Nodes.ConvertAll(n => n.Point * 1 /*CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)*/);
             
             foreach(KeyValuePair<CrossSection,MaterialProperty> kvp in _strAssembly.Assembly.CrossSectionMap)
             {
@@ -38,9 +38,9 @@ namespace PTK
 
             foreach(Support s in _strAssembly.Supports)
             {
-                var sup = new Karamba.Supports.Support(s.FixingPlane.Origin * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters),
+                var sup = new Karamba.Supports.Support(s.FixingPlane.Origin * 1 /* CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)*/,
                     s.Conditions,
-                    new Plane(s.FixingPlane.Origin * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters), s.FixingPlane.XAxis, s.FixingPlane.YAxis));
+                    new Plane(s.FixingPlane.Origin * 1 /*CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)*/, s.FixingPlane.XAxis, s.FixingPlane.YAxis));
                 sup.loadcase = s.LoadCase;
                 supports.Add(sup);
             }
@@ -50,7 +50,7 @@ namespace PTK
                 if(l is PointLoad pl)
                 {
                     var load = new Karamba.Loads.PointLoad(
-                        pl.Point * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters), 
+                        pl.Point * 1/* CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)*/, 
                         pl.ForceVector, pl.MomentVector, pl.LoadCase, true);
                     loads.Add(load);
                 }
@@ -67,8 +67,8 @@ namespace PTK
                 for (int i = 0; i <= paramList.Count-2; i++ )
                 {
                     var elem = new Karamba.Elements.GrassBeam(
-                        e.BaseCurve.PointAt(paramList[i]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters), 
-                        e.BaseCurve.PointAt(paramList[i + 1]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)
+                        e.BaseCurve.PointAt(paramList[i]) *1 /* CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters) */ , 
+                        e.BaseCurve.PointAt(paramList[i + 1]) *1 /* CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters) */
                         );
                     //var s = crosecMap[e.Element.Sections[0]];
                     //s.ecce_loc = new Vector3d(e.Element.Align.OffsetY, e.Element.Align.OffsetZ,0);
@@ -99,7 +99,7 @@ namespace PTK
             var fm = new Karamba.Materials.FemMaterial_Isotrop(
                 "familyName",
                 _matProp.Name,
-                _matProp.EE0gmean *0.1*10000,          /* N/mm2 To kN/cm2 入力がGHとコマンドで違う？1万倍 */
+                _matProp.EE0gmean *0.1*10000,          /* N/mm2 To kN/cm2 入力がGHとコマンドで違う？1万倍 cotusieodpierolilo?*/
                 _matProp.EE0gmean*0.5 *0.1*10000,      /* N/mm2 To kN/cm2 */
                 _matProp.GGgmean *0.1*10000,           /* N/mm2 To kN/cm2 */
                 _matProp.Rhogk *0.01,             /* kg/m3 To kN/m3  コレは同じ*/
@@ -122,9 +122,9 @@ namespace PTK
                     "Country",
                     null/*color*/,
                     _mat,
-                    rectSec.GetHeight() * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters),
-                    rectSec.GetWidth() * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters),
-                    rectSec.GetWidth() * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters)
+                    rectSec.GetHeight() * 1 /* CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters) */,
+                    rectSec.GetWidth() * 1 /*  CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters) */,
+                    rectSec.GetWidth() * 1 /*  CommonFunctions.ConversionUnit(Rhino.UnitSystem.Centimeters) */
                     );
                 //Karamba.Utilities.UnitsConversionFactory unitsConversionFactory = Karamba.Utilities.UnitsConversionFactories.Conv();
                 //sec.ecce_loc = unitsConversionFactory.cm();
