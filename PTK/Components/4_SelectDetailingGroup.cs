@@ -14,7 +14,7 @@ namespace PTK.Components
         public PTK_SelectDetailingGroup()
           : base("SelectDetailingGroup", "DG",
               "Use the group name to select a detailing group",
-              CommonProps.category, CommonProps.subcate3)
+              CommonProps.category, CommonProps.subcate8)
         {
         }
 
@@ -58,7 +58,7 @@ namespace PTK.Components
                 List<Detail> details = assembly.DetailingGroups.Find(t => t.Name == name).Details;
                 List<Plane> Planes = assembly.DetailingGroups.Find(t => t.Name == name).NodeGroupPlanes;
 
-                DataTree<Node> Nodes = new DataTree<Node>();
+                DataTree<GH_Node> Nodes = new DataTree<GH_Node>();
                 DataTree<Plane> NodePlanes = new DataTree<Plane>();
                 DataTree<GH_Element1D> Elements = new DataTree<GH_Element1D>();
                 DataTree<Vector3d> UnifiedVectors = new DataTree<Vector3d>();
@@ -71,19 +71,14 @@ namespace PTK.Components
                     details[i].SortElement(priorityKey);
 
                     Grasshopper.Kernel.Data.GH_Path Path = new Grasshopper.Kernel.Data.GH_Path(i);
-                    Node tempNode = details[i].Node;
+                    GH_Node tempNode = new GH_Node(details[i].Node);
 
-                    Nodes.Add(tempNode, Path);
+                    Nodes.Add(tempNode, Path); //ADDED THIS + Changed datatreees to node
                     NodePlanes.Add(Planes[i], Path);
-
-                    
 
                     Elements.AddRange(details[i].Elements.ConvertAll(e => new GH_Element1D(e)), Path); 
                     UnifiedVectors.AddRange(details[i].Elements.ConvertAll(e => details[i].ElementsUnifiedVectorsMap[e]), Path);
                     
-
-
-
                 }
 
 
