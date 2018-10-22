@@ -93,20 +93,8 @@ namespace PTK
                 {
                     
                     angle = Vector3d.VectorAngle(RefPlane.XAxis, RefPlaneCutVector, RefPlane);
-                    if (angle > Math.PI)
-                    {
-                        int i = 12;
-                    }
                     inclination = Vector3d.VectorAngle(Inputplane.XAxis, RefPlane.XAxis, NormalCutLinePlane);
-                    if (inclination > Math.PI)
-                    {
-                        int i = 12;
-                    }
                     rotation = Vector3d.VectorAngle(Inputplane.XAxis, -RefPlaneCutVector);
-                    if (rotation > Math.PI)
-                    {
-                        int i = 12;
-                    }
                     return OrientationType.start;
 
                 }
@@ -114,22 +102,8 @@ namespace PTK
                 {
                     
                     angle = Vector3d.VectorAngle(RefPlaneCutVector, -RefPlane.XAxis, RefPlane);
-                    if (angle > Math.PI)
-                    {
-                        int i = 12;
-                    }
-
                     inclination = Vector3d.VectorAngle(-RefPlane.XAxis, Inputplane.XAxis, NormalCutLinePlane);
-                    if (inclination > Math.PI)
-                    {
-                        int i = 12;
-                    }
                     rotation = Vector3d.VectorAngle(-RefPlaneCutVector, Inputplane.XAxis);
-                    if (rotation > Math.PI)
-                    {
-                        int i = 12;
-                    }
-
                     return OrientationType.end;
                 }
                 
@@ -158,74 +132,56 @@ namespace PTK
 
 
 
-        public static OrientationType GeneratePlaneAnglesPerpOld(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double rotation)  //used when when plane is closed to perpendicular to refplane
+        public static OrientationType GeneratePlaneAnglesParallell(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double slope)  //used when when plane is closed to parallell to refplane
         {
-            double PlaneANgle = Math.Abs( Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
-            if (PlaneANgle < CommonProps.tolerances || Math.Abs(Math.PI - PlaneANgle) < CommonProps.tolerances)
+            double PlaneANgle = Math.Abs(Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
+            if (PlaneANgle < CommonProps.tolerances)
             {
-                angle = 0;
-                inclination = 0;
-                rotation = 0;
+                slope = Math.PI / 2;
+                inclination = Math.PI / 2;
+                angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis, RefPlane);
                 return OrientationType.parallell;
             }
 
-
-            Line AngleLine = new Line();
-            Line InclinationLine = new Line();
-            Plane AnglePlane = Inputplane;
-            OrientationType orientationtype; 
-
-            if(Rhino.Geometry.Intersect.Intersection.PlanePlane(RefPlane, AnglePlane, out AngleLine))
+            angle = Vector3d.VectorAngle(RefPlane.XAxis, Inputplane.XAxis, RefPlane);
+            if (angle > Math.PI)
             {
-                Vector3d AngleVector = AlignVector(RefPlane.YAxis, AngleLine);
-
-                angle = Vector3d.VectorAngle(RefPlane.XAxis, AngleVector, RefPlane);
-
-                Plane Inclinationplane = new Plane(AngleLine.From, AngleVector);
-
-                if (Rhino.Geometry.Intersect.Intersection.PlanePlane(AnglePlane, Inclinationplane, out InclinationLine));
-                
-                Vector3d InclinationVector = AlignVector(-RefPlane.ZAxis, InclinationLine);
-
-                inclination = Vector3d.VectorAngle(RefPlane.XAxis, InclinationVector, Inclinationplane);
-
-                rotation = Vector3d.VectorAngle(AnglePlane.XAxis, -AngleVector, AnglePlane);
-
-                //if (Vector3d.VectorAngle(RefPlane.XAxis, AnglePlane.ZAxis, RefPlane) < Math.PI / 2)
-                if (rotation > Math.PI)
-                {
-                    rotation = Math.PI - rotation;
-                }
-                if (angle>Math.PI)
-                {
-                    orientationtype = OrientationType.end;
-                    angle = Math.PI - angle;
-                    inclination = Math.PI - angle;
-                    
-                    return orientationtype;
-
-                }
-                   
-                else
-                {
-                    orientationtype = OrientationType.start;
-                    return orientationtype;
-                }
-
-
+                int i = 0;
             }
-            else
+            Plane AlignedRefPlane = new Plane(RefPlane);
+            AlignedRefPlane.Rotate(angle, AlignedRefPlane.ZAxis);
+
+            Plane SlopePlane = new Plane(Inputplane.Origin, -AlignedRefPlane.YAxis);
+            
+
+            double zAxisAngle = Vector3d.VectorAngle(SlopePlane.XAxis, RefPlane.ZAxis, SlopePlane);
+            SlopePlane.Rotate(zAxisAngle, SlopePlane.ZAxis, SlopePlane.Origin);
+
+
+
+            slope = Vector3d.VectorAngle(SlopePlane.YAxis, Inputplane.ZAxis, SlopePlane);
+            if (slope > Math.PI)
             {
-                angle = inclination = rotation = 0;
-                return OrientationType.start;
+                int i = 0;
             }
 
+
+            Plane inclinationPlane = new Plane(Inputplane.Origin, -Inputplane.XAxis);
+            inclination = Vector3d.VectorAngle(-SlopePlane.ZAxis, Inputplane.ZAxis, inclinationPlane);
+
+            if (inclination > Math.PI)
+            {
+                int i = 0;
+            }
+
+
+            return OrientationType.start;
 
 
         }
 
 
-        public static OrientationType GeneratePlaneAnglesParallell(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double slope)  //used when when plane is closed to parallell to refplane
+        public static OrientationType GeneratePlaneAnglesParallellOld(Plane RefPlane, Plane Inputplane, out double angle, out double inclination, out double slope)  //used when when plane is closed to parallell to refplane
         {
             double PlaneANgle = Math.Abs(Vector3d.VectorAngle(RefPlane.ZAxis, Inputplane.ZAxis));
             if (PlaneANgle < CommonProps.tolerances )
@@ -242,7 +198,12 @@ namespace PTK
             AlignedRefPlane.Rotate(angle, AlignedRefPlane.ZAxis);
 
             Plane SlopePlane = new Plane(Inputplane.Origin, -AlignedRefPlane.YAxis);
-            slope = Vector3d.VectorAngle(-RefPlane.XAxis, Inputplane.ZAxis, SlopePlane);
+            double zAxisAngle = Vector3d.VectorAngle(SlopePlane.XAxis, RefPlane.ZAxis, SlopePlane);
+            SlopePlane.Rotate(zAxisAngle, SlopePlane.ZAxis, SlopePlane.Origin);
+
+
+
+            slope = Vector3d.VectorAngle(SlopePlane.YAxis, Inputplane.ZAxis, SlopePlane);
 
             Plane inclinationPlane = new Plane(Inputplane.Origin, -Inputplane.XAxis);
             inclination = Vector3d.VectorAngle(-SlopePlane.ZAxis, Inputplane.ZAxis , inclinationPlane);
@@ -986,15 +947,20 @@ namespace PTK
 
             double TestAngle = Vector3d.VectorAngle(RefPlane.XAxis, WorkPlane.XAxis, RefPlane);
 
+            Plane TempPlane = new Plane(WorkPlane);
+
+
             if (TestAngle > Math.PI)
             {
-                WorkPlane.Translate(new Vector3d(WorkPlane.XAxis * Length));
-                WorkPlane.Rotate(-Math.PI, WorkPlane.ZAxis, WorkPlane.Origin);
+                //TempPlane.Translate(new Vector3d(WorkPlane.XAxis * Length));
+                //TempPlane.Rotate(Math.PI, TempPlane.ZAxis,TempPlane.Origin);
+
                 
+
             }
 
-
-            double angled = Vector3d.VectorAngle(RefPlane.XAxis, WorkPlane.XAxis, RefPlane);
+            WorkPlane = TempPlane;
+            
 
             Point3d LocalStartPoint = new Point3d();
             RefPlane.RemapToPlaneSpace(WorkPlane.Origin, out LocalStartPoint);
@@ -1006,7 +972,7 @@ namespace PTK
             Mortise.StartY = LocalStartPoint.Y;
             Mortise.StartDepth = Math.Abs(LocalStartPoint.Z);
             Mortise.LengthLimitedBottom = LengthLimitedBottom;
-            Mortise.LengthLimitedTop = LengthLimitedTop;
+            Mortise.LengthLimitedTop = LengthLimitedBottom;
             Mortise.Length = Length;
             Mortise.Width = Width;
             Mortise.Depth = Depth;
