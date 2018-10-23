@@ -88,7 +88,8 @@ namespace PTK
                 element_report.elementLength = e1.BaseCurve.GetLength();
                 double w;
                 double h;
-                e1.Composite.GetHeightAndWidth(out w, out h);
+                h = e1.CrossSection.GetHeight();
+                w = e1.CrossSection.GetWidth();
                 element_report.elementWidth = w;
                 element_report.elementHeight = h;
 
@@ -100,25 +101,25 @@ namespace PTK
                 element_report.elementSlendernessRatioDir1 = SlendernessRatio(w, h, 1, e1.BaseCurve.GetLength());
                 element_report.elementSlendernessRatioDir2 = SlendernessRatio(w, h, 2, e1.BaseCurve.GetLength());
 
-                element_report.elementEulerForceDir1 = EulerForce(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 1, e1.BaseCurve.GetLength());
-                element_report.elementEulerForceDir2 = EulerForce(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 2, e1.BaseCurve.GetLength());
+                element_report.elementEulerForceDir1 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                element_report.elementEulerForceDir2 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
 
-                element_report.elementSlendernessRatioDir1 = SlendernessRelative(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 1, e1.BaseCurve.GetLength());
-                element_report.elementSlendernessRatioDir2 = SlendernessRelative(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 2, e1.BaseCurve.GetLength());
+                element_report.elementSlendernessRatioDir1 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                element_report.elementSlendernessRatioDir2 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                element_report.elementInstabilityFactorDir1 = InstabilityFactor(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 1, e1.BaseCurve.GetLength());
-                element_report.elementInstabilityFactorDir2 = InstabilityFactor(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 2, e1.BaseCurve.GetLength());
+                element_report.elementInstabilityFactorDir1 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                element_report.elementInstabilityFactorDir2 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                element_report.elementBucklingStrengthDir1 = BucklingStrength(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 1, e1.BaseCurve.GetLength());
-                element_report.elementBucklingStrengthDir2 = BucklingStrength(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 2, e1.BaseCurve.GetLength());
+                element_report.elementBucklingStrengthDir1 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                element_report.elementBucklingStrengthDir2 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
 
-                element_report.elementCompressionUtilization = CompressionUtilization(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
-                element_report.elementCompressionUtilizationAngle = CompressionUtilizationAngle(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
-                element_report.elementTensionUtilization = TensionUtilization(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, structuralAssembly.ElementForce[e1]);
-                element_report.elementBendingUtilization = BendingUtilization(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, structuralAssembly.ElementForce[e1]);
-                element_report.elementCombinedBendingAndAxial = CombinedBendingAndAxial(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+                element_report.elementCompressionUtilization = CompressionUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+                element_report.elementCompressionUtilizationAngle = CompressionUtilizationAngle(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+                element_report.elementTensionUtilization = TensionUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1]);
+                element_report.elementBendingUtilization = BendingUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1]);
+                element_report.elementCombinedBendingAndAxial = CombinedBendingAndAxial(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
 
                 var list_of_utilizations = new List<double>() {
                     element_report.elementCompressionUtilization,
@@ -138,19 +139,19 @@ namespace PTK
                 tmpslender_dir1 = SlendernessRatio(w, h, 1, e1.BaseCurve.GetLength());
                 tmpslender_dir2 = SlendernessRatio(w, h, 2, e1.BaseCurve.GetLength());
 
-                tmp_euler_dir1 = EulerForce(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 1, e1.BaseCurve.GetLength());
-                tmp_euler_dir2 = EulerForce(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 2, e1.BaseCurve.GetLength());
+                tmp_euler_dir1 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                tmp_euler_dir2 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                tmp_rel_slender_dir1 = SlendernessRelative(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 1, e1.BaseCurve.GetLength());
-                tmp_rel_slender_dir2 = SlendernessRelative(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 2, e1.BaseCurve.GetLength());
+                tmp_rel_slender_dir1 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                tmp_rel_slender_dir2 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                tmp_ins_factor_dir1 = InstabilityFactor(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 1, e1.BaseCurve.GetLength());
-                tmp_ins_factor_dir2 = InstabilityFactor(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 2, e1.BaseCurve.GetLength());
+                tmp_ins_factor_dir1 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                tmp_ins_factor_dir2 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                tmp_buc_strength_dir1 = BucklingStrength(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 1, e1.BaseCurve.GetLength());
-                tmp_buc_strength_dir2 = BucklingStrength(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, 2, e1.BaseCurve.GetLength());
+                tmp_buc_strength_dir1 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                tmp_buc_strength_dir2 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                tmp_util_compression = CompressionUtilization(w, h, e1.Composite.Sub2DElements[0].MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+                tmp_util_compression = CompressionUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
 
 
                 ///This part is just for checking, after validation of calculation can be deleted

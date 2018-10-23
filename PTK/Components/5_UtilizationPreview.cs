@@ -160,13 +160,23 @@ namespace PTK.Components
             
             foreach (var element in elements)
             {
-                foreach (Sub2DElement subElement in element.Sub2DElements)
+                List<Tuple<CrossSection, Alignment>> subSections = new List<Tuple<CrossSection, Alignment>>();
+                if (element.CrossSection is Composite comp)
+                {
+                    subSections.AddRange(comp.RecursionCrossSectionSearch());
+                }
+                else
+                {
+                    subSections.Add(new Tuple<CrossSection, Alignment>(element.CrossSection, element.Alignment));
+                }
+
+                foreach (Tuple<CrossSection, Alignment> subElement in subSections)
                 {
                     Vector3d localY = element.CroSecLocalPlane.XAxis;
                     Vector3d localZ = element.CroSecLocalPlane.YAxis;
 
                     Point3d originElement = element.CroSecLocalPlane.Origin;
-                    Point3d originSubElement = originElement + subElement.Alignment.OffsetY * localY + subElement.Alignment.OffsetZ * localZ;
+                    Point3d originSubElement = originElement + subElement.Item2.OffsetY * localY + subElement.Item2.OffsetZ * localZ;
 
                     Plane localPlaneSubElement = new Plane(originSubElement,
                         element.CroSecLocalPlane.XAxis,
@@ -197,8 +207,8 @@ namespace PTK.Components
 
                     sectionCurves[new Rectangle3d(
                                 localPlaneSubElement,
-                                new Interval(-subElement.CrossSection.GetWidth() / 2, subElement.CrossSection.GetWidth() / 2),
-                                new Interval(-subElement.CrossSection.GetHeight() / 2, subElement.CrossSection.GetHeight() / 2)).ToNurbsCurve()]
+                                new Interval(-subElement.Item1.GetWidth() / 2, subElement.Item1.GetWidth() / 2),
+                                new Interval(-subElement.Item1.GetHeight() / 2, subElement.Item1.GetHeight() / 2)).ToNurbsCurve()]
                                 = tmpColor;
                 }
 

@@ -78,7 +78,6 @@
     <Compile Include="Classes\Assembly.cs" />
     <Compile Include="Classes\BTLProcesssClasses.cs" />
     <Compile Include="Classes\btlx_10.cs" />
-   
     <Compile Include="Classes\Detail.cs" />
     <Compile Include="Classes\DetailingGroup.cs" />
     <Compile Include="Classes\DetailingGroupRules.cs" />
@@ -96,7 +95,6 @@
     <Compile Include="Classes\DetailingGroupPlaneRules.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
     <Compile Include="Classes\StructuralReport.cs" />
-    <Compile Include="Classes\SubElement.cs" />
     <Compile Include="Components\10_Rule_ElementTag.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
@@ -105,7 +103,6 @@
     <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVectorFromElementName.cs" />
     <Compile Include="Components\12_DGPlaneRule_SurfaceNormal.cs" />
-
     <Compile Include="Components\2_CompositeCrossSection.cs" />
     <Compile Include="Components\10_DefinitionDetailingGroup.cs" />
     <Compile Include="Components\10_Rule_ElementAmount.cs" />
