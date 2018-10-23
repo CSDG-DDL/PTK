@@ -12,12 +12,20 @@ namespace PTK
     {
         // --- field ---
         public string Name { get; private set; } = "N/A";
+        public MaterialProperty MaterialProperty { get; private set; } = new MaterialProperty("Not Named Material");
+        public Alignment Alignment { get; private set; } = new Alignment("Not Named Alignment");
 
         // --- constructors --- 
         public CrossSection() { }
         public CrossSection(string _name)
         {
             Name = _name;
+        }
+        public CrossSection(string _name, MaterialProperty _material, Alignment _alignment)
+        {
+            Name = _name;
+            MaterialProperty = _material;
+            Alignment = _alignment;
         }
 
         // --- methods ---
@@ -52,7 +60,7 @@ namespace PTK
         // --- constructors --- 
         public RectangleCroSec() : base() { }
         public RectangleCroSec(string _name) : base(_name) { }
-        public RectangleCroSec(string _name, double _height, double _width) : base(_name)
+        public RectangleCroSec(string _name, MaterialProperty _material, double _height, double _width, Alignment _alignment) : base(_name, _material, _alignment)
         {
             SetHeight(_height);
             SetWidth(_width);
@@ -87,7 +95,7 @@ namespace PTK
         // --- methods ---
         public override CrossSection DeepCopy()
         {
-            return (CrossSection)base.MemberwiseClone();
+            return (RectangleCroSec)base.MemberwiseClone();
         }
         public override string ToString()
         {
@@ -99,6 +107,166 @@ namespace PTK
             return info; 
         }
     }
+
+    public class CircularCroSec : CrossSection
+    {
+        // --- field ---
+        public double Radius { get; private set; } = 100;
+
+        // --- constructors --- 
+        public CircularCroSec() : base() { }
+        public CircularCroSec(string _name) : base(_name) { }
+        public CircularCroSec(string _name, MaterialProperty _material, double _radius, Alignment _alignment) : base(_name, _material, _alignment)
+        {
+            SetRadius(_radius);
+        }
+
+        // --- properties ---
+        private void SetRadius(double _radius)
+        {
+            if (_radius <= 0)
+            {
+                throw new ArgumentException("value <= 0");
+            }
+            Radius = _radius;
+        }
+        public double GetDiameter()
+        {
+            return Radius * 2;
+        }
+        public override double GetHeight()
+        {
+            return Radius * 2;
+        }
+        public override double GetWidth()
+        {
+            return Radius * 2;
+        }
+
+        // --- methods ---
+        public override CrossSection DeepCopy()
+        {
+            return (CircularCroSec)base.MemberwiseClone();
+        }
+        public override string ToString()
+        {
+            string info;
+            info = "<CircularCroSec>\n" +
+                " Name:" + Name + "\n" +
+                " Radius:" + Radius.ToString();
+            return info;
+        }
+    }
+
+
+    public class Composite : CrossSection
+    {
+        // --- field ---
+        public List<CrossSection> SubCrossSections { get; private set; } = new List<CrossSection>();
+
+        // --- constructors --- 
+        public Composite() : base() { }
+        public Composite(string _name) : base(_name) { }
+        public Composite(string _name, MaterialProperty _material, List<CrossSection> _subCrossSections, Alignment _alignment) : base(_name, _material, _alignment)
+        {
+            SubCrossSections = _subCrossSections;
+        }
+
+        //public bool AddCrossSection(CrossSection _crossSection, Alignment _alignment)
+        //{
+        //    if (_crossSection.IsValid() && _alignment.IsValid())
+        //    {
+        //        SubCrossSections.Add(new Tuple<CrossSection, Alignment>(_crossSection, _alignment));
+        //    }
+        //    return false;
+        //}
+        // --- methods ---
+        public List<Tuple<CrossSection, Alignment>> RecursionCrossSectionSearch()
+        {
+            //Alignmentの再帰に未対応　Alignmentの加算が必要
+            List<Tuple<CrossSection, Alignment>> crossSections = new List<Tuple<CrossSection, Alignment>>(); 
+            foreach (var s in SubCrossSections)
+            {
+                if(s is Composite comp)
+                {
+                    crossSections.AddRange(comp.RecursionCrossSectionSearch());
+                }
+                else
+                {
+                    crossSections.Add(new Tuple<CrossSection, Alignment>(s,s.Alignment));
+                }
+            }
+            return crossSections;
+        }
+        public override double GetHeight()
+        {
+            GetHeightAndWidth(out double _width, out double _height);
+            return _height;
+        }
+        public override double GetWidth()
+        {
+            GetHeightAndWidth(out double _width, out double _height);
+            return _width;
+        }
+        //Re-examination is necessary because Align rotation etc. are not considered.
+        //Alignの回転などを考慮していないので再検討が必要。
+        private void GetHeightAndWidth(out double _width, out double _height)
+        {
+            double maxHeight = double.MinValue;
+            double maxWidth = double.MinValue;
+            double minHeight = double.MaxValue;
+            double minWidth = double.MaxValue;
+            foreach (var s in SubCrossSections)
+            {
+                double tempVal;
+
+                // update maxHeight 
+                tempVal = s.Alignment.OffsetZ + s.GetHeight() / 2;
+                if (tempVal > maxHeight)
+                {
+                    maxHeight = tempVal;
+                }
+
+                // update minHeight 
+                tempVal = s.Alignment.OffsetZ - s.GetHeight() / 2;
+                if (tempVal < minHeight)
+                {
+                    minHeight = tempVal;
+                }
+
+                // update maxWidth 
+                tempVal = s.Alignment.OffsetY + s.GetWidth() / 2;
+                if (tempVal > maxWidth)
+                {
+                    maxWidth = tempVal;
+                }
+
+                // update minWidth 
+                tempVal = s.Alignment.OffsetY - s.GetWidth() / 2;
+                if (tempVal < minWidth)
+                {
+                    minWidth = tempVal;
+                }
+
+            }
+            _height = maxHeight - minHeight;
+            _width = maxWidth - minWidth;
+        }
+
+        public override CrossSection DeepCopy()
+        {
+            return (CrossSection)base.MemberwiseClone();
+        }
+        public override string ToString()
+        {
+            string info;
+            info = "<CompositeCroSec>\n" +
+                " Name:" + Name + "\n" +
+                " SubCroSecs:" + SubCrossSections.Count.ToString();
+            return info;
+        }
+    }
+
 
     public class GH_CroSec : GH_Goo<CrossSection>
     {

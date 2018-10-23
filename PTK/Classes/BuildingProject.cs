@@ -98,10 +98,8 @@ namespace PTK
             BTLParts = new List<PartType>();
             ready = true;
             
-            foreach (Sub2DElement subElement in Element.Sub2DElements)
-            {
-                Sub3DElements.Add(new Sub3DElement(Element, subElement, _processDelegate));
-            }
+            //if Element has CompositCrossSection => Branch?
+            Sub3DElements.Add(new Sub3DElement(Element, _processDelegate));
         }
 
         public void ManufactureElement(ManufactureMode _mode)      //PHASE 2: Manufacture
@@ -139,13 +137,13 @@ namespace PTK
         private bool ready = false;
         
 
-        public Sub3DElement(Element1D _element, Sub2DElement _Sub2DElement, List<PerformTimberProcessDelegate> _processDelegate)     //PHASE1: PREPAIR
+        public Sub3DElement(Element1D _element, List<PerformTimberProcessDelegate> _processDelegate)     //PHASE1: PREPAIR
         {
             ProcessedStock = new List<Brep>();
             VoidProcess = new List<Brep>();
 
-            height = _Sub2DElement.CrossSection.GetHeight();
-            width = _Sub2DElement.CrossSection.GetWidth();
+            height = _element.CrossSection.GetHeight();
+            width = _element.CrossSection.GetWidth();
             length = _element.BaseCurve.GetLength();
 
             BTLPart = new PartType();
@@ -173,7 +171,7 @@ namespace PTK
 
             // Making plane centric to Sub-element
             Plane SubElemPlaneCentric = new Plane(ElementPlaneCentric);
-            SubElemPlaneCentric.Translate(SubElemPlaneCentric.XAxis * _Sub2DElement.Alignment.OffsetY + SubElemPlaneCentric.YAxis * _Sub2DElement.Alignment.OffsetZ);
+            SubElemPlaneCentric.Translate(SubElemPlaneCentric.XAxis * _element.Alignment.OffsetY + SubElemPlaneCentric.YAxis * _element.Alignment.OffsetZ);
 
             //Making CornerPlane, bottom left corner
             Plane TempCorner1 = new Plane(SubElemPlaneCentric);

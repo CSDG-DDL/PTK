@@ -18,7 +18,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item, "PointLoad");
+            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item, "Not Named PointLoad");
             pManager.AddIntegerParameter("Load Case", "LC", "Load case", GH_ParamAccess.item, 0);
             pManager.AddPointParameter("Point", "P", "Point to which load will be assigned", GH_ParamAccess.item, new Point3d() );
             pManager.AddVectorParameter("Force Vector", "FV", "in [kN]. Vector which describe the diretion and value in kN", GH_ParamAccess.item, new Vector3d(0, 0, -1));
@@ -63,7 +63,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.Load;
+                return PTK.Properties.Resources.PointLoad;
             }
         }
 

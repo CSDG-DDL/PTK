@@ -32,8 +32,7 @@ namespace PTK
             pManager.AddPointParameter("Point At Start", "Ps", "Point At Start", GH_ParamAccess.item);
             pManager.AddPointParameter("Point At End", "Pe", "Point At End", GH_ParamAccess.item);
             pManager.AddPlaneParameter("CroSecLocalPlane", "Pl", "returns CroSec Local Plane", GH_ParamAccess.item);
-            pManager.RegisterParam(new Param_CroSec(), "CrossSections", "S", "CrossSections", GH_ParamAccess.list);
-            pManager.RegisterParam(new Param_MaterialProperty(), "Materials", "M", "Materials", GH_ParamAccess.list);
+            pManager.RegisterParam(new Param_CroSec(), "CrossSections", "S", "CrossSections", GH_ParamAccess.item);
             pManager.RegisterParam(new Param_Alignment(), "Alignment", "A", "Alignment", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Intersect Other", "I", "Is Intersect With Other", GH_ParamAccess.item);
         }
@@ -53,8 +52,7 @@ namespace PTK
             Point3d ps = elem.PointAtStart;
             Point3d pe = elem.PointAtEnd;
             Plane plane = elem.CroSecLocalPlane;
-            List<GH_CroSec> secs = elem.CrossSections.ConvertAll(s => new GH_CroSec(s));
-            List<GH_MaterialProperty> mats = elem.Materials.ConvertAll(m => new GH_MaterialProperty(m));
+            GH_CroSec sec = new GH_CroSec(elem.CrossSection);
             GH_Alignment align = new GH_Alignment(elem.Alignment);
             bool intersect = elem.IsIntersectWithOther;
 
@@ -64,10 +62,9 @@ namespace PTK
             DA.SetData(2, ps);
             DA.SetData(3, pe);
             DA.SetData(4, plane);
-            DA.SetDataList(5, secs);
-            DA.SetDataList(6, mats);
-            DA.SetData(7, align);
-            DA.SetData(8, intersect);
+            DA.SetData(5, sec);
+            DA.SetData(6, align);
+            DA.SetData(7, intersect);
         }
 
 

@@ -12,7 +12,7 @@ namespace PTK
     public class PTK_Material : GH_Component
     {
         public PTK_Material()
-          : base("Material", "Material", "Create a Material",
+          : base("Material", "Mat", "Create a Material",
               CommonProps.category, CommonProps.subcate1)
         {
             Message = CommonProps.initialMessage;
@@ -20,8 +20,8 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Material Name", GH_ParamAccess.item, "Material");
-            pManager.AddParameter(new Param_MaterialProperty(), "Structural Material Prop", "SMP", "Add material properties here", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "Material Name in large classification such as \"Wood\", \"Iron\"", GH_ParamAccess.item, "Not Named Material");
+            pManager.AddParameter(new Param_MaterialProperty(), "Structural Material Prop", "SMP", "Data representing the structural nature of the material", GH_ParamAccess.item);
             pManager.AddColourParameter("Color", "C", "Preview Color", GH_ParamAccess.item,new System.Drawing.Color());
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -30,7 +30,7 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Param_Material(), "Material", "M", "MaterialData to be connected with Materializer Component");
+            pManager.RegisterParam(new Param_Material(), "Material", "M", "Data of the Material constituting the Element");
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -45,7 +45,7 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref gProp)) {
-                prop = new MaterialProperty("MaterialProp");
+                prop = new MaterialProperty("Not Named Material Prop");
             }
             else
             {
