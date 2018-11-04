@@ -98,6 +98,7 @@
     <Compile Include="Components\10_Rule_ElementTag.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
+    <Compile Include="Components\11_BTL_DoveTailMortise.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
     <Compile Include="Components\11_BTL_Tenon.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />

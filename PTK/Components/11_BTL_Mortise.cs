@@ -30,6 +30,7 @@ namespace PTK.Components
             pManager.AddBooleanParameter("ExtendBottom?", "B", "Extend tenon Downwards?", GH_ParamAccess.item, false);
             pManager.AddNumberParameter("Shaperadius", "R", "Add shaperadius. (Active if Shapemode is set to Radius)", GH_ParamAccess.item, 20);
             pManager.AddIntegerParameter("Shapemode", "M", "Choose Shapemode. 0=Automatic, 1=Square, 2=Round, 3=rounded by tool radius, 4=Radius-based", GH_ParamAccess.item, 0);
+            pManager.AddBooleanParameter("FlipDirection?", "F", "set True if you want to flip direction of the Mortise", GH_ParamAccess.item, false);
             pManager[5].Optional = true;
             pManager[6].Optional = true;
             pManager[7].Optional = true;
@@ -56,6 +57,8 @@ namespace PTK.Components
             bool LengthLimitedBottom = true;
             double Shaperadius = 0;
             int Shapetype = 0;
+            bool FlipPlane = false;
+
 
 
             // --- input --- 
@@ -70,6 +73,7 @@ namespace PTK.Components
             DA.GetData(6, ref LengthLimitedBottom);
             DA.GetData(7, ref Shaperadius);
             DA.GetData(8, ref Shapetype);
+            DA.GetData(9, ref FlipPlane);
 
 
             BooleanType top = BooleanType.no;
@@ -82,7 +86,7 @@ namespace PTK.Components
 
 
             // --- solve ---
-            BTLMortise Mortise = new BTLMortise(MortisePlane, Width, Length, Depth, top, bottom, Shapetype, Shaperadius);
+            BTLMortise Mortise = new BTLMortise(MortisePlane, Width, Length, Depth, top, bottom, Shapetype, Shaperadius, FlipPlane);
             
             // Making Object with delegate and ID
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(Mortise.DelegateProcess));

@@ -185,18 +185,26 @@ namespace PTK
             Plane btlPlane = new Plane(TempCorner2.Origin, TempCorner2.ZAxis, CornerPlane.YAxis);
 
             Plane refPlane1 = new Plane(btlPlane.Origin, btlPlane.XAxis, btlPlane.ZAxis);
+            
+            refPlane1.YAxis.Unitize();
+            refPlane1.XAxis.Unitize();
+            refPlane1.ZAxis.Unitize();
 
-            Plane refPlane2 = new Plane(refPlane1);
-            refPlane2.Translate(btlPlane.YAxis * height);                                   //Move
-            refPlane2 = new Plane(refPlane2.Origin, btlPlane.XAxis, -btlPlane.YAxis);         //Rearrange
+            Plane refPlane2 = new Plane(refPlane1.Origin, refPlane1.XAxis, refPlane1.ZAxis);
+            Plane refPlane3 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.YAxis);
+            Plane refPlane4 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.ZAxis);
 
-            Plane refPlane3 = new Plane(refPlane2);
-            refPlane3.Translate(btlPlane.ZAxis * width);
-            refPlane3 = new Plane(refPlane3.Origin, btlPlane.XAxis, -btlPlane.ZAxis);
 
-            Plane refPlane4 = new Plane(refPlane3);
-            refPlane4.Translate(btlPlane.ZAxis * width);
-            refPlane4 = new Plane(refPlane4.Origin, btlPlane.XAxis, btlPlane.YAxis);
+
+            Vector3d WidthVector = new Vector3d(refPlane1.YAxis * width);
+            Vector3d HeightVector = new Vector3d(-refPlane1.ZAxis * height);
+
+            refPlane2.Translate(HeightVector);
+            refPlane3.Translate(WidthVector + HeightVector);
+            refPlane4.Translate(WidthVector);
+
+
+
 
             refSides.Add(new Refside(1, refPlane1, length, width,height));
             refSides.Add(new Refside(2, refPlane2, length, height, width));
