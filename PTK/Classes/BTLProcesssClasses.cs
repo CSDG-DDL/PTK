@@ -177,16 +177,12 @@ namespace PTK
             if (Vector3d.VectorAngle(RefPlane.XAxis, WorkPlane.XAxis, RefPlane) > Math.PI)
             {
 
-
-
                 Plane tempplane = new Plane(WorkPlane);
                 tempplane.XAxis.Unitize();
                 tempplane.Translate(tempplane.XAxis * Length);
                 tempplane.Rotate(Math.PI, tempplane.ZAxis, tempplane.Origin);
                 WorkPlane = tempplane;
             }
-
-
 
 
 
