@@ -85,6 +85,7 @@
     <Compile Include="Classes\Element.cs" />
     <Compile Include="Classes\CommonFunctions.cs" />
     <Compile Include="Classes\BuildingProject.cs" />
+    <Compile Include="Classes\GlobalAlignmentRules.cs" />
     <Compile Include="Classes\Joint.cs" />
     <Compile Include="Classes\KarambaConversion.cs" />
     <Compile Include="Classes\Load.cs" />
@@ -104,6 +105,10 @@
     <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVectorFromElementName.cs" />
     <Compile Include="Components\12_DGPlaneRule_SurfaceNormal.cs" />
+    <Compile Include="Components\13_GlobalAlign_FromPlane.cs" />
+    <Compile Include="Components\13_GlobalAlign_FromPoints.cs" />
+    <Compile Include="Components\13_GlobalAlign_FromSurfaces.cs" />
+    <Compile Include="Components\13_GlobalAlign_FromVector.cs" />
     <Compile Include="Components\2_CompositeCrossSection.cs" />
     <Compile Include="Components\10_DefinitionDetailingGroup.cs" />
     <Compile Include="Components\10_Rule_ElementAmount.cs" />

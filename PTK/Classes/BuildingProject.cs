@@ -176,11 +176,18 @@ namespace PTK
             //Making CornerPlane, bottom left corner
             Plane TempCorner1 = new Plane(SubElemPlaneCentric);
             TempCorner1.Translate(SubElemPlaneCentric.XAxis * -width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
+            TempCorner1.Translate(SubElemPlaneCentric.XAxis * -_element.Alignment.OffsetY + (SubElemPlaneCentric.YAxis * -_element.Alignment.OffsetZ));
+            
+
+
             //TempCorner.Translate(TempCorner.XAxis * 100 + (TempCorner.YAxis * 100));
             CornerPlane = TempCorner1;
 
             Plane TempCorner2 = new Plane(SubElemPlaneCentric);
             TempCorner2.Translate(SubElemPlaneCentric.XAxis * width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
+            TempCorner2.Translate(SubElemPlaneCentric.XAxis * -_element.Alignment.OffsetY + (SubElemPlaneCentric.YAxis * -_element.Alignment.OffsetZ));
+
+
 
             Plane btlPlane = new Plane(TempCorner2.Origin, TempCorner2.ZAxis, CornerPlane.YAxis);
 
@@ -313,14 +320,19 @@ namespace PTK
                  
                 }
 
-                BTLPart.Processings = new ComponentTypeProcessings();
-                
 
-                BTLPart.Processings.Items = AllProcessings.ToArray();
+                if (AllProcessings.Count > 0)
+                {
+                    BTLPart.Processings = new ComponentTypeProcessings();
 
+
+                    BTLPart.Processings.Items = AllProcessings.ToArray();
+
+                    
+                }
                 if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
                 {
-                    
+
                     Interval ix = new Interval(0, width);
                     Interval iy = new Interval(0, height);
                     Interval iz = new Interval(0, length);
@@ -330,7 +342,7 @@ namespace PTK
                     List<Brep> boolBrep = new List<Brep>();
                     boolBrep.Add(Stock);
 
-                        
+
                     if (VoidProcess.Count > 0)
                     {
                         if (true)
@@ -341,9 +353,9 @@ namespace PTK
                                 if (breps.Length != 0)
                                 {
                                     ProcessedStock.AddRange(breps);
-                                    
+
                                 }
-                            
+
                         }
                     }
 
@@ -352,10 +364,11 @@ namespace PTK
                         ProcessedStock.Add(Stock);
                     }
 
-                    
+
 
                     // ProcessedStock = BrepOperation....
                 }
+
 
             }
             
