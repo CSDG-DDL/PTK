@@ -20,6 +20,9 @@ namespace PTK
         public double OffsetZ { get; private set; } = 0.0;
         public double RotationAngle { get; private set; } = 0.0; //degree
         public Vector3d AlongVector { get; private set; } = new Vector3d();
+        public ElementAlignment ElementAlignment { get; private set; }
+
+
 
         // --- constructors ---
         public Alignment() { }
@@ -42,6 +45,23 @@ namespace PTK
             RotationAngle = _rotationAngle;
             AlongVector = _alongVector;
         }
+
+
+        //Alignment using delegate
+        public Alignment(string _name, double _offsetY, double _offsetZ, ElementAlignment ElementAlignMentRule)
+        {
+            OffsetY = _offsetY;
+            OffsetZ = _offsetZ;
+            ElementAlignment = ElementAlignMentRule;
+        }
+
+
+        //Generating AlongVector based on the delegate
+        public void GenerateVectorFromDelegate(Curve Curve)
+        {
+            AlongVector = ElementAlignment(Curve);
+        }
+
 
         // --- methods ---
         public void SetAnchor(AlignmentAnchorVert _ver,AlignmentAnchorHori _hor)

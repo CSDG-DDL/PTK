@@ -103,7 +103,7 @@ namespace PTK
             var fm = new Karamba.Materials.FemMaterial_Isotrop(
                 "familyName",
                 _matProp.Name,
-                _matProp.EE0gmean *0.1*10000,          /* N/mm2 To kN/cm2 入力がGHとコマンドで違う？1万倍 */
+                _matProp.EE0gmean *0.1*10000,          /* N/mm2 To kN/cm2 入力がGHとコマンドで違う？1万倍 cotusieodpierolilo?*/
                 _matProp.EE0gmean*0.5 *0.1*10000,      /* N/mm2 To kN/cm2 */
                 _matProp.GGgmean *0.1*10000,           /* N/mm2 To kN/cm2 */
                 _matProp.Rhogk *0.01,             /* kg/m3 To kN/m3  コレは同じ*/

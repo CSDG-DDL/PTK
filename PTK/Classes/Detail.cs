@@ -144,6 +144,7 @@ namespace PTK
                     break;
             }
         }
+        
 
         private bool IsNodeEndPointAtElement(Element1D _element)
         {
@@ -153,7 +154,7 @@ namespace PTK
                 return true;
             }
             return false;
-        }
+        }                              
 
         public double SearchNodeParamAtElement(Element1D _element)
         {

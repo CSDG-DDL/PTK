@@ -11,6 +11,7 @@ namespace PTK
     {
         // --- field ---
         public string Name { get; set; } = "N/A";
+        public string MaterialClass { get; set; } = "N/A";
         public double Fmgk { get; set; }
         public double Ft0gk { get; set; }
         public double Ft90gk { get; set; }
@@ -28,7 +29,13 @@ namespace PTK
         public double GGrg05 { get; set; }
         public double Rhogk { get; set; }
         public double Rhogmean { get; set; }
+        public string TxtHash { get; } = "";
 
+        private double kmod = 0.8;
+        private double ksys = 1;
+        private double gammaM = 1.2;
+
+        private double grainangle = 0;
         // --- constructors --- 
         public MaterialProperty() { }
         public MaterialProperty(string _name)
@@ -37,6 +44,7 @@ namespace PTK
         }
         public MaterialProperty(
             string _name,
+            string _materialClass,
             double _fmgk,
             double _ft0gk,
             double _ft90gk,
@@ -56,7 +64,8 @@ namespace PTK
             double _rhogmean    // density
         )
         {
-            Name = _name; 
+            Name = _name;
+            MaterialClass = _materialClass;
             Fmgk = _fmgk;
             Ft0gk = _ft0gk;
             Ft90gk = _ft90gk;
@@ -75,6 +84,14 @@ namespace PTK
             Rhogk = _rhogk;          // density
             Rhogmean = _rhogmean;    // density
         }
+
+        #region properties
+        public double Kmod { get { return kmod; } set { kmod = value; } }
+        public double Ksys { get { return ksys; } set { ksys = value; } }
+        public double GammaM { get { return gammaM; } set { gammaM = value; } }
+
+        public double GrainAngle { get; set; }
+        #endregion
 
         // --- methods ---
         public MaterialProperty DeepCopy()

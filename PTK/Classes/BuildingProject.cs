@@ -176,27 +176,42 @@ namespace PTK
             //Making CornerPlane, bottom left corner
             Plane TempCorner1 = new Plane(SubElemPlaneCentric);
             TempCorner1.Translate(SubElemPlaneCentric.XAxis * -width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
+            TempCorner1.Translate(SubElemPlaneCentric.XAxis * -_element.Alignment.OffsetY + (SubElemPlaneCentric.YAxis * -_element.Alignment.OffsetZ));
+            
+
+
             //TempCorner.Translate(TempCorner.XAxis * 100 + (TempCorner.YAxis * 100));
             CornerPlane = TempCorner1;
 
             Plane TempCorner2 = new Plane(SubElemPlaneCentric);
             TempCorner2.Translate(SubElemPlaneCentric.XAxis * width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
+            TempCorner2.Translate(SubElemPlaneCentric.XAxis * -_element.Alignment.OffsetY + (SubElemPlaneCentric.YAxis * -_element.Alignment.OffsetZ));
+
+
 
             Plane btlPlane = new Plane(TempCorner2.Origin, TempCorner2.ZAxis, CornerPlane.YAxis);
 
             Plane refPlane1 = new Plane(btlPlane.Origin, btlPlane.XAxis, btlPlane.ZAxis);
+            
+            refPlane1.YAxis.Unitize();
+            refPlane1.XAxis.Unitize();
+            refPlane1.ZAxis.Unitize();
 
-            Plane refPlane2 = new Plane(refPlane1);
-            refPlane2.Translate(btlPlane.YAxis * height);                                   //Move
-            refPlane2 = new Plane(refPlane2.Origin, btlPlane.XAxis, -btlPlane.YAxis);         //Rearrange
+            Plane refPlane2 = new Plane(refPlane1.Origin, refPlane1.XAxis, refPlane1.ZAxis);
+            Plane refPlane3 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.YAxis);
+            Plane refPlane4 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.ZAxis);
 
-            Plane refPlane3 = new Plane(refPlane2);
-            refPlane3.Translate(btlPlane.ZAxis * width);
-            refPlane3 = new Plane(refPlane3.Origin, btlPlane.XAxis, -btlPlane.ZAxis);
 
-            Plane refPlane4 = new Plane(refPlane3);
-            refPlane4.Translate(btlPlane.ZAxis * width);
-            refPlane4 = new Plane(refPlane4.Origin, btlPlane.XAxis, btlPlane.YAxis);
+
+            Vector3d WidthVector = new Vector3d(refPlane1.YAxis * width);
+            Vector3d HeightVector = new Vector3d(-refPlane1.ZAxis * height);
+
+            refPlane2.Translate(HeightVector);
+            refPlane3.Translate(WidthVector + HeightVector);
+            refPlane4.Translate(WidthVector);
+
+
+
 
             refSides.Add(new Refside(1, refPlane1, length, width,height));
             refSides.Add(new Refside(2, refPlane2, length, height, width));
@@ -285,29 +300,39 @@ namespace PTK
                     
                     PerformedProcess PerformedProcess = Perform(BTLPartGeometry, _mode);
 
-                    if (_mode == ManufactureMode.BTL || _mode==ManufactureMode.BOTH)
+                    if (PerformedProcess != null)
                     {
+                        if (_mode == ManufactureMode.BTL || _mode == ManufactureMode.BOTH)
+                        {
 
-                        AllProcessings.Add(PerformedProcess.BTLProcess);
-                        
+                            AllProcessings.Add(PerformedProcess.BTLProcess);
+
+                        }
+
+                        if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
+                        {
+                            VoidProcess.Add(PerformedProcess.VoidProcess);
+
+                        }
                     }
 
-                    if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
-                    {
-                        VoidProcess.Add(PerformedProcess.VoidProcess);
-                        
-                    }
+                    
                  
                 }
 
-                BTLPart.Processings = new ComponentTypeProcessings();
-                
 
-                BTLPart.Processings.Items = AllProcessings.ToArray();
+                if (AllProcessings.Count > 0)
+                {
+                    BTLPart.Processings = new ComponentTypeProcessings();
 
+
+                    BTLPart.Processings.Items = AllProcessings.ToArray();
+
+                    
+                }
                 if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
                 {
-                    
+
                     Interval ix = new Interval(0, width);
                     Interval iy = new Interval(0, height);
                     Interval iz = new Interval(0, length);
@@ -317,7 +342,7 @@ namespace PTK
                     List<Brep> boolBrep = new List<Brep>();
                     boolBrep.Add(Stock);
 
-                        
+
                     if (VoidProcess.Count > 0)
                     {
                         if (true)
@@ -328,9 +353,9 @@ namespace PTK
                                 if (breps.Length != 0)
                                 {
                                     ProcessedStock.AddRange(breps);
-                                    
+
                                 }
-                            
+
                         }
                     }
 
@@ -339,10 +364,11 @@ namespace PTK
                         ProcessedStock.Add(Stock);
                     }
 
-                    
+
 
                     // ProcessedStock = BrepOperation....
                 }
+
 
             }
             

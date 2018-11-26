@@ -12,8 +12,8 @@ namespace PTK.Components
         /// Initializes a new instance of the _11_04_NodeInRegion class.
         /// </summary>
         public PTK_Rule_NodeInRegion()
-          : base("NodeInRegion", "Nickname",
-              "Description",
+          : base("NodeInRegion", "NodeInRegion",
+              "Checks if the Details node is within one of the regions.",
               CommonProps.category, CommonProps.subcate10)
         {
         }
@@ -23,8 +23,8 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("Region", "R", "Region to test ", GH_ParamAccess.list);
-
+            pManager.AddCurveParameter("Region(s)", "R", "Region(s) to test ", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Max Dist","M","Maximum distance between the node and region plane. Set to 0 for strict evaluation",GH_ParamAccess.item, 9999999);
 
         }
 
@@ -45,13 +45,14 @@ namespace PTK.Components
         {
             //Variables
             List<Curve> InputCurves = new List<Curve>();
-
+            double MaxDist = 99999999;
 
             //Input
             DA.GetDataList(0, InputCurves);
+            DA.GetData(1, ref MaxDist);
 
             //Solve
-            Rules.NodeHitRegion Rule = new Rules.NodeHitRegion(InputCurves);
+            Rules.NodeHitRegion Rule = new Rules.NodeHitRegion(InputCurves,MaxDist);
 
             //Output
             DA.SetData(0, new Rules.Rule(new CheckGroupDelegate(Rule.check)));   //Sending a new checkgroupDelegate through a new rule object

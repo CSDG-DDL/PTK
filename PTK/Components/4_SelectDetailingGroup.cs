@@ -14,7 +14,7 @@ namespace PTK.Components
         public PTK_SelectDetailingGroup()
           : base("SelectDetailingGroup", "DG",
               "Use the group name to select a detailing group",
-              CommonProps.category, CommonProps.subcate3)
+              CommonProps.category, CommonProps.subcate8)
         {
         }
 
@@ -27,7 +27,11 @@ namespace PTK.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Param_Detail(), "Details", "D", "Details", GH_ParamAccess.list);
+            
+            pManager.AddGenericParameter("Node", "N", "Node", GH_ParamAccess.tree);
+            pManager.AddPlaneParameter("Nodeplanes", "P", "", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Elements", "E", "Elements", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("UnifiedElementVectors", "V", "", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -39,10 +43,10 @@ namespace PTK.Components
             int priorityKey = 0;
 
             // --- input --- 
-            if (DA.GetData(0, ref ghAssembly)) { return; }
+            if (!DA.GetData(0, ref ghAssembly)) { return; }
             assembly = ghAssembly.Value;
-            if (DA.GetData(1, ref name)) { return; }
-            if (DA.GetData(2, ref priorityKey)) { return; }
+            if (!DA.GetData(1, ref name)) { return; }
+            if (!DA.GetData(2, ref priorityKey)) { return; }
 
             //Until now, the slider is a hypothetical object.
             // This command makes it 'real' and adds it to the canvas.
@@ -50,16 +54,54 @@ namespace PTK.Components
             // --- solve ---
             if (assembly.DetailingGroups.Any(t => t.Name == name))
             {
+                
                 List<Detail> details = assembly.DetailingGroups.Find(t => t.Name == name).Details;
+                List<Plane> Planes = assembly.DetailingGroups.Find(t => t.Name == name).NodeGroupPlanes;
 
-                foreach (Detail detail in details)
+                DataTree<GH_Node> Nodes = new DataTree<GH_Node>();
+                DataTree<Plane> NodePlanes = new DataTree<Plane>();
+                DataTree<GH_Element1D> Elements = new DataTree<GH_Element1D>();
+                DataTree<Vector3d> UnifiedVectors = new DataTree<Vector3d>();
+                
+
+                for(int i =0; i<details.Count;i++)
                 {
-                    detail.GenerateUnifiedElementVectors();
-                    detail.SortElement(priorityKey);
+                    
+                    details[i].GenerateUnifiedElementVectors();
+                    details[i].SortElement(priorityKey);
+
+                    Grasshopper.Kernel.Data.GH_Path Path = new Grasshopper.Kernel.Data.GH_Path(i);
+                    GH_Node tempNode = new GH_Node(details[i].Node);
+
+                    Nodes.Add(tempNode, Path); //ADDED THIS + Changed datatreees to node
+                    NodePlanes.Add(Planes[i], Path);
+
+                    Elements.AddRange(details[i].Elements.ConvertAll(e => new GH_Element1D(e)), Path); 
+                    UnifiedVectors.AddRange(details[i].Elements.ConvertAll(e => details[i].ElementsUnifiedVectorsMap[e]), Path);
+                    
                 }
 
+
                 // --- output ---
-                DA.SetDataList(0, details.ConvertAll(d => new GH_Detail(d)));
+                DA.SetDataTree(0, Nodes);
+                DA.SetDataTree(1, NodePlanes);
+                DA.SetDataTree(2, Elements);
+                DA.SetDataTree(3, UnifiedVectors);
+
+                //// --- solve ---
+                //GH_Node node = new GH_Node(detail.Node);
+                //List<GH_Element1D> elements = detail.Elements.ConvertAll(e => new GH_Element1D(e));
+                //List<Vector3d> vectors = detail.Elements.ConvertAll(e => detail.ElementsUnifiedVectorsMap[e]);
+                //string type = detail.Type.ToString();
+
+
+
+
+
+
+
+
+
             }
         }
 

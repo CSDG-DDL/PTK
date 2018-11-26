@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rhino.Geometry;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 namespace PTK
 {
@@ -22,13 +25,16 @@ namespace PTK
         public static readonly string subcate9 = "Tool";
         public static readonly string subcate10 = "DetailGroupRules";
         public static readonly string subcate11 = "TimberDetailing";
+        public static readonly string subcate12 = "ElementAlignment";
         public static readonly string initialMessage = "PTK Ver.0.5";
     }
 
     // ----------------
     //     Delegate    
     // ----------------
+    public delegate Plane GenerateNodeGroupPlane(Detail detail);
     public delegate bool CheckGroupDelegate(Detail detail);
+    public delegate Vector3d ElementAlignment(Curve curve);
     public delegate PerformedProcess PerformTimberProcessDelegate(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode);
 
 

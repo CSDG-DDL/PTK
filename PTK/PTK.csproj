@@ -36,14 +36,17 @@
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GH_IO">
-      <HintPath>..\..\Library\GH_IO.dll</HintPath>
+      <HintPath>Library\GH_IO.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Grasshopper, Version=1.0.0.20, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\Grasshopper.dll</HintPath>
+      <HintPath>Library\Grasshopper.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="karamba">
@@ -75,7 +78,6 @@
     <Compile Include="Classes\Assembly.cs" />
     <Compile Include="Classes\BTLProcesssClasses.cs" />
     <Compile Include="Classes\btlx_10.cs" />
-   
     <Compile Include="Classes\Detail.cs" />
     <Compile Include="Classes\DetailingGroup.cs" />
     <Compile Include="Classes\DetailingGroupRules.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Classes\Element.cs" />
     <Compile Include="Classes\CommonFunctions.cs" />
     <Compile Include="Classes\BuildingProject.cs" />
+    <Compile Include="Classes\GlobalAlignmentRules.cs" />
     <Compile Include="Classes\Joint.cs" />
     <Compile Include="Classes\KarambaConversion.cs" />
     <Compile Include="Classes\Load.cs" />
@@ -90,11 +93,22 @@
     <Compile Include="Classes\MaterialProp.cs" />
     <Compile Include="Classes\Node.cs" />
     <Compile Include="Classes\CommonProps.cs" />
+    <Compile Include="Classes\DetailingGroupPlaneRules.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
+    <Compile Include="Classes\StructuralReport.cs" />
+    <Compile Include="Components\10_Rule_ElementTag.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
+    <Compile Include="Components\11_BTL_DoveTailMortise.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
-
+    <Compile Include="Components\11_BTL_Tenon.cs" />
+    <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />
+    <Compile Include="Components\12_DGPlaneRule_NormalVectorFromElementName.cs" />
+    <Compile Include="Components\12_DGPlaneRule_SurfaceNormal.cs" />
+    <Compile Include="Components\13_GlobalAlign_FromPlane.cs" />
+    <Compile Include="Components\13_GlobalAlign_FromPoints.cs" />
+    <Compile Include="Components\13_GlobalAlign_FromSurfaces.cs" />
+    <Compile Include="Components\13_GlobalAlign_FromVector.cs" />
     <Compile Include="Components\2_CompositeCrossSection.cs" />
     <Compile Include="Components\10_DefinitionDetailingGroup.cs" />
     <Compile Include="Components\10_Rule_ElementAmount.cs" />
@@ -102,6 +116,9 @@
     <Compile Include="Components\2_CircularCrossSection.cs" />
     <Compile Include="Components\3_GravityLoad.cs" />
     <Compile Include="Components\3_StructualAssembly.cs" />
+    <Compile Include="Components\5_KarambaTHI.cs" />
+    <Compile Include="Components\5_Utilization.cs" />
+    <Compile Include="Components\5_UtilizationPreview.cs" />
     <Compile Include="Components\6_FinishedModel.cs" />
     <Compile Include="Components\2_SimpleAlignment.cs" />
     <Compile Include="Components\2_Force.cs" />
@@ -116,6 +133,8 @@
     <Compile Include="Components\8_ExtractDetail.cs" />
     <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
     <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
+    <Compile Include="Components\11_BTL_Mortise.cs" />
+    <Compile Include="Components\10_Rule_ElementAngle.cs" />
     <Compile Include="Forms\F01_Supports.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -150,7 +169,6 @@
     <Compile Include="PTKInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Components\2_Element.cs" />
-    <Compile Include="Components\5_KarambaExport.cs" />
     <Compile Include="Components\3_Assembly.cs" />
     <Compile Include="Components\1_LoadMaterialProp.cs" />
     <Compile Include="Components\1_MaterialProp.cs" />

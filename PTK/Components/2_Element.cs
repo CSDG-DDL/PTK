@@ -68,6 +68,9 @@ namespace PTK
             crossSection = gCroSec.Value;
             if (!DA.GetData(3, ref gAlignment)) { return; }
             alignment = gAlignment.Value;
+            //Generating Alignment
+            alignment.GenerateVectorFromDelegate(curve);
+
             if (!DA.GetDataList(4, gForces))
             {
                 forces = new List<Force>();
@@ -86,6 +89,13 @@ namespace PTK
             }
             if (!DA.GetData(6, ref priority)) { return; }
             if (!DA.GetData(7, ref intersect)) { return; }
+
+
+
+
+
+
+
 
             // --- solve ---
             GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, crossSection, alignment, forces, joints, priority, intersect));

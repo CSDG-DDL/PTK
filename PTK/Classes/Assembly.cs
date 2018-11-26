@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+
 namespace PTK
 {
     public class Assembly
@@ -22,7 +23,7 @@ namespace PTK
         public Dictionary<Element1D, List<int>> NodeMap { get; private set; } = new Dictionary<Element1D, List<int>>();
         public List<Detail> Details { get; private set; } = new List<Detail>();
         public List<DetailingGroup> DetailingGroups { get; private set; } = new List<DetailingGroup>();
-
+        
         // --- constructors --- 
         public Assembly() { }
         public Assembly(Assembly _assembly)
@@ -207,6 +208,10 @@ namespace PTK
         public Assembly Assembly { get; private set; } = new Assembly();
         public List<Support> Supports { get; private set; } = new List<Support>();
         public List<Load> Loads { get; private set; } = new List<Load>();
+        public Dictionary<Element1D, Force> ElementForce { get; private set; } = new Dictionary<Element1D, Force>();
+        public Dictionary<Element1D, PTK_StructuralAnalysis> ElementReport { get; private set; } = new Dictionary<Element1D, PTK_StructuralAnalysis>();
+        //public List<Karamba.Models.GH_Model> krmb_GH_Model { get; private set; } = new List<Karamba.Models.GH_Model>();
+
 
         // --- constructors ---
         public StructuralAssembly() { }
@@ -234,7 +239,7 @@ namespace PTK
             }
             return Loads.Count;
         }
-
+        
         public new StructuralAssembly DeepCopy()
         {
             return (StructuralAssembly)base.MemberwiseClone();
@@ -297,6 +302,7 @@ namespace PTK
             return GH_GetterResult.success;
         }
     }
+
     public class GH_StructuralAssembly : GH_Goo<StructuralAssembly>
     {
         public GH_StructuralAssembly() { }

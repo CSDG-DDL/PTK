@@ -14,7 +14,7 @@ namespace PTK.Components
         /// </summary>
         public _10_Rule_ElementTag()
           : base("ElementTagRule", "T",
-              "Checks the tag of the elements",
+              "Checks the tag of the elements. Several tags can be inputted.",
               CommonProps.category, CommonProps.subcate10)
         {
         }
@@ -45,7 +45,6 @@ namespace PTK.Components
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            //Inputs
 
             //Variables
             List<string> tagsAre = new List<string>();
@@ -73,7 +72,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return Properties.Resources.SearchDetail;
             }
         }
 

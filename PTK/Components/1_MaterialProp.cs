@@ -8,8 +8,8 @@ namespace PTK
     public class PTK_StructuralMaterialProp : GH_Component
     {
         public PTK_StructuralMaterialProp()
-          : base("Material Prop", "MatProp",
-              "Creates material properties",
+          : base("Material Structural Prop", "MatStrProp",
+              "creates material properties",
               CommonProps.category, CommonProps.subcate1)
         {
             Message = CommonProps.initialMessage;
@@ -17,7 +17,8 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Material Name (more detailed name such as product name and standard name)", GH_ParamAccess.item, "Not Named Material Prop");
+            pManager.AddTextParameter("Name", "N", "names Material.", GH_ParamAccess.item, "Glulam");
+            pManager.AddTextParameter("MaterialClass", "N", "names Material.", GH_ParamAccess.item, "GL26");
 
             pManager.AddNumberParameter("f m,g,k", "fmgk", "in [N/mm2]", GH_ParamAccess.item, 26 );
             pManager.AddNumberParameter("f t,0,g,k", "ft0gk", "in [N/mm2]", GH_ParamAccess.item, 19 );
@@ -44,14 +45,15 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Param_MaterialProperty(), "Material Prop", "MatProp",
-                "Data of the Material constituting the Element");
+            pManager.RegisterParam(new Param_MaterialProperty(), "Structural Material Prop", "SMP",
+                "Material Property (PTK) data to be connected to a Material (PTK) component");
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // --- variables ---
             string Name = null;
+            string Class = null;
 
             // for glulam according LIMTREBOKA
             double fmgk = new double() ;
@@ -79,32 +81,36 @@ namespace PTK
 
             // --- input --- 
             if (!DA.GetData(0, ref Name)) { return; } ;
+            if (!DA.GetData(1, ref Name)) { return; };
 
-            if (!DA.GetData(1, ref fmgk)) { return; }
-            if (!DA.GetData(2, ref ft0gk)) { return; }
-            if (!DA.GetData(3, ref ft90gk)) { return; }
-            if (!DA.GetData(4, ref fc0gk)) { return; }
-            if (!DA.GetData(5, ref fc90gk)) { return; }
-            if (!DA.GetData(6, ref fvgk)) { return; }
-            if (!DA.GetData(7, ref frgk)) { return; }
+            if (!DA.GetData(2, ref fmgk)) { return; }
+            if (!DA.GetData(3, ref ft0gk)) { return; }
+            if (!DA.GetData(4, ref ft90gk)) { return; }
+            if (!DA.GetData(5, ref fc0gk)) { return; }
+            if (!DA.GetData(6, ref fc90gk)) { return; }
+            if (!DA.GetData(7, ref fvgk)) { return; }
+            if (!DA.GetData(8, ref frgk)) { return; }
 
-            if (!DA.GetData(8, ref E0gmean)) { return; }
-            if (!DA.GetData(9, ref E0g05)) { return; }
-            if (!DA.GetData(10, ref E90gmean)) { return; }
-            if (!DA.GetData(11, ref E90g05)) { return; }
+            if (!DA.GetData(9, ref E0gmean)) { return; }
+            if (!DA.GetData(10, ref E0g05)) { return; }
+            if (!DA.GetData(11, ref E90gmean)) { return; }
+            if (!DA.GetData(12, ref E90g05)) { return; }
 
-            if (!DA.GetData(12, ref Ggmean)) { return; }
-            if (!DA.GetData(13, ref Gg05)) { return; }
-            if (!DA.GetData(14, ref Gtgmean)) { return; }
-            if (!DA.GetData(15, ref Grg05)) { return; }
+            if (!DA.GetData(13, ref Ggmean)) { return; }
+            if (!DA.GetData(14, ref Gg05)) { return; }
+            if (!DA.GetData(15, ref Gtgmean)) { return; }
+            if (!DA.GetData(16, ref Grg05)) { return; }
 
-            if (!DA.GetData(16, ref Rhogk)) { return; }
-            if (!DA.GetData(17, ref Rhogmean)) { return; }
+            if (!DA.GetData(17, ref Rhogk)) { return; }
+            if (!DA.GetData(18, ref Rhogmean)) { return; }
 
             // --- solve ---
             GH_MaterialProperty prop = new GH_MaterialProperty(
                 new MaterialProperty(
                     Name,
+                    Class,
+                    
+                    
                     fmgk,
 
                     ft0gk,

@@ -34,6 +34,10 @@ namespace PTK.Components
         {
             pManager.AddTextParameter("", "", "", GH_ParamAccess.item);
             pManager.AddBrepParameter("Breps", "", "", GH_ParamAccess.tree);
+            pManager.AddPlaneParameter("1", "", "", GH_ParamAccess.list);
+            pManager.AddPlaneParameter("2", "", "", GH_ParamAccess.list);
+            pManager.AddPlaneParameter("3", "", "", GH_ParamAccess.list);
+            pManager.AddPlaneParameter("4", "", "", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -57,6 +61,9 @@ namespace PTK.Components
             GrasshopperProject.PrepairElements(ghAssembly.Value.Elements, Orders);
             GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
 
+            
+
+
             // Create a new XmlSerializer instance with the type of the test class
             //Initializing the project
             ProjectType Project = GrasshopperProject.BTLProject; 
@@ -77,6 +84,7 @@ namespace PTK.Components
             BTLx.Language = "Norsk";
             
             
+            
 
 
             // Create a new XmlSerializer instance with the type of the test class
@@ -92,11 +100,34 @@ namespace PTK.Components
 
             
             SerializerObj.Serialize(WriteFileStream, BTLx);
-            WriteFileStream.Close();
+
+            List<BuildingElement> Elements = GrasshopperProject.BuildingElements;
+
+            List<Plane> ref1 = new List<Plane>();
+            List<Plane> ref2 = new List<Plane>();
+            List<Plane> ref3 = new List<Plane>();
+            List<Plane> ref4 = new List<Plane>();
+
+            foreach (BuildingElement Elems in Elements)
+            {
+                ref1.Add(Elems.Sub3DElements[0].BTLPartGeometry.Refsides[0].RefPlane);
+                ref2.Add(Elems.Sub3DElements[0].BTLPartGeometry.Refsides[1].RefPlane);
+                ref3.Add(Elems.Sub3DElements[0].BTLPartGeometry.Refsides[2].RefPlane);
+                ref4.Add(Elems.Sub3DElements[0].BTLPartGeometry.Refsides[3].RefPlane);
+
+            }
+            
 
             // --- output ---
             DA.SetDataList(0, "Yeahhhh");
             DA.SetDataTree(1, dataTree);
+            DA.SetDataList(2, ref1);
+            DA.SetDataList(3, ref2);
+            DA.SetDataList(4, ref3);
+            DA.SetDataList(5, ref4);
+
+
+
 
         }
 
