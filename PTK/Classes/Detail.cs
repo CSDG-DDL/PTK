@@ -95,7 +95,7 @@ namespace PTK
             {
                 double DistanceElemStart = Node.Point.DistanceTo(element.BaseCurve.PointAtStart);
                 double DistanceElemEnd = Node.Point.DistanceTo(element.BaseCurve.PointAtEnd);
-                element.BaseCurve.Reverse();
+                //element.BaseCurve.Reverse();
                 if (DistanceElemStart < DistanceElemEnd)
                 {
                     ElementsUnifiedVectorsMap[element] = -element.BaseCurve.TangentAtStart;
