@@ -24,7 +24,8 @@ namespace PTK
     public class Element1D : Element
     {
         // --- field ---
-        public Curve BaseCurve { get; private set; } = null;
+        private Curve baseCurve = null;
+        //public Curve BaseCurve { get; private set; } = null;
         public Point3d PointAtStart { get; private set; } = new Point3d();
         public Point3d PointAtEnd { get; private set; } = new Point3d();
         public Plane CroSecLocalPlane { get; private set; }
@@ -59,6 +60,12 @@ namespace PTK
         }
 
         // --- methods ---
+        public Curve BaseCurve
+        {
+            get { return baseCurve.DuplicateCurve(); }
+            set { baseCurve = value; }
+        }
+
         private void InitializeLocalPlane()
         {
             if (BaseCurve != null)
