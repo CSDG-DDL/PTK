@@ -1,6 +1,6 @@
 # Reindeer (name to be confirmed, temporarily "Reindeer")
 
-Reindeer is a plugin for Grasshopper. It is a collection of tools necessary to design - analyze - and produce various timber elements for buildings and bridges.
+Reindeer is a plugin for Grasshopper. It is a collection of tools necessary to design - analyze - and produce various timber elements for buildings and bridges. It starts with the joint development between CSDG (https://www.ntnu.edu/kt/research/csdg) in NTNU and DDL in Nikken Sekkei, Ltd (https://www.nikken.co.jp/en/).
 
 ## version and status
 
