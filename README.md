@@ -2,6 +2,10 @@
 
 Reindeer is a plugin for Grasshopper. It is a collection of tools necessary to design - analyze - and produce various timber elements for buildings and bridges.
 
+## version and status
+
+- V.0.5.00 : Initial release. 
+
 # Licenses and Copyright
 
 Reindeer is released under the MIT License. Please refer to the textfile named "LISENCE".
