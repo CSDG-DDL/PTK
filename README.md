@@ -4,7 +4,7 @@ Reindeer is a plugin for Grasshopper. It is a collection of tools necessary to d
 
 # Licenses and Copyright
 
-Reindeer is released under the MIT License, please refer to the textfile named "LISENCE".
+Reindeer is released under the MIT License. Please refer to the textfile named "LISENCE".
 
 # External Libraries
 
@@ -24,3 +24,4 @@ All rights reserved.
 # Credit
 
 - Karamba3D
+- BTLx ?
