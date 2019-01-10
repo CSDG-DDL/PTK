@@ -6,6 +6,10 @@ Reindeer is a plugin for Grasshopper. It is a collection of tools necessary to d
 
 - V.0.5.00 : Initial release. 
 
+## when you encounter a buggy behaviour
+
+Posting the contents of your problem to the Issue on github would be appreciated, although we may not be available to solve the problems.
+
 # Licenses and Copyright
 
 Reindeer is released under the MIT License. Please refer to the textfile named "LISENCE".
