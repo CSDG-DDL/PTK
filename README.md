@@ -8,7 +8,7 @@ Reindeer is released under the MIT License, please refer to the textfile named "
 
 # External Libraries
 
-Following Libraries are used to develop Reindeer.
+Following Libraries are employed to develop Reindeer.
 
 - JSON.NET https://github.com/JamesNK/Newtonsoft.Json 
 - D3 https://github.com/d3/d3
