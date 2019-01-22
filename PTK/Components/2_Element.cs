@@ -66,8 +66,13 @@ namespace PTK
             if (!DA.GetData(1, ref curve)) { return; }
             if (!DA.GetData(2, ref gCroSec)) { return; }
             crossSection = gCroSec.Value;
-            if (!DA.GetData(3, ref gAlignment)) { return; }
-            alignment = gAlignment.Value;
+            if (!DA.GetData(3, ref gAlignment)) {
+                alignment = new Alignment("Not Named Alignment");
+            }
+            else
+            {
+                alignment = gAlignment.Value;
+            }
             //Generating Alignment
             alignment.GenerateVectorFromDelegate(curve);
 

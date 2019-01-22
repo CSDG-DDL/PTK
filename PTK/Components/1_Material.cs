@@ -22,7 +22,7 @@ namespace PTK
         {
             pManager.AddTextParameter("Name", "N", "Material Name in large classification such as \"Wood\", \"Iron\"", GH_ParamAccess.item, "Not Named Material");
             pManager.AddParameter(new Param_MaterialProperty(), "Structural Material Prop", "SMP", "Data representing the structural nature of the material", GH_ParamAccess.item);
-            pManager.AddColourParameter("Color", "C", "Preview Color", GH_ParamAccess.item,new System.Drawing.Color());
+            pManager.AddColourParameter("Color", "C", "Preview Color", GH_ParamAccess.item, Color.White);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;

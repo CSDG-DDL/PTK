@@ -52,10 +52,10 @@ namespace PTK
             if (!DA.GetData(0, ref name)) { return; }
             if (!DA.GetData(1, ref width)) { return; }
             if (!DA.GetData(2, ref height)) { return; }
-            if (!DA.GetData(3, ref gMaterial)) { return; }
-            material = gMaterial.Value;
+            if (!DA.GetData(3, ref gMaterial)) { material = new MaterialProperty("Not Named MatProp"); }
+            else { material = gMaterial.Value; }
             if (!DA.GetData(4, ref gAlignment)) { alignment = new Alignment("Not Named Alignment"); ; }
-            alignment = gAlignment.Value;
+            else { alignment = gAlignment.Value; }
 
             // --- solve ---
             GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, material, height, width, alignment));
