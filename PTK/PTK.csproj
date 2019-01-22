@@ -126,7 +126,6 @@
     <Compile Include="Components\6_PreviewCrossSection.cs" />
     <Compile Include="Components\6_PreviewElement.cs" />
     <Compile Include="Classes\DetailModel.cs" />
-    <Compile Include="Components\6_PreviewGeometry.cs" />
     <Compile Include="Components\6_PreviewPriority.cs" />
     <Compile Include="Components\4_SelectDetailingGroup.cs" />
     <Compile Include="Components\7_BuildModel.cs" />
