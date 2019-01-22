@@ -54,7 +54,7 @@ namespace PTK
             if (!DA.GetData(2, ref height)) { return; }
             if (!DA.GetData(3, ref gMaterial)) { return; }
             material = gMaterial.Value;
-            if (!DA.GetData(4, ref gAlignment)) { return; }
+            if (!DA.GetData(4, ref gAlignment)) { alignment = new Alignment("Not Named Alignment"); ; }
             alignment = gAlignment.Value;
 
             // --- solve ---
