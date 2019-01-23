@@ -53,15 +53,7 @@ namespace PTK
             if (!DA.GetData(4, ref alongVector)) { return; }
 
             // --- solve ---
-            GH_Alignment ali;
-            if (alongVector.Length <= 0)
-            {
-                ali = new GH_Alignment(new Alignment(name, offsetY, offsetZ, rotationAngle));
-            }
-            else
-            {
-                ali = new GH_Alignment(new Alignment(name, offsetY, offsetZ, rotationAngle, alongVector));
-            }
+            GH_Alignment ali = new GH_Alignment(new Alignment(name, offsetY, offsetZ, rotationAngle, alongVector));
 
             // --- output ---
             DA.SetData(0, ali);

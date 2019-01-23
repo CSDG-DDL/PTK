@@ -119,15 +119,11 @@
     <Compile Include="Components\5_KarambaTHI.cs" />
     <Compile Include="Components\5_Utilization.cs" />
     <Compile Include="Components\5_UtilizationPreview.cs" />
-    <Compile Include="Components\6_FinishedModel.cs" />
     <Compile Include="Components\2_SimpleAlignment.cs" />
     <Compile Include="Components\2_Force.cs" />
     <Compile Include="Classes\Force.cs" />
-    <Compile Include="Components\6_PreviewCrossSection.cs" />
     <Compile Include="Components\6_PreviewElement.cs" />
     <Compile Include="Classes\DetailModel.cs" />
-    <Compile Include="Components\6_PreviewGeometry.cs" />
-    <Compile Include="Components\6_PreviewPriority.cs" />
     <Compile Include="Components\4_SelectDetailingGroup.cs" />
     <Compile Include="Components\7_BuildModel.cs" />
     <Compile Include="Components\8_ExtractDetail.cs" />
@@ -175,18 +171,14 @@
     <Compile Include="Components\1_Material.cs" />
     <Compile Include="Components\3_PointLoad.cs" />
     <Compile Include="Components\3_Support.cs" />
-    <Compile Include="Components\4_PrioritizedModel.cs" />
-    <Compile Include="Components\4_DetailModel.cs" />
     <Compile Include="Components\5_LocalAnalysis.cs" />
     <Compile Include="Components\5_FeasibleCheck.cs" />
     <Compile Include="Components\7_BtlExport.cs" />
-    <Compile Include="Components\8_DisassembleMaterial.cs" />
     <Compile Include="Components\8_ExtractElement.cs" />
     <Compile Include="Classes\CrossSection.cs" />
     <Compile Include="Components\8_ExtractNode.cs" />
     <Compile Include="Classes\Support.cs" />
     <Compile Include="Components\8_ExtractAssembly.cs" />
-    <Compile Include="Components\8_DisassembleSection.cs" />
     <Compile Include="Components\9_GeneticAlgorithm.cs" />
   </ItemGroup>
   <ItemGroup>
