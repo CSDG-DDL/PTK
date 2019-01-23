@@ -93,16 +93,14 @@ namespace PTK
         {
             foreach (Element1D element in Elements)
             {
-                double DistanceElemStart = Node.Point.DistanceTo(element.BaseCurve.PointAtStart);
-                double DistanceElemEnd = Node.Point.DistanceTo(element.BaseCurve.PointAtEnd);
-                //element.BaseCurve.Reverse();
-                if (DistanceElemStart < DistanceElemEnd)
+                if (Node.Equals(element.BaseCurve.PointAtEnd))
                 {
-                    ElementsUnifiedVectorsMap[element] = -element.BaseCurve.TangentAtStart;
+                    ElementsUnifiedVectorsMap[element] = -element.BaseCurve.TangentAtEnd;
                 }
                 else
                 {
-                    ElementsUnifiedVectorsMap[element] = -element.BaseCurve.TangentAtEnd;
+                    double param = SearchNodeParamAtElement(element);
+                    ElementsUnifiedVectorsMap[element] = element.BaseCurve.TangentAt(param);
                 }
             }
         }
