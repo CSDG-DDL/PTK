@@ -97,7 +97,7 @@ namespace PTK.Components
 
             structuralAssembly = gStrAssembly.Value ;
 
-            List<Element1D> elements = structuralAssembly.Assembly.Elements ;
+            List<Element1D> elements = structuralAssembly.Elements ;
 
             List<Color> cList = new List<Color>();
             foreach (var c1 in colorList)
@@ -131,7 +131,7 @@ namespace PTK.Components
                     c1++;
                 }
                 int i1 = 0;
-                foreach (var e1 in structuralAssembly.Assembly.Elements)
+                foreach (var e1 in structuralAssembly.Elements)
                 {
                     tmpReport = structuralAssembly.ElementReport[e1];
                     tmpUtilList = new List<double>() {
@@ -178,7 +178,8 @@ namespace PTK.Components
                     Point3d originElement = element.CroSecLocalPlane.Origin;
                     Point3d originSubElement = originElement + subElement.Item2.OffsetY * localY + subElement.Item2.OffsetZ * localZ;
 
-                    Plane localPlaneSubElement = new Plane(originSubElement,
+                    Plane localPlaneSubElement = new Plane(
+                        originSubElement,
                         element.CroSecLocalPlane.XAxis,
                         element.CroSecLocalPlane.YAxis);
 
@@ -197,14 +198,10 @@ namespace PTK.Components
                             if (tmpUtil >= utilList[i1] && tmpUtil < utilList[i1 + 1])
                             {
                             tmpColor = cList[i1];
-                            }
-                                
+                            }  
                         }
-
                     };
                     
-
-
                     sectionCurves[new Rectangle3d(
                                 localPlaneSubElement,
                                 new Interval(-subElement.Item1.GetWidth() / 2, subElement.Item1.GetWidth() / 2),
@@ -219,7 +216,6 @@ namespace PTK.Components
                     {
                         Line l = new Line(c.PointAtStart, c.PointAtEnd);
                         Brep brep = Extrusion.CreateExtrusion(s, l.Direction).ToBrep();
-                        //brep = brep.CapPlanarHoles(CommonProps.tolerances);
                         tmpModels[brep] = sectionCurves[s];
                     }
                     else
@@ -231,7 +227,7 @@ namespace PTK.Components
                         }
                     }
                 }
-
+                sectionCurves.Clear();
 
 
             }

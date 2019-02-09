@@ -25,13 +25,14 @@ namespace PTK
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
+            pManager.AddTextParameter( "Units", "SI", "The units of geometry either mm or m", GH_ParamAccess.item,"mm");
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.RegisterParam(new Karamba.Models.Param_Model(), "Karamba Model", "KM", "Karamba Model", GH_ParamAccess.item);
-            pManager.RegisterParam(new Karamba.Models.Param_Model(), "Analyzed Assembly", "AA", "", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Displacement", "D", "Maximum displacement in [m]", GH_ParamAccess.item);
+            pManager.RegisterParam(new Karamba.Models.Param_Model(), "Analyzed Assembly Meters", "AAm", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("NewsaDisplacement", "D", "Maximum displacement in [m]", GH_ParamAccess.item);
             pManager.RegisterParam(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
             pManager.AddTextParameter("Checkout", "c", "Maximum displacement in [m]", GH_ParamAccess.list);
         }
@@ -41,6 +42,7 @@ namespace PTK
 
 
             // --- variables ---
+            string unitsInput = "mm";
             string singular_system_msg = "singular stiffness matrix";
             GH_StructuralAssembly gStrAssembly = null;
             StructuralAssembly structuralAssembly = null;
@@ -52,14 +54,23 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref gStrAssembly)) { return; }
             structuralAssembly = gStrAssembly.Value;
-            
+            if (!DA.GetData(1, ref unitsInput)) { return; }
 
             // --- solve ---
-            var karambaModel = PTK.KarambaConversion.BuildModel(structuralAssembly);
+            var karambaModel = PTK.KarambaConversion.BuildModelMeters(structuralAssembly);
+
+            if (unitsInput=="m")
+            {
+                karambaModel = null;
+            // --- solve ---
+            karambaModel = PTK.KarambaConversion.BuildModelMmeters(structuralAssembly);
+            }
+            
             Karamba.Models.Model analyzedModel;
 
             //clone model to avoid side effects
             analyzedModel = (Karamba.Models.Model)karambaModel.Clone();
+            
 
             //clone its elements to avoid side effects
             analyzedModel.cloneElements();
@@ -68,12 +79,14 @@ namespace PTK
             analyzedModel.deepCloneFEModel();
 
             feb.Deform deform = new feb.Deform(analyzedModel.febmodel);
+
             feb.Response response = new feb.Response(deform);
 
             try
             {
                 //calculate displacements
                 response.updateNodalDisplacements();
+
                 //calculate the member forces
                 response.updateMemberForces();
             }
@@ -89,8 +102,6 @@ namespace PTK
             double maxGlobalDisplacement = 0;
             maxGlobalDisplacement = response.maxNodalDisplacement();
 
-
-
             /// the sorting data from analysis
             /// 
             List<string> id_list = new List<string>();
@@ -98,6 +109,7 @@ namespace PTK
             {
                 id_list.Add(e.id);      // loop over !!karamba!! elements, to take their id
             }
+
 
             double maximum_distance_bt_points = 1;
             int maximum_num_points = 20;
@@ -118,6 +130,7 @@ namespace PTK
 
             List<Force> listOfForcesToElements = new List<Force>();
             List<String> check1 = new List<string>();
+            string tmpS;
 
             foreach (var result_element_list in results)
             {
@@ -133,17 +146,21 @@ namespace PTK
                 {
                     /// this loop is over elements in the model
 
+                    // the variables for maximum values of the forces
                     double N1_tension_max = 0;
                     double N1_compression_max = 0;
                     double N2_max = 0;
                     double N3_max = 0;
-
                     double M1_max = 0;
                     double M2_max = 0;
                     double M3_max = 0;
 
                     element_id++;
 
+
+                    /* there is six places for each forces, we are looking for maximum forces on the beam,
+                    since the maximum compression can appear in the middle of the beam, the other 5 forces for this place
+                    should also be remembered. In the future maybe there we should also add the load case in which the max appeared */
                     var N1_compression_list_element = new List<double>() { 0, 0, 0, 0, 0, 0 };
                     var N1_tension_list_element = new List<double>() { 0, 0, 0, 0, 0, 0 };
 
@@ -165,11 +182,14 @@ namespace PTK
                         M3_list_element
                         );
 
+
+
                     foreach (var force_component_list in result_point_list)
                     {
                         /// Loop over result points
                         id_points++;
-                        if (N1_compression_max >= force_component_list[0])
+                        
+                        if (N1_compression_max >= force_component_list[0])  // if the new compression(+ sign) force is bigger then the previous one, save it
                         {
                             N1_compression_max = force_component_list[0];
                             N1_compression_list_element = force_component_list;
@@ -178,47 +198,47 @@ namespace PTK
                             tmpForces.Loadcase_Max_Fx_compression = load_case_id;
 
                         }
-                        if (N1_tension_max <= force_component_list[0])
+                        if (N1_tension_max <= force_component_list[0])      // if the new tension(- sign) force is smaller than the previous one, save it
                         {
                             N1_tension_max = force_component_list[0];
                             N1_tension_list_element = force_component_list;
 
                             tmpForces.Loadcase_Max_Fx_tension = load_case_id;
                         }
-                        if (N2_max <= Math.Abs(force_component_list[1]))
+                        if (N2_max <= Math.Abs(force_component_list[1]))    // we do not care about shear1 sign, so just if absolute value is bigger
                         {
                             N2_max = force_component_list[1];
                             N2_list_element = force_component_list;
 
                             tmpForces.Loadcase_Max_Fy_shear = load_case_id;
                         }
-                        if (N3_max <= Math.Abs(force_component_list[2]))
+                        if (N3_max <= Math.Abs(force_component_list[2]))    // we do not care about shear2 sign, so just if absolute value is bigger
                         {
                             N3_max = force_component_list[2];
                             N3_list_element = force_component_list;
 
                             tmpForces.Loadcase_Max_Fz_shear = load_case_id;
                         }
-                        if (M1_max <= Math.Abs(force_component_list[3]))
+                        if (M1_max <= Math.Abs(force_component_list[3]))    // we do not care about moment1 sign, so just if absolute value is bigger
                         {
                             M1_max = force_component_list[3];
                             M1_list_element = force_component_list;
 
                             tmpForces.Loadcase_Max_Mx_torsion = load_case_id;
                         }
-                        if (M2_max <= Math.Abs(force_component_list[4]))
+                        if (M2_max <= Math.Abs(force_component_list[4]))    // we do not care about moment2 sign, so just if absolute value is bigger
                         {
                             M2_max = force_component_list[4];
                             M2_list_element = force_component_list;
 
                             tmpForces.Loadcase_Max_My_bending = load_case_id;
                         }
-                        if (M3_max <= Math.Abs(force_component_list[5]))
+                        if (M3_max <= Math.Abs(force_component_list[5]))    // we do not care about moment3 sign, so just if absolute value is bigger
                         {
                             M3_max = force_component_list[5];
                             M3_list_element = force_component_list;
 
-                            tmpForces.Loadcase_Max_Mz_bending = load_case_id;
+                            tmpForces.Loadcase_Max_Mz_bending = load_case_id;   
                             }
 
                     }
@@ -244,8 +264,15 @@ namespace PTK
                     tmpforce1.Max_Mz_bending = Math.Abs(M3_max);
 
                     listOfForcesToElements.Add( tmpforce1 );
+                    // the maximum forces in the elements
+                    tmpS = " Fxc= "+ tmpforce1.Max_Fx_compression 
+                        + " Fxt= " + tmpforce1.Max_Fx_tension 
+                        + " Fy= " + tmpforce1.Max_Fy_shear 
+                        + " Fz= " + tmpforce1.Max_Fz_shear 
+                        + " Mx= " + tmpforce1.Max_Mx_torsion 
+                        + " My= " + tmpforce1.Max_My_bending 
+                        + " Mz= " + tmpforce1.Max_Mz_bending;
 
-                    string tmpS = " fxc= "+ tmpforce1.Max_Fx_compression + " fxt= " + tmpforce1.Max_Fx_tension + " fy= " + tmpforce1.Max_Fy_shear + " fz= " + tmpforce1.Max_Fz_shear + " Mx= " + tmpforce1.Max_Mx_torsion + " My= " + tmpforce1.Max_My_bending + " Mz= " + tmpforce1.Max_Mz_bending;
                     check1.Add(tmpS);
 
                 }
@@ -255,29 +282,22 @@ namespace PTK
             Dictionary<Element1D, Force> forceDictionary = new Dictionary<Element1D, Force>();
             structuralAssembly.ElementForce.Clear();
             int indexForceFromKaramba = -1;
-            foreach (var e1 in structuralAssembly.Assembly.Elements)
+
+
+            check1.Add("Add the data to structural analysis");
+            foreach (var e1 in structuralAssembly.Elements)
             {
                 indexForceFromKaramba = indexForceFromKaramba + 1;
                 structuralAssembly.ElementForce.Add(e1, listOfForcesToElements[indexForceFromKaramba]);
+
+                tmpS = " element= " + indexForceFromKaramba + "  added to elementForce in structural assembly";
+                check1.Add(tmpS);
+                tmpS = listOfForcesToElements[indexForceFromKaramba].Max_Fx_compression.ToString() ;
+                check1.Add(tmpS);
+
+
             }
             
-
-
-
-
-
-
-
-            //Assembly OutAssembly = Add_Forces_From_Karamba(assemble, model);
-
-            //Karamba.Algorithms.Component_ThIAnalyze.solve(
-            //    karambaModel,
-            //    out maxDisps,
-            //    out gravityForces,
-            //    out elasticEnergy,
-            //    out warning,
-            //    out analyzedModel
-            //);
 
             // --- output ---
             DA.SetData(0, new Karamba.Models.GH_Model(karambaModel));
@@ -285,11 +305,7 @@ namespace PTK
             DA.SetData(2, maxGlobalDisplacement);
             DA.SetData(3, new GH_StructuralAssembly(structuralAssembly));
             DA.SetDataList(4, check1);
-
-            //DA.SetData(1, new Karamba.Models.GH_Model(analyzedModel));
-            //DA.SetDataList(2, maxDisps);
-            //DA.SetDataList(3, gravityForces);
-            //DA.SetDataList(4, elasticEnergy);
+            
         }
         
 
