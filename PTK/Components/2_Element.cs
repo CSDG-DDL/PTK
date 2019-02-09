@@ -40,6 +40,8 @@ namespace PTK
             pManager[7].Optional = true;
         }
 
+
+
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.RegisterParam(new Param_Element1D(), "Element", "E", "PTK Elements", GH_ParamAccess.item);
@@ -47,6 +49,8 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            //Test
+
             // --- variables ---
             string tag = null;
             Curve curve = null;
