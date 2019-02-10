@@ -66,10 +66,22 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
             if (!DA.GetData(1, ref curve)) { return; }
-            if (!DA.GetData(2, ref gCroSec)) { return; }
-            crossSection = gCroSec.Value;
-            if (!DA.GetData(3, ref gAlignment)) {
-                alignment = new Alignment("Not Named Alignment");
+            if (!DA.GetData(2, ref gCroSec))
+            {
+                crossSection = new RectangleCroSec("DefaultCrossSection");
+                
+            }
+            else
+            {
+                crossSection = gCroSec.Value;
+            }
+            
+            if (!DA.GetData(3, ref gAlignment))
+            {
+                GlobalAlignmentRules.AlignmentFromVector VectorAlign = new GlobalAlignmentRules.AlignmentFromVector(new Vector3d(0,0,1));
+
+                alignment = new Alignment("", 0, 0, VectorAlign.GenerateVector);
+
             }
             else
             {

@@ -12,8 +12,8 @@ namespace PTK.Components
         /// Initializes a new instance of the _12_DGPlaneRule_SurfaceNormal class.
         /// </summary>
         public _12_DGPlaneRule_SurfaceNormal()
-          : base("NormalVectorPlane", "Nickname",
-              "Description",
+          : base("NormalVectorFromSurface", "S",
+              "Gets normal vector of the node plane from a surface",
               CommonProps.category, CommonProps.subcate10)
         {
         }
@@ -57,7 +57,6 @@ namespace PTK.Components
 
             //Solve 
             PlaneRules.SurfaceNormalPlane PlaneRule = new PlaneRules.SurfaceNormalPlane(Surface, AlignmentElementName);
-
 
 
             //Output
