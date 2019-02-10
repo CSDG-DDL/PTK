@@ -29,6 +29,7 @@ namespace PTK
         public Alignment(string _name)
         {
             Name = _name;
+            
         }
         public Alignment(string _name, double _offsetY, double _offsetZ, double _rotationAngle)
         {

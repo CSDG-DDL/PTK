@@ -159,6 +159,9 @@ namespace PTK.Rules
     }
 
 
+
+
+
     public class ElementTag
     {
         // --- field ---
@@ -265,6 +268,121 @@ namespace PTK.Rules
                 }
             }
             return valid;
+        }
+
+    }
+
+    public class ElementOnNodeDomains
+    {
+        // --- field ---
+        private int mode;
+
+        // --- constructors --- 
+        public ElementOnNodeDomains(int _mode)
+        {
+            mode = _mode;
+        }
+
+        // --- methods ---
+        public bool check(Detail _detail)
+        {
+            List<Element1D> elements = _detail.Elements;
+            Node node = _detail.Node;
+
+            Interval IntervalNotOnEnd = new Interval(0 + CommonProps.tolerances, 1 - CommonProps.tolerances);
+
+            int AmountOnends = 0;
+            int ElemCount = elements.Count;
+            List<Point3d> centerPts = new List<Point3d>();
+
+            foreach (Element1D elem in elements)
+            {
+                double t;
+                Curve TempCurve = elem.BaseCurve;
+                TempCurve.Domain = new Interval(0, 1);
+                TempCurve.ClosestPoint(node.Point, out t);
+
+                centerPts.Add(TempCurve.PointAt(0.5));
+
+                if (!IntervalNotOnEnd.IncludesParameter(t))
+                {
+                    AmountOnends += 1;
+                }
+            }
+
+
+                
+
+            if (mode == 0 )  //L-Node
+            {
+                if (AmountOnends == 2 && ElemCount==2){return true; } else { return false; }
+            }
+
+            if (mode == 1) //T-node
+            {
+                if (AmountOnends == 1 && ElemCount == 2) { return true; } else { return false; }
+            }
+
+            if (mode == 2) //X-node
+            {
+                if (AmountOnends == 0 && ElemCount == 2) { return true; } else { return false; }
+            }
+
+            if (mode ==3) //EndNode
+            {
+                if (ElemCount==1) { return true; } else { return false; }
+            }
+
+            if (mode == 4) //StarNode
+            {
+                if (ElemCount > 2 && ElemCount == AmountOnends) { return true; } else { return false; }
+            }
+
+            if (mode ==5) //Planar
+            {
+                Plane PtPlane = new Plane();
+                double deviation;
+                List<Point3d> checkPoints = centerPts;
+                checkPoints.Add(node.Point);
+
+                Plane.FitPlaneToPoints(checkPoints, out PtPlane, out deviation);
+                if (deviation<CommonProps.tolerances) { return true; } else { return false; }
+            }
+
+            if (mode == 6) //Orthogonal
+            {
+                for (int i = 0; i < centerPts.Count; i++)
+                {
+                    Vector3d FirstVector = new Line(node.Point, centerPts[i]).Direction;
+
+                    for (int j = 0; j < centerPts.Count; j++)
+                    {
+                        if (j != i)
+                        {
+                            Vector3d SecondVector = new Line(node.Point, centerPts[j]).Direction;
+                            double angle = Vector3d.VectorAngle(FirstVector, SecondVector);
+
+                            double rest = angle % (Math.PI / 2);
+                            rest = Math.Abs(rest);
+                            if (rest < CommonProps.tolerances) { return true; } else { return false; }
+                        }
+                    }
+
+                }
+            }
+            return false;
+
+
+
+
+
+
+
+
+
+
+            
+            
         }
 
     }
