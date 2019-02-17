@@ -283,6 +283,8 @@ namespace PTK
             structuralAssembly.ElementForce.Clear();
             int indexForceFromKaramba = -1;
 
+            double test = structuralAssembly.Elements[0].Forces[0].Max_Fx_compression;
+
 
             check1.Add("Add the data to structural analysis");
             foreach (var e1 in structuralAssembly.Elements)
