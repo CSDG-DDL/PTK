@@ -69,8 +69,10 @@ namespace PTK
             Assembly assembly = new Assembly();
             elems.ForEach(e => assembly.AddElement(e));
             assembly.GenerateDetails();
-            
-            foreach(DetailingGroupRulesDefinition DG in DetailinGroupDefinitions)
+            assembly.DetailingGroupDefinitions = DetailinGroupDefinitions;    
+
+
+            foreach (DetailingGroupRulesDefinition DG in DetailinGroupDefinitions)
             {
                 assembly.AddDetailingGroup(DG.GenerateDetailingGroup(assembly.Details)); 
             }

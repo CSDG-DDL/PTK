@@ -23,7 +23,8 @@ namespace PTK
         public Dictionary<Element1D, List<int>> NodeMap { get; private set; } = new Dictionary<Element1D, List<int>>();
         public List<Detail> Details { get; private set; } = new List<Detail>();
         public List<DetailingGroup> DetailingGroups { get; private set; } = new List<DetailingGroup>();
-        
+        public List<DetailingGroupRulesDefinition> DetailingGroupDefinitions { get; set; } = new List<DetailingGroupRulesDefinition>();
+
         // --- constructors --- 
         public Assembly() { }
         public Assembly(Assembly _assembly)
