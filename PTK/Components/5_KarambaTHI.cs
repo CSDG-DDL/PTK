@@ -313,9 +313,13 @@ namespace PTK
             {
                 structuralAssemblyNew.AddLoad(l1);
             }
-            
-            
-            
+
+            foreach (DetailingGroupRulesDefinition DG in structuralAssembly.DetailingGroupDefinitions)
+            {
+                structuralAssemblyNew.AddDetailingGroup(DG.GenerateDetailingGroup(structuralAssemblyNew.Details));
+            }
+
+
             // --- output ---
             DA.SetData(0, new Karamba.Models.GH_Model(karambaModel));
             DA.SetData(1, gm_list[0]);
