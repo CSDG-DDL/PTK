@@ -26,7 +26,7 @@ namespace PTK.Components
             pManager.AddTextParameter("DetailingGroup Name", "N", "Add Detailing Group Name. Used as key to select detailing groups", GH_ParamAccess.item,"N/A");
             pManager.AddGenericParameter("True Rules", "=", "Add rules that are true for the details in the detailing group", GH_ParamAccess.list);
             pManager.AddGenericParameter("False Rules", "≠", "Add rules that are false for the details in the detailing group", GH_ParamAccess.list);
-            pManager.AddGenericParameter("NodePlaneRule", "馬鹿 :`(", "Not implemented in 0.5", GH_ParamAccess.item);
+            pManager.AddGenericParameter("NodePlaneRule", "NP","Add a NodePlaneRule to generate nodeplane according to its detail", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -62,7 +62,14 @@ namespace PTK.Components
             DA.GetData(0, ref Name);
             DA.GetDataList(1, TrueRulesObjects);
             DA.GetDataList(2, FalseRulesObjects);
-            DA.GetData(3, ref PlaneRule);
+            if (!DA.GetData(3, ref PlaneRule))
+            {
+                //Solve 
+                PlaneRules.NormalVectorPlane NodeRule = new PlaneRules.NormalVectorPlane(new Vector3d(0,0,1), "");
+                PlaneRule = new PlaneRules.PlaneRule(NodeRule.GenerateDetailingGroupPlane);
+
+            }
+            
 
 
 

@@ -41,6 +41,25 @@ namespace PTK
         public MaterialProperty(string _name)
         {
             Name = _name;
+            string _materialClass = "GL26";
+            double _fmgk = 26;
+            double _ft0gk = 19;
+            double _ft90gk = 0.5;
+            double _fc0gk = 23.5;
+            double _fc90gk = 2.5;
+            double _fvgk = 3.5;
+            double _frgk = 1.2;
+            double _e0gmean = 12000;
+            double _e0g05 = 10000;
+            double _e90gmean = 300;
+            double _e90g05 = 250;
+            double _ggmean = 650;
+            double _gg05 = 542;
+            double _grgmean = 65;
+            double _grg05 =54;
+            double _rhogk =385;      // density
+            double _rhogmean = 420; 
+
         }
         public MaterialProperty(
             string _name,

@@ -19,6 +19,7 @@ namespace PTK
             Message = CommonProps.initialMessage;
         }
 
+        
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
@@ -53,6 +54,8 @@ namespace PTK
             Point3d ps = elem.PointAtStart;
             Point3d pe = elem.PointAtEnd;
             Plane plane = elem.CroSecLocalPlane;
+            
+
             GH_CroSec sec = new GH_CroSec(elem.CrossSection);
             GH_Alignment align = new GH_Alignment(elem.Alignment);
             bool intersect = elem.IsIntersectWithOther;
