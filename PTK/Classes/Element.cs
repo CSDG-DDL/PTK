@@ -31,7 +31,7 @@ namespace PTK
         public Plane CroSecLocalPlane { get; private set; }
         public CrossSection CrossSection { get; private set; } = null;
         public Alignment Alignment { get; private set; } = new Alignment("Alignment");
-        public List<Force> Forces { get; private set; } = new List<Force>();
+        public Force Forces { get; private set; } = new Force();
         public List<Joint> Joints { get; private set; } = new List<Joint>();
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
@@ -45,7 +45,7 @@ namespace PTK
         {
             InitializeLocalPlane();
         }
-        public Element1D(string _tag, Curve _curve, CrossSection _crossSection, Alignment _alignmnet, List<Force> _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
+        public Element1D(string _tag, Curve _curve, CrossSection _crossSection, Alignment _alignmnet, Force _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
         {
             BaseCurve = _curve;
             PointAtStart = _curve.PointAtStart;
@@ -56,6 +56,19 @@ namespace PTK
             Joints = _joints;
             IsIntersectWithOther = _intersect;
             Priority = _priority;
+            InitializeLocalPlane();
+        }
+        public Element1D( Element1D _elem, Force _forces) : base()
+        {
+            BaseCurve = _elem.baseCurve;
+            PointAtStart = _elem.PointAtStart;
+            PointAtEnd = _elem.PointAtEnd;
+            CrossSection = _elem.CrossSection;
+            Alignment = _elem.Alignment;
+            Forces = _forces;
+            Joints = _elem.Joints;
+            IsIntersectWithOther = _elem.IsIntersectWithOther;
+            Priority = _elem.Priority;
             InitializeLocalPlane();
         }
 
