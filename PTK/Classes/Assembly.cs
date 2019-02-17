@@ -36,6 +36,7 @@ namespace PTK
             NodeMap = _assembly.NodeMap;
             Details = _assembly.Details;
             DetailingGroups = _assembly.DetailingGroups;
+            DetailingGroupDefinitions = _assembly.DetailingGroupDefinitions;
         }
 
         // --- methods ---
