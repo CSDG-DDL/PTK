@@ -35,7 +35,7 @@ namespace PTK
             pManager.AddNumberParameter("NewDisplacement", "D", "Maximum displacement in [m]", GH_ParamAccess.item);
             pManager.RegisterParam(new Param_StructuralAssembly(), "oldStructural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
             pManager.RegisterParam(new Param_StructuralAssembly(), "newStructural Assembly", "nSA", "nStructural Assembly", GH_ParamAccess.item);
-            pManager.AddTextParameter("Checkout", "c", "Maximum displacement in [m]", GH_ParamAccess.list);
+            
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -68,7 +68,7 @@ namespace PTK
             }
             
             Karamba.Models.Model analyzedModel;
-
+            
             //clone model to avoid side effects
             analyzedModel = (Karamba.Models.Model)karambaModel.Clone();
 
@@ -282,12 +282,12 @@ namespace PTK
             Dictionary<Element1D, Force> forceDictionary = new Dictionary<Element1D, Force>();
             structuralAssembly.ElementForce.Clear();
             int indexForceFromKaramba = -1;
-
-            StructuralAssembly structuralAssemblyNew = new StructuralAssembly();
+            
             // structuralAssemblyNew = structuralAssembly.DeepCopy();
             // structuralAssemblyNew.Elements.Clear();
             List<Element1D> elementListNew = new List<Element1D>();
             List<Force> forceListNew = new List<Force>();
+            Assembly assemblyNew = new Assembly();
 
 
             check1.Add("Add the data to structural analysis");
@@ -296,25 +296,25 @@ namespace PTK
                 indexForceFromKaramba = indexForceFromKaramba + 1;
                 structuralAssembly.ElementForce.Add(e1, listOfForcesToElements[indexForceFromKaramba]);
 
-                // creating new structural assembly with updated forces in elements
-                // forceListNew.Add(listOfForcesToElements[indexForceFromKaramba]);
-                // bew 
-                elementListNew.Add(new Element1D(e1, listOfForcesToElements[indexForceFromKaramba])); //rescribning elements with new forces
-                // forceListNew.Clear();
-                // structuralAssemblyNew.Elements.Add(new Element1D(e1, forceListNew));
-                structuralAssemblyNew.AddElement(new Element1D(e1, listOfForcesToElements[indexForceFromKaramba]));
-
-                //just to check
-                tmpS = " element= " + indexForceFromKaramba + "  added to elementForce in structural assembly";
-                check1.Add(tmpS);
-                tmpS = listOfForcesToElements[indexForceFromKaramba].Max_Fx_compression.ToString() ;
-                check1.Add(tmpS);
-
-
+               
+                // 
+                //structuralAssemblyNew.AddElement(new Element1D(e1, listOfForcesToElements[indexForceFromKaramba]));
+                assemblyNew.AddElement(new Element1D(e1, listOfForcesToElements[indexForceFromKaramba]));
             }
+            assemblyNew.GenerateDetails();
 
+            StructuralAssembly structuralAssemblyNew = new StructuralAssembly(assemblyNew);
 
-
+            foreach (var s1 in structuralAssembly.Supports)
+            {
+                structuralAssemblyNew.AddSupport(s1);
+            }
+            foreach (var l1 in structuralAssembly.Loads)
+            {
+                structuralAssemblyNew.AddLoad(l1);
+            }
+            
+            
             
             // --- output ---
             DA.SetData(0, new Karamba.Models.GH_Model(karambaModel));
@@ -322,7 +322,7 @@ namespace PTK
             DA.SetData(2, maxGlobalDisplacement);
             DA.SetData(3, new GH_StructuralAssembly(structuralAssembly));
             DA.SetData(4, new GH_StructuralAssembly(structuralAssemblyNew));
-            DA.SetDataList(5, check1);
+            
             
         }
         
