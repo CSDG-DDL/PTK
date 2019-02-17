@@ -35,7 +35,7 @@ namespace PTK
             pManager.RegisterParam(new Param_CroSec(), "CrossSections", "S", "CrossSections", GH_ParamAccess.item);
             pManager.RegisterParam(new Param_Alignment(), "Alignment", "A", "Alignment", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Intersect Other", "I", "Is Intersect With Other", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Forces", "F", "forces in the element", GH_ParamAccess.list);
+            pManager.RegisterParam(new Param_Force(), "Forces", "F", "forces in the element", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -56,16 +56,7 @@ namespace PTK
             GH_CroSec sec = new GH_CroSec(elem.CrossSection);
             GH_Alignment align = new GH_Alignment(elem.Alignment);
             bool intersect = elem.IsIntersectWithOther;
-            Force nForces = elem.Forces;
-
-            List<double> dForces = new List<double>();
-            
-                dForces.Add(nForces.Max_Fx_compression);
-                dForces.Add(nForces.Max_Fx_tension);
-                dForces.Add(nForces.Max_Fy_shear);
-                dForces.Add(nForces.Max_Fz_shear);
-                dForces.Add(nForces.Max_My_bending);
-                dForces.Add(nForces.Max_Mz_bending);
+            GH_Force forc = new GH_Force(elem.Forces);
             
 
             // --- output ---
@@ -77,7 +68,7 @@ namespace PTK
             DA.SetData(5, sec);
             DA.SetData(6, align);
             DA.SetData(7, intersect);
-            DA.SetDataList(8, dForces );
+            DA.SetData(8, forc );
         }
 
 
