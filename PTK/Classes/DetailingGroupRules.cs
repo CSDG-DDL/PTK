@@ -42,9 +42,15 @@ namespace PTK.Rules
         // --- methods ---
         public bool check(Detail _detail)  //Checking element length
         {
+
+
+
             Detail detail = _detail;
             Node node = detail.Node;
             List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
+
+            
+
 
             bool valid = false;
             foreach (Element1D element in elements)
@@ -102,6 +108,37 @@ namespace PTK.Rules
         }
     }
 
+    public class ElementForce
+    {
+        // --- field ---
+        private Interval allowedForce;
+
+        // --- constructors --- 
+        public ElementForce(Interval _allowedForce)
+        {
+            allowedForce = _allowedForce;
+        }
+
+        // --- methods ---
+        public bool check(Detail _detail)
+        {
+            Detail detail = _detail;
+            Node node = detail.Node;
+
+            if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fx_compression))
+            {
+                return true;
+            }
+            else
+            {
+                return false; 
+            }
+
+            
+        }
+    }
+
+
     public class NodeHitRegion 
     {
         // --- field ---
@@ -157,9 +194,6 @@ namespace PTK.Rules
             return false;
         }
     }
-
-
-
 
 
     public class ElementTag
