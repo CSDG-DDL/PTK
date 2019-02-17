@@ -282,11 +282,13 @@ namespace PTK
             Dictionary<Element1D, Force> forceDictionary = new Dictionary<Element1D, Force>();
             structuralAssembly.ElementForce.Clear();
             int indexForceFromKaramba = -1;
+
             StructuralAssembly structuralAssemblyNew = new StructuralAssembly();
             // structuralAssemblyNew = structuralAssembly.DeepCopy();
             // structuralAssemblyNew.Elements.Clear();
             List<Element1D> elementListNew = new List<Element1D>();
             List<Force> forceListNew = new List<Force>();
+
 
             check1.Add("Add the data to structural analysis");
             foreach (var e1 in structuralAssembly.Elements)
