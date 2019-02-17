@@ -25,7 +25,7 @@ namespace PTK
             pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
             pManager.AddParameter(new Param_CroSec(), "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Alignment(), "Alignment", "A", "Global Alignment", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.list);
+            pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Joint(), "Joint", "J", "Add joint", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Structural Priority", "P", "Add integer value to set the priority of the member", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Intersection Nodes?", "I?", "Whether the element intersects other members at other than the end point", GH_ParamAccess.item, true);
@@ -56,8 +56,8 @@ namespace PTK
             CrossSection crossSection = null;
             GH_Alignment gAlignment = null;
             Alignment alignment = null;
-            List<GH_Force> gForces = new List<GH_Force>();
-            List<Force> forces = null;
+            GH_Force gForces = null;
+            Force forces = null;
             List<GH_Joint> gJoints = new List<GH_Joint>();
             List<Joint> joints = null;
             int priority = new int();
@@ -78,13 +78,13 @@ namespace PTK
             //Generating Alignment
             alignment.GenerateVectorFromDelegate(curve);
 
-            if (!DA.GetDataList(4, gForces))
+            if (!DA.GetData(4, ref gForces))
             {
-                forces = new List<Force>();
+                forces = new Force();
             }
             else
             {
-                forces = gForces.ConvertAll(f => f.Value);
+                forces = gForces.Value;
             }
             if (!DA.GetDataList(5, gJoints))
             {
