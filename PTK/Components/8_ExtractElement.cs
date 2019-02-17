@@ -19,7 +19,7 @@ namespace PTK
             Message = CommonProps.initialMessage;
         }
 
-        //     add
+        
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
