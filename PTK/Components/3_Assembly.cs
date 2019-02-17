@@ -37,16 +37,15 @@ namespace PTK
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.RegisterParam(new Param_Assembly(), "Assembly", "A", "Assembled project data", GH_ParamAccess.item);
-            pManager.RegisterParam(new Param_Node(), "Nodes", "N", "Nodes included in the Assembly", GH_ParamAccess.list);
-            pManager.AddTextParameter("Tags", "T", "Tag list held by Elements included in Assemble", GH_ParamAccess.list);
-            pManager.RegisterParam(new Param_CroSec(), "CrossSection", "S", "CrossSection list held by Elements included in Assemble", GH_ParamAccess.list);
+            //pManager.RegisterParam(new Param_Node(), "Nodes", "N", "Nodes included in the Assembly", GH_ParamAccess.list);
+            //pManager.AddTextParameter("Tags", "T", "Tag list held by Elements included in Assemble", GH_ParamAccess.list);
+            //pManager.RegisterParam(new Param_CroSec(), "CrossSection", "S", "CrossSection list held by Elements included in Assemble", GH_ParamAccess.list);
         }
 
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // --- variables ---
-            Assembly assembly = new Assembly();
             List<GH_Element1D> gElems = new List<GH_Element1D>();
             List<Element1D> elems = null;
             List<DetailingGroupRulesDefinition> DetailinGroupDefinitions = new List<DetailingGroupRulesDefinition>();
@@ -67,6 +66,7 @@ namespace PTK
             
 
             // --- solve ---
+            Assembly assembly = new Assembly();
             elems.ForEach(e => assembly.AddElement(e));
             assembly.GenerateDetails();
             
@@ -76,14 +76,14 @@ namespace PTK
             }
 
             // --- output ---
-            List<GH_Node> nodes = assembly.Nodes.ConvertAll(n => new GH_Node(n));
-            List<string> tags = assembly.Tags;
-            List<GH_CroSec> sections = assembly.CrossSections.ConvertAll(s => new GH_CroSec(s));
+            //List<GH_Node> nodes = assembly.Nodes.ConvertAll(n => new GH_Node(n));
+            //List<string> tags = assembly.Tags;
+            //List<GH_CroSec> sections = assembly.CrossSections.ConvertAll(s => new GH_CroSec(s));
             
             DA.SetData(0, new GH_Assembly(assembly));
-            DA.SetDataList(1, nodes);
-            DA.SetDataList(2, tags);
-            DA.SetDataList(3, sections);
+            //DA.SetDataList(1, nodes);
+            //DA.SetDataList(2, tags);
+            //DA.SetDataList(3, sections);
         }
 
         protected override System.Drawing.Bitmap Icon

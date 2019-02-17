@@ -50,13 +50,15 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="karamba">
-      <HintPath>..\..\Library\karamba.gha</HintPath>
+      <HintPath>C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\karamba.gha</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files\IIS\Microsoft Web Deploy V3\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="RhinoCommon">
       <HintPath>..\..\Library\RhinoCommon.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -96,6 +98,7 @@
     <Compile Include="Classes\DetailingGroupPlaneRules.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
     <Compile Include="Classes\StructuralReport.cs" />
+    <Compile Include="Components\10_Rule_ElementDomain.cs" />
     <Compile Include="Components\10_Rule_ElementTag.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
@@ -119,15 +122,12 @@
     <Compile Include="Components\5_KarambaTHI.cs" />
     <Compile Include="Components\5_Utilization.cs" />
     <Compile Include="Components\5_UtilizationPreview.cs" />
-    <Compile Include="Components\6_FinishedModel.cs" />
     <Compile Include="Components\2_SimpleAlignment.cs" />
     <Compile Include="Components\2_Force.cs" />
     <Compile Include="Classes\Force.cs" />
-    <Compile Include="Components\6_PreviewCrossSection.cs" />
+    <Compile Include="Components\6_PreviewElementStructural.cs" />
     <Compile Include="Components\6_PreviewElement.cs" />
     <Compile Include="Classes\DetailModel.cs" />
-    <Compile Include="Components\6_PreviewGeometry.cs" />
-    <Compile Include="Components\6_PreviewPriority.cs" />
     <Compile Include="Components\4_SelectDetailingGroup.cs" />
     <Compile Include="Components\7_BuildModel.cs" />
     <Compile Include="Components\8_ExtractDetail.cs" />
@@ -175,18 +175,14 @@
     <Compile Include="Components\1_Material.cs" />
     <Compile Include="Components\3_PointLoad.cs" />
     <Compile Include="Components\3_Support.cs" />
-    <Compile Include="Components\4_PrioritizedModel.cs" />
-    <Compile Include="Components\4_DetailModel.cs" />
     <Compile Include="Components\5_LocalAnalysis.cs" />
     <Compile Include="Components\5_FeasibleCheck.cs" />
     <Compile Include="Components\7_BtlExport.cs" />
-    <Compile Include="Components\8_DisassembleMaterial.cs" />
     <Compile Include="Components\8_ExtractElement.cs" />
     <Compile Include="Classes\CrossSection.cs" />
     <Compile Include="Components\8_ExtractNode.cs" />
     <Compile Include="Classes\Support.cs" />
     <Compile Include="Components\8_ExtractAssembly.cs" />
-    <Compile Include="Components\8_DisassembleSection.cs" />
     <Compile Include="Components\9_GeneticAlgorithm.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +385,9 @@
     <None Include="Resources\Assembly.ico" />
     <None Include="Resources\assembly.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -398,7 +397,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "%25UserProfile%25\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
+    <PostBuildEvent>Copy "$(TargetPath)" "C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\$(ProjectName).gha"
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

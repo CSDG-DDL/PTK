@@ -25,7 +25,7 @@ namespace PTK
         {
             pManager.RegisterParam(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
             pManager.AddGenericParameter("PTK Report", "R (PTK)", "Structural analysis report", GH_ParamAccess.item);
-            pManager.AddTextParameter("OUT information", "info", "temporary information from analysis", GH_ParamAccess.list);
+            pManager.AddTextParameter("OUT information", "info", "temporary information from analysis", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -35,6 +35,8 @@ namespace PTK
             string singular_system_msg = "singular stiffness matrix";
             GH_StructuralAssembly gStrAssembly = null;
             StructuralAssembly structuralAssembly = null;
+            Grasshopper.Kernel.Data.GH_Structure<Grasshopper.Kernel.Types.GH_String> infoTree = new Grasshopper.Kernel.Data.GH_Structure<Grasshopper.Kernel.Types.GH_String>();
+            Grasshopper.Kernel.Types.GH_String s1 = new Grasshopper.Kernel.Types.GH_String("The data tree");
             List<string> infolist = new List<string>();
             infolist.Add("Start of algorithm");
             string warning;
@@ -77,13 +79,14 @@ namespace PTK
             /// Loop over elements
             /// 
 
-            infolist.Add("indexreport=" + indexReport);
+            infolist.Add("The utilization checking according EC5, each element data is stored in new data branch");
 
-            foreach (var e1 in structuralAssembly.Assembly.Elements)
+            foreach (var e1 in structuralAssembly.Elements)
             {
                 PTK_StructuralAnalysis element_report = new PTK_StructuralAnalysis(indexReport);
                 indexReport = indexReport + 1;
                 infolist.Add("indexreport=" + indexReport);
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("report for element number=" + indexReport),new Grasshopper.Kernel.Data.GH_Path(indexReport));
 
                 element_report.elementLength = e1.BaseCurve.GetLength();
                 double w;
@@ -93,33 +96,67 @@ namespace PTK
                 element_report.elementWidth = w;
                 element_report.elementHeight = h;
 
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("Length [mm]=" + element_report.elementLength));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("Width [mm]=" + element_report.elementWidth));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("Height [mm]=" + element_report.elementHeight));
 
                 element_report.elementEffectiveLengthDir1 = EffectiveLength(1, e1.BaseCurve.GetLength());
                 element_report.elementEffectiveLengthDir2 = EffectiveLength(2, e1.BaseCurve.GetLength());
 
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("EffectiveLengthDir1 [mm]=" + element_report.elementEffectiveLengthDir1));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("EffectiveLengthDir2 [mm]=" + element_report.elementEffectiveLengthDir2));
 
                 element_report.elementSlendernessRatioDir1 = SlendernessRatio(w, h, 1, e1.BaseCurve.GetLength());
                 element_report.elementSlendernessRatioDir2 = SlendernessRatio(w, h, 2, e1.BaseCurve.GetLength());
 
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("SlendernessRatioDir1=" + element_report.elementSlendernessRatioDir1));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("SlendernessRatioDir2=" + element_report.elementSlendernessRatioDir2));
+
                 element_report.elementEulerForceDir1 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
                 element_report.elementEulerForceDir2 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("EulerForceDir1=" + element_report.elementEulerForceDir1));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("EulerForceDir2=" + element_report.elementEulerForceDir2));
 
                 element_report.elementSlendernessRatioDir1 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
                 element_report.elementSlendernessRatioDir2 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("SlendernessRatioDir1=" + element_report.elementSlendernessRatioDir1));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("SlendernessRatioDir2=" + element_report.elementSlendernessRatioDir2));
+
                 element_report.elementInstabilityFactorDir1 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
                 element_report.elementInstabilityFactorDir2 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("InstabilityFactorDir1=" + element_report.elementInstabilityFactorDir1));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("InstabilityFactorDir2=" + element_report.elementInstabilityFactorDir2));
 
                 element_report.elementBucklingStrengthDir1 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
                 element_report.elementBucklingStrengthDir2 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("BucklingStrengthDir1=" + element_report.elementBucklingStrengthDir1));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("BucklingStrengthDir2=" + element_report.elementBucklingStrengthDir2));
+
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The compression [N]=" + structuralAssembly.ElementForce[e1].Max_Fx_compression));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The tension [N]=" + structuralAssembly.ElementForce[e1].Max_Fx_tension));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The shear dir1 [N]=" + structuralAssembly.ElementForce[e1].Max_Fy_shear));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The shear dir2 [N]=" + structuralAssembly.ElementForce[e1].Max_Fz_shear));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The torsion [Nmm]=" + structuralAssembly.ElementForce[e1].Max_Mx_torsion));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending dir1 [Nmm]=" + structuralAssembly.ElementForce[e1].Max_My_bending));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending dir2 [Nmm]=" + structuralAssembly.ElementForce[e1].Max_Mz_bending));
 
                 element_report.elementCompressionUtilization = CompressionUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
                 element_report.elementCompressionUtilizationAngle = CompressionUtilizationAngle(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
                 element_report.elementTensionUtilization = TensionUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1]);
                 element_report.elementBendingUtilization = BendingUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1]);
                 element_report.elementCombinedBendingAndAxial = CombinedBendingAndAxial(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The compression utilization =" + element_report.elementCompressionUtilization));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The compression utilizataion (grain angle)=" + element_report.elementCompressionUtilizationAngle));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The tension utilization =" + element_report.elementTensionUtilization));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending utilization=" + element_report.elementBendingUtilization));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The combined utilization =" + element_report.elementCombinedBendingAndAxial));
+
+
 
                 var list_of_utilizations = new List<double>() {
                     element_report.elementCompressionUtilization,
@@ -185,7 +222,7 @@ namespace PTK
 
             structuralAssembly.ElementReport.Clear();
             int indexReportFromKaramba = -1;
-            foreach (var e2 in structuralAssembly.Assembly.Elements)
+            foreach (var e2 in structuralAssembly.Elements)
             {
                 indexReportFromKaramba = indexReportFromKaramba + 1;
                 structuralAssembly.ElementReport.Add(e2, report_list[indexReportFromKaramba]);
@@ -194,9 +231,8 @@ namespace PTK
 
             // --- output ---
             DA.SetData(0, new GH_StructuralAssembly(structuralAssembly));
-                DA.SetData(1, report_list);
-                DA.SetDataList(2, infolist);
-
+            DA.SetData(1, report_list);
+            DA.SetDataTree(2, infoTree);
 
         }
 

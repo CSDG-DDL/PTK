@@ -25,7 +25,7 @@ namespace PTK
         public static readonly string subcate9 = "Tool";
         public static readonly string subcate10 = "DetailGroupRules";
         public static readonly string subcate11 = "TimberDetailing";
-        public static readonly string subcate12 = "ElementAlignment";
+        public static readonly string subcate12 = "ElementGlobalAlignment";
         public static readonly string initialMessage = "PTK Ver.0.5";
     }
 
