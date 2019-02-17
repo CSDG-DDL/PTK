@@ -296,7 +296,7 @@ namespace PTK
 
                 // creating new structural assembly with updated forces in elements
                 // forceListNew.Add(listOfForcesToElements[indexForceFromKaramba]);
-                
+                // bew 
                 elementListNew.Add(new Element1D(e1, listOfForcesToElements[indexForceFromKaramba])); //rescribning elements with new forces
                 // forceListNew.Clear();
                 // structuralAssemblyNew.Elements.Add(new Element1D(e1, forceListNew));
