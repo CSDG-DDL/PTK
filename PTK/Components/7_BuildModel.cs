@@ -32,12 +32,19 @@ namespace PTK.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("", "", "", GH_ParamAccess.item);
-            pManager.AddBrepParameter("Breps", "", "", GH_ParamAccess.tree);
-            pManager.AddPlaneParameter("1", "", "", GH_ParamAccess.list);
-            pManager.AddPlaneParameter("2", "", "", GH_ParamAccess.list);
-            pManager.AddPlaneParameter("3", "", "", GH_ParamAccess.list);
-            pManager.AddPlaneParameter("4", "", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Stock", "", "", GH_ParamAccess.tree);
+            pManager.AddBrepParameter("Voids", "", "", GH_ParamAccess.tree);
+            
+            pManager.AddBrepParameter("ProcessingSurfaces", "", "", GH_ParamAccess.tree);
+            pManager.AddBrepParameter("Processed Component", "", "", GH_ParamAccess.tree);
+            pManager.AddBrepParameter("test", "", "", GH_ParamAccess.item);
+            
+
+            pManager.HideParameter(0);
+            pManager.HideParameter(1);
+            pManager.HideParameter(2);
+
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -68,13 +75,23 @@ namespace PTK.Components
             //Initializing the project
             ProjectType Project = GrasshopperProject.BTLProject; 
             
-            Project.Name = "PTK";
-            Project.Architect = "JOHNBUNJIMarcin";
-            Project.Comment = "YeaaaahhH! Finally. ";
-            
+            Project.Name = "ReindeerProject";
+            Project.Architect = "DDL-CSDG";
+            Project.Comment = "BetaTest";
+
+
+            DataTree<Brep> Stock = GrasshopperProject.GetStock();
+            DataTree<Brep> Voids = GrasshopperProject.GetVoids();
+            DataTree<Brep> ProcessedStock = GrasshopperProject.GetProcessedStock();
+            DataTree<Brep> ProcessingSurfaces = GrasshopperProject.GetProcessSurfaces();
+
+ 
             
 
-            DataTree<Brep> dataTree = GrasshopperProject.GetBreps();
+           
+            
+
+
 
             //Initializing the file;
 
@@ -103,30 +120,16 @@ namespace PTK.Components
 
             List<BuildingElement> Elements = GrasshopperProject.BuildingElements;
 
-            List<Plane> ref1 = new List<Plane>();
-            List<Plane> ref2 = new List<Plane>();
-            List<Plane> ref3 = new List<Plane>();
-            List<Plane> ref4 = new List<Plane>();
+            
 
-            foreach (BuildingElement Elems in Elements)
-            {
-                ref1.Add(Elems.Sub3DElements[0].BTLPartGeometry.Refsides[0].RefPlane);
-                ref2.Add(Elems.Sub3DElements[0].BTLPartGeometry.Refsides[1].RefPlane);
-                ref3.Add(Elems.Sub3DElements[0].BTLPartGeometry.Refsides[2].RefPlane);
-                ref4.Add(Elems.Sub3DElements[0].BTLPartGeometry.Refsides[3].RefPlane);
 
-            }
             
 
             // --- output ---
-            DA.SetDataList(0, "Yeahhhh");
-            DA.SetDataTree(1, dataTree);
-            DA.SetDataList(2, ref1);
-            DA.SetDataList(3, ref2);
-            DA.SetDataList(4, ref3);
-            DA.SetDataList(5, ref4);
-
-
+            DA.SetDataTree(0, Stock);
+            DA.SetDataTree(1, Voids);
+            DA.SetDataTree(2, ProcessingSurfaces);
+            DA.SetDataTree(3, ProcessedStock);
 
 
         }

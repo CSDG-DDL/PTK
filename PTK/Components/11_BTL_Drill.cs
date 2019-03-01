@@ -8,6 +8,8 @@ namespace PTK.Components
 {
     public class _11_BTL_Drill : GH_Component
     {
+        Line PublicLine = new Line();
+        double PublicRadius = 0;
         /// <summary>
         /// Initializes a new instance of the _11_BTL_Drill class.
         /// </summary>
@@ -48,10 +50,12 @@ namespace PTK.Components
             // --- solve ---
             BTLDrill drill = new BTLDrill(Line, Radius);
 
+            PublicLine = Line;
+            PublicRadius = Radius;
 
             // Making Object with delegate and ID
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(drill.DelegateProcess));
-
+            
             // --- output ---
             DA.SetData(0, Order);
         }
@@ -76,5 +80,33 @@ namespace PTK.Components
         {
             get { return new Guid("02f5f402-a02c-4b74-89e8-d59b0323a12f"); }
         }
+
+        public override void ExpireSolution(bool recompute)
+        {
+
+            base.ExpireSolution(recompute);
+        }
+
+
+        public override void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+
+            if (PublicLine.IsValid)
+            {
+
+
+                Plane tempPlane = new Plane(PublicLine.From, PublicLine.Direction);
+                Circle tempCircle = new Circle(tempPlane, PublicRadius);
+                Cylinder tempCylinder = new Cylinder(tempCircle, PublicLine.Length);
+
+                args.Display.DepthMode = Rhino.Display.DepthMode.AlwaysInFront;
+                args.Display.DrawBrepShaded(tempCylinder.ToBrep(false,false), new Rhino.Display.DisplayMaterial(System.Drawing.Color.Red));
+
+
+            }
+
+
+        }
+
     }
 }

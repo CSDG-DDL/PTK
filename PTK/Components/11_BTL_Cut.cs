@@ -8,6 +8,9 @@ namespace PTK
 {
     public class PTK_BTL_Cut : GH_Component
     {
+        Plane publicPlane = new Plane();
+        
+
         public PTK_BTL_Cut()
           : base("Cut", "Cut",
               "Define the Cut process",
@@ -20,7 +23,7 @@ namespace PTK
         {
             pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Cut Plane", "P", "Cut Plane", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Flip Plane?", "F", "True flip plane", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Flip Plane?", "F", "True flip plane", GH_ParamAccess.item, false);
 
             pManager[0].Optional = true;
         }
@@ -42,14 +45,22 @@ namespace PTK
             Element1D element = gElement.Value;
             if (!DA.GetData(1, ref Plane)) { return; }
 
-            DA.GetData(0, ref Flip);
+            DA.GetData(2, ref Flip);
 
             if (Flip)
             {
                 Plane = new Plane(Plane.Origin, -Plane.ZAxis);
             }
 
+            Curve lineCurve = element.BaseCurve;
 
+            var intersection = Rhino.Geometry.Intersect.Intersection.CurvePlane(lineCurve, Plane, CommonProps.tolerances);
+            
+
+
+
+            publicPlane = Plane;
+            publicPlane.Origin = intersection[0].PointA;
 
 
 
@@ -70,6 +81,30 @@ namespace PTK
                 return Properties.Resources.Cut;
             }
         }
+
+        public override void ExpireSolution(bool recompute)
+        {
+
+            base.ExpireSolution(recompute);
+        }
+
+        public override void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+
+            if (publicPlane.IsValid)
+            {
+                args.Display.DepthMode = Rhino.Display.DepthMode.AlwaysInFront;
+
+                PlaneArrow Arrow = new PlaneArrow(publicPlane, 50);
+                args.Display.DrawLineArrow(Arrow.NegLine, System.Drawing.Color.Red, 5, 10);
+                args.Display.DrawLineArrow(Arrow.PosLine, System.Drawing.Color.Green, 5, 10);
+                args.Display.DrawBrepShaded(Arrow.SurfacePlane.ToBrep(), new Rhino.Display.DisplayMaterial(System.Drawing.Color.Red));
+            }
+            
+
+        }
+
+
 
         public override Guid ComponentGuid
         {
