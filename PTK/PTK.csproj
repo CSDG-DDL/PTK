@@ -98,7 +98,9 @@
     <Compile Include="Classes\DetailingGroupPlaneRules.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
     <Compile Include="Classes\StructuralReport.cs" />
-    <Compile Include="Components\10_Rule_ElementCompressionForce.cs" />
+    <Compile Include="Components\10_Rule_ElementForce.cs" />
+    <Compile Include="Components\10_Rule_ElementForceTension.cs" />
+    <Compile Include="Components\10_Rule_ElementForceCompression.cs" />
     <Compile Include="Components\10_Rule_ElementDomain.cs" />
     <Compile Include="Components\10_Rule_ElementTag.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
@@ -132,6 +134,7 @@
     <Compile Include="Components\4_SelectDetailingGroup.cs" />
     <Compile Include="Components\7_BuildModel.cs" />
     <Compile Include="Components\8_ExtractDetail.cs" />
+    <Compile Include="Components\8_ExtractForce.cs" />
     <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
     <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
     <Compile Include="Components\11_BTL_Mortise.cs" />
@@ -398,7 +401,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "%25UserProfile%25\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
+    <PostBuildEvent>Copy "$(TargetPath)" "C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\$(ProjectName).gha"
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

@@ -6,12 +6,12 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _10_Rule_ElementCompressionForce : GH_Component
+    public class _10_Rule_ElementForceTension : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the _10_RuleElementCompressionForce class.
         /// </summary>
-        public _10_Rule_ElementCompressionForce()
+        public _10_Rule_ElementForceTension()
           : base("Detail shape", "S",
               "Makes you select details based on typical shapes",
               CommonProps.category, CommonProps.subcate10)
@@ -88,7 +88,7 @@ namespace PTK.Components
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("f099152b-7490-4d2f-a950-ad522fe027c2"); }
+            get { return new Guid("f099152b-1290-4d2f-a950-ad522fe027c2"); }
         }
     }
 }
