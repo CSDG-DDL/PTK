@@ -112,16 +112,23 @@ namespace PTK.Rules
     {
         // --- field ---
         private Interval allowedForce;
+        private int forceType;
 
         // --- constructors --- 
         public ElementForce(Interval _allowedForce)
         {
             allowedForce = _allowedForce;
         }
+        public ElementForce(Interval _allowedForce, int _forceType)
+        {
+            allowedForce = _allowedForce;
+            forceType = _forceType;
+        }
 
         // --- methods ---
-        public bool check(Detail _detail)
+        public bool checkCompression(Detail _detail)
         {
+            // checking the compression
             Detail detail = _detail;
             Node node = detail.Node;
 
@@ -133,9 +140,85 @@ namespace PTK.Rules
             {
                 return false; 
             }
-
-            
         }
+
+        public bool checkTension(Detail _detail)
+        {
+            // checking the tension
+            Detail detail = _detail;
+            Node node = detail.Node;
+
+            if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fx_tension))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public bool check(Detail _detail)
+        {
+            // checking the tension
+            Detail detail = _detail;
+            Node node = detail.Node;
+            
+            if (forceType == 0)
+            {
+                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fx_compression))
+                { return true; }
+                else
+                { return false; }
+            }
+            else if (forceType == 1)
+            {
+                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fx_tension))
+                { return true; }
+                else
+                { return false; }
+            }
+            else if (forceType == 2)
+            {
+                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fy_shear))
+                { return true; }
+                else
+                { return false; }
+            }
+            else if (forceType == 3)
+            {
+                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fz_shear))
+                { return true; }
+                else
+                { return false; }
+            }
+            else if (forceType == 4)
+            {
+                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Mx_torsion))
+                { return true; }
+                else
+                { return false; }
+            }
+            else if (forceType == 5)
+            {
+                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_My_bending))
+                { return true; }
+                else
+                { return false; }
+            }
+            else if (forceType == 6)
+            {
+                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Mz_bending))
+                { return true; }
+                else
+                { return false; }
+            }
+            else
+                return false;
+
+        }
+
     }
 
 
