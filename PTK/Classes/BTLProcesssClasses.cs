@@ -8,6 +8,24 @@ using Rhino.Geometry;
 
 namespace PTK
 {
+
+    public class PlaneArrow
+    {
+        public Line PosLine { get; private set; }
+        public Line NegLine { get; private set; }
+        public Surface SurfacePlane { get; private set; }
+
+        public PlaneArrow (Plane _plane, double _size)
+        {
+            Interval Domain = new Interval(-_size *3, _size * 3);
+            SurfacePlane = new PlaneSurface(_plane, Domain, Domain);
+            
+            NegLine = new Line(SurfacePlane.PointAt(-_size * 3, -_size * 3), _plane.ZAxis, _size * 3);
+            PosLine = new Line(SurfacePlane.PointAt(-_size * 3, -_size * 3), -_plane.ZAxis, _size * 1);
+        }
+
+    }
+
     public class BTLFunctions       //THis is the BTL element. There can be more than one BTL element in a main element (Element.cl)
     {
         static public Plane AlignInputPlane(Line _refEdge, Plane _refPlane, Plane _cutPlane, out OrientationType orientationtype)
@@ -130,6 +148,10 @@ namespace PTK
 
         }
 
+        
+
+
+        
 
 
         public static void GeneratePlaneAnglesParallell(BTLPartGeometry _BTLPartGeometry, double Length, Plane WorkPlane, bool FlipDirection, out double Angle, out double Inclination, out double Slope, out Point3d LocalStartPoint, out Refside Refside, out Plane UpdatedWorkPlane)  //used when when plane is closed to parallell to refplane
@@ -519,10 +541,15 @@ namespace PTK
             foreach (Refside side in _refsides)
             {
                 double tempDouble = 0;
+                
+
+
                 if (Rhino.Geometry.Intersect.Intersection.LinePlane(side.RefEdge, _CutPlane, out tempDouble)) ;
+                CutPoints.Add(side.RefEdge.PointAt(tempDouble));
+
                 if (0 < tempDouble && tempDouble < side.RefEdge.Length)
                 {
-                    CutPoints.Add(side.RefEdge.PointAt(tempDouble));
+                    
                 }
             }
             return CutPoints;
@@ -836,6 +863,13 @@ namespace PTK
 
             //Creating voidbox
             Box box = new Box(CutPlane, voidpoints);
+
+            //Increasing size of box (Some angles (that includes only 1 or 2 voidpoints will give errors)
+            box.X = new Interval(box.X.T0 * 4, box.X.T1 * 4);
+            box.Y = new Interval(box.Y.T0 * 4, box.Y.T1 * 4);
+
+            
+
 
 
             //Creating BTL processing
@@ -1246,6 +1280,53 @@ namespace PTK
 
 
 
+
+
+
+    }
+
+
+
+    public class CustomBrep
+    {
+        // --- field ---
+        public Brep CustomBrepShape { get; private set; }
+
+        // --- constructors --- 
+        public CustomBrep(Brep _customBrepShape)
+        {
+            CustomBrepShape = _customBrepShape;
+        }
+
+        // --- methods ---
+        public PerformedProcess DelegateProcess(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode)
+        {
+
+
+
+
+
+            //Creating BTL processing
+
+            SphereType DUMMY = new SphereType();
+            DUMMY.Name = "NotInUse";
+            DUMMY.Comment = "Not in use";
+            DUMMY.Process = BooleanType.no;
+            DUMMY.Radius = 0;
+            DUMMY.Orientation = OrientationType.end;
+            DUMMY.StartX = 0;
+            DUMMY.StartY = 0;
+            DUMMY.StartDepth = 0;
+            DUMMY.Length = 0;
+            DUMMY.StartOffset = 0;
+
+
+
+
+
+            return new PerformedProcess(DUMMY, CustomBrepShape);
+
+        }
 
 
 

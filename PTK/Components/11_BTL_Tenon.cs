@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
-
+/*  NOT READY FOR PUBLICATION!
 namespace PTK.Components
 {
     public class _11_BTL_Tenon : GH_Component
@@ -121,3 +121,4 @@ namespace PTK.Components
         }
     }
 }
+*/

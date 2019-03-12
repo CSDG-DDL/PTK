@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
-
+/*  NOT READY FOR PUBLICATION!
 namespace PTK.Components
 {
     public class BTL_Mortise : GH_Component
@@ -117,3 +117,4 @@ namespace PTK.Components
         }
     }
 }
+*/

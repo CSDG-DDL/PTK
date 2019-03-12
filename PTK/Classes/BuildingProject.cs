@@ -63,7 +63,7 @@ namespace PTK
         }
 
 
-        public DataTree<Brep> GetBreps()
+        public DataTree<Brep> GetProcessedStock()
         {
             DataTree<Brep> dataTree = new DataTree<Brep>();
             for(int i = 0; i < BuildingElements.Count; i++)
@@ -80,6 +80,66 @@ namespace PTK
             }
             return dataTree;
         }
+
+        public DataTree<Brep> GetVoids()
+        {
+            DataTree<Brep> dataTree = new DataTree<Brep>();
+            for (int i = 0; i < BuildingElements.Count; i++)
+            {
+                BuildingElement BuildingElement = BuildingElements[i];
+                for (int j = 0; j < BuildingElement.Sub3DElements.Count; j++)
+                {
+                    Sub3DElement Sub3DElement = BuildingElement.Sub3DElements[j];
+                    if (Sub3DElement.VoidProcess != null)
+                    {
+                        dataTree.AddRange(Sub3DElement.VoidProcess, new Grasshopper.Kernel.Data.GH_Path(i, j));
+                    }
+                }
+            }
+            return dataTree;
+        }
+
+        public DataTree<Brep> GetStock()
+        {
+            DataTree<Brep> dataTree = new DataTree<Brep>();
+            for (int i = 0; i < BuildingElements.Count; i++)
+            {
+                BuildingElement BuildingElement = BuildingElements[i];
+                for (int j = 0; j < BuildingElement.Sub3DElements.Count; j++)
+                {
+                    Sub3DElement Sub3DElement = BuildingElement.Sub3DElements[j];
+                    if (Sub3DElement.Stock != null)
+                    {
+                        dataTree.Add(Sub3DElement.Stock, new Grasshopper.Kernel.Data.GH_Path(i, j));
+                    }
+                }
+            }
+            return dataTree;
+        }
+
+        public DataTree<Brep> GetProcessSurfaces()
+        {
+            DataTree<Brep> dataTree = new DataTree<Brep>();
+            for (int i = 0; i < BuildingElements.Count; i++)
+            {
+                BuildingElement BuildingElement = BuildingElements[i];
+                for (int j = 0; j < BuildingElement.Sub3DElements.Count; j++)
+                {
+                    Sub3DElement Sub3DElement = BuildingElement.Sub3DElements[j];
+                    if (Sub3DElement.ProcessingSurfaces != null)
+                    {
+                        dataTree.AddRange(Sub3DElement.ProcessingSurfaces, new Grasshopper.Kernel.Data.GH_Path(i, j));
+                    }
+                }
+            }
+            return dataTree;
+        }
+
+
+
+
+
+
     }
 
     
@@ -127,6 +187,7 @@ namespace PTK
         public Brep Stock { get; private set; }  
         public List<Brep> ProcessedStock { get; private set; }
         public List<Brep> VoidProcess { get; private set; }
+        public List<Brep> ProcessingSurfaces { get; private set; }
         public Plane CornerPlane { get; private set; }
         public double height{ get; private set; }
         public double width { get; private set; }
@@ -141,6 +202,7 @@ namespace PTK
         {
             ProcessedStock = new List<Brep>();
             VoidProcess = new List<Brep>();
+            ProcessingSurfaces = new List<Brep>();
 
             height = _element.CrossSection.GetHeight();
             width = _element.CrossSection.GetWidth();
@@ -304,8 +366,13 @@ namespace PTK
                     {
                         if (_mode == ManufactureMode.BTL || _mode == ManufactureMode.BOTH)
                         {
+                            if (PerformedProcess.BTLProcess.Name != "NotInUse")
+                            {
+                                AllProcessings.Add(PerformedProcess.BTLProcess);
+                            }
 
-                            AllProcessings.Add(PerformedProcess.BTLProcess);
+
+                            
 
                         }
 
@@ -340,6 +407,24 @@ namespace PTK
                     Box boxstock = new Box(CornerPlane, ix, iy, iz);
                     Stock = Brep.CreateFromBox(boxstock);
                     List<Brep> boolBrep = new List<Brep>();
+
+
+                    foreach(Surface s in Stock.Surfaces)
+                    {
+                        s.SetUserString("old", "yes");
+                    }
+
+                    foreach(BrepFace f in Stock.Faces)
+                    {
+                        f.SetUserString("old", "yes");
+                    }
+                    foreach(Surface f in Stock.Surfaces)
+                    {
+                        f.SetUserString("old", "yes");
+                    }
+
+
+
                     boolBrep.Add(Stock);
 
 
@@ -348,13 +433,44 @@ namespace PTK
                         if (true)
                         {
                             double tolerance = CommonProps.tolerances;
+
+                            
+
                             Rhino.Geometry.Brep[] breps = Rhino.Geometry.Brep.CreateBooleanDifference(boolBrep, VoidProcess, tolerance);
                             if (breps != null)
-                                if (breps.Length != 0)
+                            {
+                                ProcessedStock.AddRange(breps);
+                                foreach (Brep brep in breps)
                                 {
-                                    ProcessedStock.AddRange(breps);
+                                    Brep temp = brep.DuplicateBrep();
 
+                                    for(int i = 0; i < brep.Faces.Count; i++)
+                                    {
+                                        //String value = brep.Faces[i].GetUserString("old");
+                                        String value = brep.Surfaces[brep.Faces[i].SurfaceIndex].GetUserString("old");
+
+
+
+                                        if (value != "yes")
+                                        {
+                                            ProcessingSurfaces.Add(temp.Faces.ExtractFace(i));
+                                        }
+                                    }
+                                        
+                                        
                                 }
+
+
+                            }
+                                
+                                    
+                                        
+                                        
+
+
+                                    
+
+                                
 
                         }
                     }
