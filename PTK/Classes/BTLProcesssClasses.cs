@@ -541,10 +541,15 @@ namespace PTK
             foreach (Refside side in _refsides)
             {
                 double tempDouble = 0;
+                
+
+
                 if (Rhino.Geometry.Intersect.Intersection.LinePlane(side.RefEdge, _CutPlane, out tempDouble)) ;
+                CutPoints.Add(side.RefEdge.PointAt(tempDouble));
+
                 if (0 < tempDouble && tempDouble < side.RefEdge.Length)
                 {
-                    CutPoints.Add(side.RefEdge.PointAt(tempDouble));
+                    
                 }
             }
             return CutPoints;
@@ -858,6 +863,13 @@ namespace PTK
 
             //Creating voidbox
             Box box = new Box(CutPlane, voidpoints);
+
+            //Increasing size of box (Some angles (that includes only 1 or 2 voidpoints will give errors)
+            box.X = new Interval(box.X.T0 * 4, box.X.T1 * 4);
+            box.Y = new Interval(box.Y.T0 * 4, box.Y.T1 * 4);
+
+            
+
 
 
             //Creating BTL processing

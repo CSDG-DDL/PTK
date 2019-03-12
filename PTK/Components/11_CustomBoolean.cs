@@ -12,8 +12,8 @@ namespace PTK.Components
         /// Initializes a new instance of the _11_CustomBoolean class.
         /// </summary>
         public _11_CustomBoolean()
-          : base("_11_CustomBoolean", "Nickname",
-              "Description",
+          : base("CustomSubtraction", "CS",
+              "Add a Brep here to subtract material from the element. NB!! This subtractive operation does not export to BTL!!!!",
               CommonProps.category, CommonProps.subcate11)
         {
             Message = CommonProps.initialMessage;

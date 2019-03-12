@@ -28,6 +28,8 @@ namespace PTK.Components
             pManager.AddTextParameter("Filepath", "", "", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
+            pManager[2].Optional = true;
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -73,11 +75,7 @@ namespace PTK.Components
 
             // Create a new XmlSerializer instance with the type of the test class
             //Initializing the project
-            ProjectType Project = GrasshopperProject.BTLProject; 
             
-            Project.Name = "ReindeerProject";
-            Project.Architect = "DDL-CSDG";
-            Project.Comment = "BetaTest";
 
 
             DataTree<Brep> Stock = GrasshopperProject.GetStock();
@@ -85,40 +83,50 @@ namespace PTK.Components
             DataTree<Brep> ProcessedStock = GrasshopperProject.GetProcessedStock();
             DataTree<Brep> ProcessingSurfaces = GrasshopperProject.GetProcessSurfaces();
 
- 
+
+
+
+            if(filepath.Length != 0)
+            {
+                ProjectType Project = GrasshopperProject.BTLProject;
+
+                Project.Name = "ReindeerProject";
+                Project.Architect = "DDL-CSDG";
+                Project.Comment = "BetaTest";
+
+
+                //Initializing the file;
+
+                BTLx BTLx = new BTLx();
+
+                BTLx.Project = Project;
+                BTLx.Language = "Norsk";
+
+
+
+
+
+                // Create a new XmlSerializer instance with the type of the test class
+
+
+                XmlSerializer SerializerObj = new XmlSerializer(typeof(BTLx));
+
+
+
+
+                // Create a new file stream to write the serialized object to a file
+                TextWriter WriteFileStream = new StreamWriter(filepath);
+               
+
+
+                SerializerObj.Serialize(WriteFileStream, BTLx);
+
+                WriteFileStream.Dispose();
+
+                List<BuildingElement> Elements = GrasshopperProject.BuildingElements;
+            }
+
             
-
-           
-            
-
-
-
-            //Initializing the file;
-
-            BTLx BTLx = new BTLx();
-
-            BTLx.Project = Project;
-            BTLx.Language = "Norsk";
-            
-            
-            
-
-
-            // Create a new XmlSerializer instance with the type of the test class
-
-
-            XmlSerializer SerializerObj = new XmlSerializer(typeof(BTLx));
-            
-            
-            
-
-            // Create a new file stream to write the serialized object to a file
-            TextWriter WriteFileStream = new StreamWriter(filepath);
-
-            
-            SerializerObj.Serialize(WriteFileStream, BTLx);
-
-            List<BuildingElement> Elements = GrasshopperProject.BuildingElements;
 
             
 

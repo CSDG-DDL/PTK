@@ -408,6 +408,7 @@ namespace PTK
                     Stock = Brep.CreateFromBox(boxstock);
                     List<Brep> boolBrep = new List<Brep>();
 
+
                     foreach(Surface s in Stock.Surfaces)
                     {
                         s.SetUserString("old", "yes");

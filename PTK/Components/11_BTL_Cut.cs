@@ -8,7 +8,7 @@ namespace PTK
 {
     public class PTK_BTL_Cut : GH_Component
     {
-        Plane publicPlane = new Plane();
+        List<Plane> publicPlane = new List<Plane>();
         
 
         public PTK_BTL_Cut()
@@ -59,8 +59,22 @@ namespace PTK
 
 
 
-            publicPlane = Plane;
-            publicPlane.Origin = intersection[0].PointA;
+            
+
+            Plane templane = Plane;
+
+            if (intersection==null)
+            {
+                throw new Exception("Your cut does not intersect!");
+            }
+            else
+            {
+                templane.Origin = intersection[0].PointA;
+            }
+            publicPlane.Add(templane);
+
+
+
 
 
 
@@ -91,14 +105,20 @@ namespace PTK
         public override void DrawViewportMeshes(IGH_PreviewArgs args)
         {
 
-            if (publicPlane.IsValid)
-            {
-                args.Display.DepthMode = Rhino.Display.DepthMode.AlwaysInFront;
 
-                PlaneArrow Arrow = new PlaneArrow(publicPlane, 50);
-                args.Display.DrawLineArrow(Arrow.NegLine, System.Drawing.Color.Red, 5, 10);
-                args.Display.DrawLineArrow(Arrow.PosLine, System.Drawing.Color.Green, 5, 10);
-                args.Display.DrawBrepShaded(Arrow.SurfacePlane.ToBrep(), new Rhino.Display.DisplayMaterial(System.Drawing.Color.Red));
+
+            if (publicPlane.Count>1)
+            {
+                foreach (Plane pp in publicPlane)
+                {
+                    args.Display.DepthMode = Rhino.Display.DepthMode.AlwaysInFront;
+
+                    PlaneArrow Arrow = new PlaneArrow(pp, 50);
+                    args.Display.DrawLineArrow(Arrow.NegLine, System.Drawing.Color.Red, 5, 10);
+                    args.Display.DrawLineArrow(Arrow.PosLine, System.Drawing.Color.Green, 5, 10);
+                    args.Display.DrawBrepShaded(Arrow.SurfacePlane.ToBrep(), new Rhino.Display.DisplayMaterial(System.Drawing.Color.Red));
+                }
+                
             }
             
 

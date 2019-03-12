@@ -92,20 +92,34 @@ namespace PTK
                 // case B: other than case A. (such as beams or inclined columns)
                 // localY direction is obtained by the cross product of globalZ and localX.
 
-                Vector3d localY = Vector3d.CrossProduct(globalZ, localX);   //case B
+
+
+                Plane tempPlane = new Plane(BaseCurve.PointAtStart, BaseCurve.TangentAtStart);
+
+                
+
+
+
+
+
+                Vector3d localY = tempPlane.XAxis;   //case B
                 if (localY.Length == 0)
                 {
                     localY = Vector3d.YAxis;    //case A
                 }
 
                 Vector3d localZ = Vector3d.CrossProduct(localX, localY);
-                Plane localYZ = new Plane(BaseCurve.PointAtStart, localY, localZ);
+                Plane localYZ = tempPlane;// new Plane(BaseCurve.PointAtStart, localY, localZ);
 
                 //AlongVector
                 if (Alignment.AlongVector.Length != 0)
                 {
-                    double rot = Vector3d.VectorAngle(localYZ.YAxis, Alignment.AlongVector, localYZ);
-                    localYZ.Rotate(rot, localYZ.ZAxis);
+                    if (Alignment.AlongVector.IsParallelTo(localYZ.ZAxis)  ==0)
+                    {
+                        double rot = Vector3d.VectorAngle(localYZ.YAxis, Alignment.AlongVector, localYZ);
+                        localYZ.Rotate(rot, localYZ.ZAxis);
+                    }
+                    
                 }
 
                 // rotation
