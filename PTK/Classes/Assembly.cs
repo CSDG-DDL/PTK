@@ -144,7 +144,7 @@ namespace PTK
 
 
 
-                        //
+                        
                         double OtherParam;
                         double ThisParam;
 
