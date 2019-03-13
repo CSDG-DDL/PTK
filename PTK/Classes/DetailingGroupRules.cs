@@ -158,6 +158,36 @@ namespace PTK.Rules
         }
     }
 
+    public class NodeZClip 
+    {
+        // --- field ---
+        public double MinDist = -1;
+        public double MaxDist = 9999999;
+
+        // --- constructors --- 
+        public NodeZClip(double _minDist, double _maxDist)
+        {
+            MinDist = _minDist;
+            MaxDist = _maxDist;
+        }
+
+        // --- methods ---
+        public bool check(Detail _detail)
+
+            //This method checks if the node point has Z within range
+        {
+            Detail detail = _detail;
+            Node node = detail.Node;
+            Point3d point = node.Point;
+            double Z = point.Z;
+
+            if (MinDist<Z && Z<MaxDist)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
 
     public class ElementTag
     {
