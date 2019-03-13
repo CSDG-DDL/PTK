@@ -138,6 +138,7 @@
     <Compile Include="Components\11_BTL_Mortise.cs" />
     <Compile Include="Components\10_Rule_ElementAngle.cs" />
     <Compile Include="Components\8_ExtractCrossSection.cs" />
+    <Compile Include="Components\DetailSearch.cs" />
     <Compile Include="Forms\F01_Supports.cs">
       <SubType>Form</SubType>
     </Compile>

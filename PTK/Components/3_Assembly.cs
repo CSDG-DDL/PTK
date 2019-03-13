@@ -29,17 +29,13 @@ namespace PTK
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Element1D(), "Elements", "E", "Add elements here", GH_ParamAccess.list);
-            pManager.AddGenericParameter("DetailingGroupDefinitions", "DG", "Add detailingroups here", GH_ParamAccess.list);
             pManager[0].Optional = true;
-            pManager[1].Optional = true;
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.RegisterParam(new Param_Assembly(), "Assembly", "A", "Assembled project data", GH_ParamAccess.item);
-            //pManager.RegisterParam(new Param_Node(), "Nodes", "N", "Nodes included in the Assembly", GH_ParamAccess.list);
-            //pManager.AddTextParameter("Tags", "T", "Tag list held by Elements included in Assemble", GH_ParamAccess.list);
-            //pManager.RegisterParam(new Param_CroSec(), "CrossSection", "S", "CrossSection list held by Elements included in Assemble", GH_ParamAccess.list);
         }
 
 
@@ -48,7 +44,7 @@ namespace PTK
             // --- variables ---
             List<GH_Element1D> gElems = new List<GH_Element1D>();
             List<Element1D> elems = null;
-            List<DetailingGroupRulesDefinition> DetailinGroupDefinitions = new List<DetailingGroupRulesDefinition>();
+
 
             // --- input --- 
             if (!DA.GetDataList(0, gElems))
@@ -59,34 +55,18 @@ namespace PTK
             {
                 elems = gElems.ConvertAll(e => e.Value);
             }
-            if (!DA.GetDataList(1, DetailinGroupDefinitions))
-            {
-                DetailinGroupDefinitions = new List<DetailingGroupRulesDefinition>();
-            }
+
             
 
             // --- solve ---
             Assembly assembly = new Assembly();
 
             elems.ForEach(e => assembly.AddElement(e));
-            //assembly.GenerateDetails();                                         
-            assembly.DetailingGroupDefinitions = DetailinGroupDefinitions;    ///FAST!
-
-
-            foreach (DetailingGroupRulesDefinition DG in DetailinGroupDefinitions)
-            {
-                assembly.AddDetailingGroup(DG.GenerateDetailingGroup(assembly.Details)); 
-            }
-
-            // --- output ---
-            //List<GH_Node> nodes = assembly.Nodes.ConvertAll(n => new GH_Node(n));
-            //List<string> tags = assembly.Tags;
-            //List<GH_CroSec> sections = assembly.CrossSections.ConvertAll(s => new GH_CroSec(s));
+                                     
+            
             
             DA.SetData(0, new GH_Assembly(assembly));
-            //DA.SetDataList(1, nodes);
-            //DA.SetDataList(2, tags);
-            //DA.SetDataList(3, sections);
+
         }
 
         protected override System.Drawing.Bitmap Icon
