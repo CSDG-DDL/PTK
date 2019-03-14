@@ -13,9 +13,17 @@ namespace PTK.Components
         /// </summary>
         public PTK_Rule_ElementAmount()
           : base("ElementAmountRule", "A",
-              "Grouping details based on amount of elements",
+              "Detail search based on amount of elements at the detail",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>

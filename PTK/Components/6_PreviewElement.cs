@@ -15,7 +15,7 @@ namespace PTK.Components
         public PTK_PreviewElement()
           : base("Preview Element", "PrevElem",
               "Preview Element",
-              CommonProps.category, CommonProps.subcate6)
+              CommonProps.category, CommonProps.subcate2)
         {
             Message = CommonProps.initialMessage;
         }

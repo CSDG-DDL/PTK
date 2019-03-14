@@ -12,19 +12,26 @@ namespace PTK.Components
         /// Initializes a new instance of the _12_DGPlaneRule_NormalVector class.
         /// </summary>
         public _12_DGPlaneRule_NormalVector()
-          : base("NormalVectorPlane", "Nickname",
-              "Description",
+          : base("DetailPlaneNormalFromVector", "DetNorVec",
+              "Sets the Detail Plane Z-axis to a Vector. Optional Align X-axis along an element.",
               CommonProps.category, CommonProps.subcate10)
         {
         }
-
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
+        }
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddVectorParameter("Normal Vector", "N", "Input global Normal Vector", GH_ParamAccess.item);
-            pManager.AddTextParameter("Name of Alignmentelement", "A", "Optional. Add name of the element that aligns the plane", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name of AlignmentElement for x-axis", "X", "Optional. Name of an element to align the detail plane x-axis along", GH_ParamAccess.item);
             pManager[1].Optional = true;
         }
 

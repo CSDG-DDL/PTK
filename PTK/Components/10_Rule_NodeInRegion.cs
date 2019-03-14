@@ -13,9 +13,17 @@ namespace PTK.Components
         /// </summary>
         public PTK_Rule_NodeInRegion()
           : base("NodeInRegion", "NodeInRegion",
-              "Checks if the Details node is within one of the regions.",
+              "Detail search checking if the details node is within one of the regions.",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>
@@ -24,7 +32,7 @@ namespace PTK.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Region(s)", "R", "Region(s) to test ", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Max Dist","M","Maximum distance between the node and region plane. Set to 0 for strict evaluation",GH_ParamAccess.item, 9999999);
+            pManager.AddNumberParameter("Max Dist","D","Optional. Maximum distance between the node and regions plane. Set to 0 for strict evaluation",GH_ParamAccess.item, 9999999);
 
         }
 

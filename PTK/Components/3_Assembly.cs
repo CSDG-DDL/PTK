@@ -19,8 +19,8 @@ namespace PTK
     {
 
         public PTK_Assembly()
-          : base("Assembly", "Assembly",
-              "Assembly",
+          : base("Reindeer Assembly", "Assembly",
+              "Assemble all elements in this component.",
               CommonProps.category, CommonProps.subcate3)
         {
             Message = CommonProps.initialMessage;

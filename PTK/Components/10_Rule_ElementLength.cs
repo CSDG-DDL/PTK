@@ -8,14 +8,23 @@ namespace PTK.Components
 {
     public class PTK_Rule_ElementLength : GH_Component
     {
+
         /// <summary>
         /// Initializes a new instance of the _10_Rule_ElementLength class.
         /// </summary>
         public PTK_Rule_ElementLength()
           : base("ElementLengthRule", "L",
-              "Grouping details based on length of elements",
+              "Detail search based on the length of the elements",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>
@@ -59,8 +68,9 @@ namespace PTK.Components
 
             //Output
             DA.SetData(0, new Rules.Rule(new CheckGroupDelegate(Rule.check)));   //Sending a new checkgroupDelegate through a new rule object
-
+        
         }
+
 
         /// <summary>
         /// Provides an Icon for the component.

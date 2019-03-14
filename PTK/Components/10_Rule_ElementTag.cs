@@ -14,9 +14,17 @@ namespace PTK.Components
         /// </summary>
         public _10_Rule_ElementTag()
           : base("ElementTagRule", "T",
-              "Checks the tag of the elements. Several tags can be inputted.",
+              "Detail search checking the tag of its elements. Several tags can be inputted for different modes.",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>

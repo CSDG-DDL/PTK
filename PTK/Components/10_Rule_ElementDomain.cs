@@ -12,10 +12,18 @@ namespace PTK.Components
         /// Initializes a new instance of the _10_Rule_ElementDomain class.
         /// </summary>
         public _10_Rule_ElementDomain()
-          : base("Detail shape", "S",
-              "Makes you select details based on typical shapes",
+          : base("Detail typology", "T",
+              "Detail search based on typical detail toplogies or shapes, like an L, T or X detail.",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>

@@ -14,14 +14,21 @@ namespace PTK.Components
         /// Initializes a new instance of the DetailSearch class.
         /// </summary>
         public DetailSearch()
-          : base("DetailSearch", "Nickname",
-              "Description",
-              "Category", "Subcategory")
+          : base("DetailSearch", "DS",
+              "Search For A Detail different search rules",
+              CommonProps.category, CommonProps.subcate10)
         {
         }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+        get
+        { return GH_Exposure.primary; }
+        }
 
-
-    protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
     {
         pManager.AddParameter(new Param_Assembly(), "Assembly", "A", "Assembly", GH_ParamAccess.item);
         pManager.AddTextParameter("DetailingGroupName", "DN", "DetailingGroupName", GH_ParamAccess.item, "DetailingGroupName"); 

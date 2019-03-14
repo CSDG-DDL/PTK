@@ -17,8 +17,17 @@ namespace PTK.Components
         public BuildModel()
           : base("BuildModel", "Nickname",
               "Exporting BTL file to the designated location",
-              CommonProps.category, CommonProps.subcate7)
+              CommonProps.category, CommonProps.subcate11)
         {
+        }
+
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)

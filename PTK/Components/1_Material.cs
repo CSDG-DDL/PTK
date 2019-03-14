@@ -12,10 +12,18 @@ namespace PTK
     public class PTK_Material : GH_Component
     {
         public PTK_Material()
-          : base("Material", "Mat", "Create a Material",
-              CommonProps.category, CommonProps.subcate1)
+          : base("Material", "Mat", "Creates a Material",
+              CommonProps.category, CommonProps.subcate2)
         {
             Message = CommonProps.initialMessage;
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.quarternary; }
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
