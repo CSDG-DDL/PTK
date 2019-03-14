@@ -24,9 +24,17 @@ namespace PTK
         public PTK_Support()
           : base("Support", "Support",
               "Add Supports Conditions here",
-              CommonProps.category, CommonProps.subcate3)
+              CommonProps.category, CommonProps.subcate5)
         {
             //Message = CommonProps.initialMessage;
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)

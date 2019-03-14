@@ -15,7 +15,7 @@ namespace PTK.Components
         public PTK_PreviewElementStructural()
           : base("Preview Element Structural", "PrevElemS",
               "Preview Element with structural analysis",
-              CommonProps.category, CommonProps.subcate6)
+              CommonProps.category, CommonProps.subcate2)
         {
             Message = CommonProps.initialMessage;
         }

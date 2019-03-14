@@ -17,6 +17,14 @@ namespace PTK.Components
               CommonProps.category, CommonProps.subcate8)
         {
         }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.hidden; }
+        }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {

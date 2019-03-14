@@ -12,10 +12,18 @@ namespace PTK.Components
         /// Initializes a new instance of the _13_GlobalAlign_FromPoints class.
         /// </summary>
         public _13_GlobalAlign_FromPoints()
-          : base("AlignFromPoints", "P",
-              "Aligns Z-vector from surface",
-              CommonProps.category, CommonProps.subcate12)
+          : base("GlobalAlignFromPoints", "P",
+              "Aligns element Z-vector from point(s). Closest point is used when several points are inserted.",
+              CommonProps.category, CommonProps.subcate2)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
         }
 
         /// <summary>

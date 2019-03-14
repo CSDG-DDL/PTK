@@ -22,7 +22,7 @@ namespace PTK
         public PTK_StructualAssembly()
           : base("Structual Assembly", "Str Assembly",
               "StructualAssembly",
-              CommonProps.category, CommonProps.subcate3)
+              CommonProps.category, CommonProps.subcate5)
         {
             Message = CommonProps.initialMessage;
         }

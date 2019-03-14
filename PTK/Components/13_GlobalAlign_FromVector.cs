@@ -12,12 +12,19 @@ namespace PTK.Components
         /// Initializes a new instance of the _13_GlobalAlign_FromVector class.
         /// </summary>
         public _13_GlobalAlign_FromVector()
-          : base("AlignFromVector", "V",
-              "Aligns Z-vector from surface",
-              CommonProps.category, CommonProps.subcate12)
+          : base("GlobalAlignFromVector", "V",
+              "Aligns element Z-vectors from a surface",
+              CommonProps.category, CommonProps.subcate2)
         {
         }
-
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
+        }
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>

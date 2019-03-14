@@ -14,9 +14,17 @@ namespace PTK.Components
         /// </summary>
         public _10_Rule_ElementAngle()
           : base("Element Angle", "EA",
-              "Checks the angle of the all neighbouring elements. Returns details with elements inside the range",
+              "Detail search by checking the angle of all neighbouring elements. Returns details with elements inside the range",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>

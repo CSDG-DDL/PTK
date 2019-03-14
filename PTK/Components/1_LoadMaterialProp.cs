@@ -15,16 +15,24 @@ namespace PTK
     {
         public PTK_LoadStructuralMaterialProp()
           : base("Load Structural Material Prop", "Load SMP",
-              "loads material properties from Tree.",
-              CommonProps.category, CommonProps.subcate1)
+              "Loads structural material properties.",
+              CommonProps.category, CommonProps.subcate2)
         {
             Message = CommonProps.initialMessage;
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.quarternary; }
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "names Material.", GH_ParamAccess.item);
-            pManager.AddTextParameter("Data", "D", "Load data tree with properties.", GH_ParamAccess.tree);
+            pManager.AddTextParameter("Name", "N", "Name of Material.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Data", "D", "Data tree with material properties.", GH_ParamAccess.tree);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)

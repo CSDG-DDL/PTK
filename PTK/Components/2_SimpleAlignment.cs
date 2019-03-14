@@ -9,11 +9,20 @@ namespace PTK
     public class PTK_SimpleAlignment : GH_Component
     {
         public PTK_SimpleAlignment()
-          : base("Alignment", "Align",
+          : base("LocalAlignment", "Align",
               "Alignment",
               CommonProps.category, CommonProps.subcate2)
         {
             Message = CommonProps.initialMessage;
+        }
+
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.quinary; }
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)

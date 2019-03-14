@@ -13,9 +13,17 @@ namespace PTK.Components
         /// </summary>
         public _10_Rule_ElementForce()
           : base("Element force", "F",
-              "Makes you select details based on force range",
+              "Detail search based on the forces in the detail.",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>
@@ -129,7 +137,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return Properties.Resources.SearchDetail;
             }
         }
 
