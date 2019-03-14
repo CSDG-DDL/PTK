@@ -66,9 +66,8 @@ namespace PTK.Components
 
             GlobalAlignmentRules.AlignmentFromSurfaces SurfaceAlignment = new GlobalAlignmentRules.AlignmentFromSurfaces(AlignmentSurfaces, 100);
 
-            
+            ElementAlign Alignment = new ElementAlign(SurfaceAlignment.GenerateVector, OffsetY, offsetZ);
 
-            GH_Alignment Alignment = new GH_Alignment(new Alignment("", OffsetY, offsetZ, SurfaceAlignment.GenerateVector));
 
             DA.SetData(0, Alignment);
 

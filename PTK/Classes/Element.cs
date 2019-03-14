@@ -35,8 +35,9 @@ namespace PTK
         public List<Joint> Joints { get; private set; } = new List<Joint>();
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
+        public ElementAlign Elementalignment { get; private set; }
 
-        // --- constructors --- 
+    // --- constructors --- 
         public Element1D() : base()
         {
             InitializeLocalPlane();
@@ -45,13 +46,14 @@ namespace PTK
         {
             InitializeLocalPlane();
         }
-        public Element1D(string _tag, Curve _curve, CrossSection _crossSection, Alignment _alignmnet, Force _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
+        public Element1D(string _tag, Curve _curve, CrossSection _crossSection, ElementAlign _elementalignmnet, Force _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
         {
             BaseCurve = _curve;
             PointAtStart = _curve.PointAtStart;
             PointAtEnd = _curve.PointAtEnd;
             CrossSection = _crossSection;
-            Alignment = _alignmnet;
+            Alignment = _crossSection.Alignment;
+            Elementalignment = _elementalignmnet;
             Forces = _forces;
             Joints = _joints;
             IsIntersectWithOther = _intersect;
@@ -93,68 +95,55 @@ namespace PTK
                 // localY direction is obtained by the cross product of globalZ and localX.
 
 
-
-                Plane tempPlane = new Plane(BaseCurve.PointAtStart, BaseCurve.TangentAtStart);
-
                 
 
+                Plane InitialPlane = new Plane(BaseCurve.PointAtStart, BaseCurve.TangentAtStart);
+
+                Vector3d Alignmentvector = Elementalignment.ElementAlignmentRule(BaseCurve);
+                Vector3d InitialXvector = InitialPlane.XAxis;
+
+                double angle = Vector3d.VectorAngle(InitialXvector, Alignmentvector, InitialPlane);
+
+                Plane BaseCurveYZPlane = new Plane(InitialPlane);
+
+                BaseCurveYZPlane.Rotate(angle, BaseCurveYZPlane.ZAxis, BaseCurveYZPlane.Origin);
+
+                double ElementOffsetY = Elementalignment.OffsetY;
+                double ElementOffsetZ = Elementalignment.OffsetZ;
+
+                CroSecLocalPlane = new Plane(BaseCurveYZPlane);
+
+
+
+                CroSecLocalPlane.Translate(CroSecLocalPlane.XAxis * ElementOffsetY + CroSecLocalPlane.YAxis * ElementOffsetZ);
 
 
 
 
-                Vector3d localY = tempPlane.XAxis;   //case B
-                if (localY.Length == 0)
-                {
-                    localY = Vector3d.YAxis;    //case A
-                }
 
-                Vector3d localZ = Vector3d.CrossProduct(localX, localY);
-                Plane localYZ = tempPlane;// new Plane(BaseCurve.PointAtStart, localY, localZ);
 
-                //AlongVector
-                if (Alignment.AlongVector.Length != 0)
-                {
-                    if (Alignment.AlongVector.IsParallelTo(localYZ.ZAxis)  ==0)
-                    {
-                        double rot = Vector3d.VectorAngle(localYZ.YAxis, Alignment.AlongVector, localYZ);
-                        localYZ.Rotate(rot, localYZ.ZAxis);
-                    }
+                //Vector3d localZ = Vector3d.CrossProduct(localX, localY);
+                //Plane localYZ = tempPlane;// new Plane(BaseCurve.PointAtStart, localY, localZ);
+
+                ////AlongVector
+                //if (Alignment.AlongVector.Length != 0)
+                //{
+                //    if (Alignment.AlongVector.IsParallelTo(localYZ.ZAxis)  ==0)
+                //    {
+                //        double rot = Vector3d.VectorAngle(localYZ.YAxis, Alignment.AlongVector, localYZ);
+                //        localYZ.Rotate(rot, localYZ.ZAxis);
+                //    }
                     
-                }
+                //}
 
-                // rotation
-                if (Alignment.RotationAngle != 0.0)
-                {
-                    double rot = Alignment.RotationAngle * Math.PI / 180; // degree to radian
-                    localYZ.Rotate(rot, localYZ.ZAxis);
-                }
+                //// rotation
+                //if (Alignment.RotationAngle != 0.0)
+                //{
+                //    double rot = Alignment.RotationAngle * Math.PI / 180; // degree to radian
+                //    localYZ.Rotate(rot, localYZ.ZAxis);
+                //}
 
-                // move origin
-                double offsetV = 0.0;
-                double offsetU = 0.0;
-                double height = CrossSection.GetHeight();
-                double width = CrossSection.GetWidth();
-                if (Alignment.AnchorVert == AlignmentAnchorVert.Top)
-                {
-                    offsetV += height / 2;
-                }
-                else if (Alignment.AnchorVert == AlignmentAnchorVert.Bottom)
-                {
-                    offsetV -= height / 2;
-                }
-                if (Alignment.AnchorHori == AlignmentAnchorHori.Right)
-                {
-                    offsetV += width / 2;
-                }
-                else if (Alignment.AnchorHori == AlignmentAnchorHori.Left)
-                {
-                    offsetV -= width / 2;
-                }
-                offsetV += Alignment.OffsetZ;
-                offsetU += Alignment.OffsetY;
-                localYZ.Origin = localYZ.PointAt(offsetU, offsetV);
-
-                CroSecLocalPlane = localYZ;
+                
             }
             else
             {

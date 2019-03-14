@@ -24,7 +24,7 @@ namespace PTK
             pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Not Named Element");
             pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
             pManager.AddParameter(new Param_CroSec(), "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Alignment(), "Alignment", "A", "Global Alignment", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Alignment", "A", "Global Alignment", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Joint(), "Joint", "J", "Add joint", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Structural Priority", "P", "Add integer value to set the priority of the member", GH_ParamAccess.item, 0);
@@ -54,8 +54,7 @@ namespace PTK
             Curve curve = null;
             GH_CroSec gCroSec = null;
             CrossSection crossSection = null;
-            GH_Alignment gAlignment = null;
-            Alignment alignment = null;
+            ElementAlign ElementAlignment = null;
             GH_Force gForces = null;
             Force forces = null;
             List<GH_Joint> gJoints = new List<GH_Joint>();
@@ -76,19 +75,18 @@ namespace PTK
                 crossSection = gCroSec.Value;
             }
             
-            if (!DA.GetData(3, ref gAlignment))
+            if (!DA.GetData(3, ref ElementAlignment))
             {
                 GlobalAlignmentRules.AlignmentFromVector VectorAlign = new GlobalAlignmentRules.AlignmentFromVector(new Vector3d(0,0,1));
 
-                alignment = new Alignment("", 0, 0, VectorAlign.GenerateVector);
+
+
+                ElementAlignment = new ElementAlign(VectorAlign.GenerateVector, 0, 0);
 
             }
-            else
-            {
-                alignment = gAlignment.Value;
-            }
+            
             //Generating Alignment
-            alignment.GenerateVectorFromDelegate(curve);
+            
 
             if (!DA.GetData(4, ref gForces))
             {
@@ -117,7 +115,7 @@ namespace PTK
 
 
             // --- solve ---
-            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, crossSection, alignment, forces, joints, priority, intersect));
+            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, crossSection, ElementAlignment, forces, joints, priority, intersect));
 
             // --- output ---
             DA.SetData(0, elem);
