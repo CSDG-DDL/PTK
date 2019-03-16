@@ -20,7 +20,7 @@ namespace PTK
         {
             ElementAlignmentRule = _elementAlignmentRule;
             OffsetY = _offsetY;
-            OffsetZ = _offsetY;
+            OffsetZ = _offsetZ;
         }
 
 

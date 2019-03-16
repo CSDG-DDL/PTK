@@ -31,6 +31,13 @@ namespace PTK
             Alignment = _alignment;
         }
 
+        
+
+        
+
+
+
+
         // --- methods ---
         public abstract double GetHeight();
         public abstract double GetWidth();

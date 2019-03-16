@@ -67,9 +67,13 @@ namespace PTK
 
             // --- solve ---
             GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, material, height, width, alignment));
+            CompositeInput Composite = new CompositeInput(new RectangleCroSec(name, material, height, width, alignment));
+
+
+
 
             // --- output ---
-            DA.SetData(0, sec);
+            DA.SetData(0, Composite);
         }
 
         protected override System.Drawing.Bitmap Icon

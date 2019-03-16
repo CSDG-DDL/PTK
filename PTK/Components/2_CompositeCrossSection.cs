@@ -31,11 +31,8 @@ namespace PTK.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Name", "N", "Add name to the sub-element.", GH_ParamAccess.item, "Not Named Composite");
-            pManager.AddParameter(new Param_CroSec(), "Cross-sections", "S", "Sub CrossSections", GH_ParamAccess.list);
-            pManager.AddParameter(new Param_Alignment(), "Alignments", "A", "Local Alignmnet", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Cross-sections", "S", "Sub CrossSections", GH_ParamAccess.list);
             pManager[0].Optional = true;
-            pManager[1].Optional = true;
-            pManager[2].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -47,47 +44,29 @@ namespace PTK.Components
         {
             // --- variables ---
             string name = null;
-            List<GH_CroSec> gCrossSections = new List<GH_CroSec>();
-            List<CrossSection> crossSections = null;
-            GH_Alignment gAlignmnet = null;
-            Alignment alignment = null;
-            Composite composite = null;
+            List<CompositeInput> CompositeInputs = new List<CompositeInput>();
+
 
             // --- input --- 
             if (!DA.GetData(0, ref name)) { return; }
-            if (!DA.GetDataList(1, gCrossSections)) { return; }
-            crossSections = gCrossSections.ConvertAll(s => s.Value);
-            if (!DA.GetData(2, ref gAlignmnet)) { return; }
-            alignment = gAlignmnet.Value;
+            if (!DA.GetDataList(1, CompositeInputs)) { return; }
+
 
             // --- solve ---
-            if (crossSections.Count == 0) { return; }
 
-            composite = new Composite(name, null, crossSections, alignment);
-            //if (crossSections.Count > alignment.Count)
-            //{
-            //    while (crossSections.Count>alignment.Count)
-            //    {
-            //        alignment.Add(alignment.Last());
-            //    }
-            //}
-            //if (crossSections.Count < alignment.Count)
-            //{
-            //    while (crossSections.Count < alignment.Count)
-            //    {
-            //        crossSections.Add(crossSections.Last());
-            //    }
-            //}
+            List<CrossSection> Crossections = new List<CrossSection>();
 
-            //for (int i = 0; i < crossSections.Count; i++)
-            //{
-            //    composite.AddCrossSection(crossSections[i], alignment[i]);
-            //}
 
-            GH_CroSec sec = new GH_CroSec(composite);
+            foreach(CompositeInput C in CompositeInputs)
+            {
+                Crossections.AddRange(C.CrossSections);
+            }
 
-            // --- output ---
-            DA.SetData(0, sec);
+            CompositeInput Composite = new CompositeInput(name, Crossections);
+
+
+
+            DA.SetData(0, Composite);
         }
 
         protected override System.Drawing.Bitmap Icon
