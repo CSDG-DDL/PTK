@@ -36,6 +36,8 @@ namespace PTK
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
 
+        public List<Curve> EdgeCurves { get; private set; } = new List<Curve>();
+
         // --- constructors --- 
         public Element1D() : base()
         {
@@ -149,19 +151,51 @@ namespace PTK
                 else if (Alignment.AnchorHori == AlignmentAnchorHori.Left)
                 {
                     offsetV -= width / 2;
-                }
+                }   
                 offsetV += Alignment.OffsetZ;
                 offsetU += Alignment.OffsetY;
                 localYZ.Origin = localYZ.PointAt(offsetU, offsetV);
-
+                
                 CroSecLocalPlane = localYZ;
+
+                //CreateEdgeCurves
+
+                Vector3d BaseVector = baseCurve.PointAtEnd - baseCurve.PointAtStart;
+
+                Point3d TRs = CroSecLocalPlane.PointAt(height / 2, width / 2);
+                Point3d BRs = CroSecLocalPlane.PointAt(height / -2, width / 2);
+                Point3d BLs = CroSecLocalPlane.PointAt(height / -2, width / -2);
+                Point3d TLs = CroSecLocalPlane.PointAt(height / 2, width / -2);
+
+                Point3d TRe = TRs;
+                TRe.Transform(Transform.Translation(BaseVector));
+                Point3d BRe = BRs;
+                BRe.Transform(Transform.Translation(BaseVector));
+                Point3d BLe = BLs;
+                BLe.Transform(Transform.Translation(BaseVector));
+                Point3d TLe = TLs;
+                TLe.Transform(Transform.Translation(BaseVector));
+                
+                Curve edgeTR = new LineCurve(TRs, TRe);
+                Curve edgeBR = new LineCurve(BRs, BRe);
+                Curve edgeBL = new LineCurve(BLs, BLe);
+                Curve edgeTL = new LineCurve(TLs, TLe);
+                                
+                EdgeCurves.Add(edgeTR);
+                EdgeCurves.Add(edgeBR);
+                EdgeCurves.Add(edgeBL);
+                EdgeCurves.Add(edgeTL);
             }
             else
             {
                 CroSecLocalPlane = new Plane();
             }
+
+
+
         }
 
+        
         public Element1D DeepCopy()
         {
             return (Element1D)base.MemberwiseClone();
