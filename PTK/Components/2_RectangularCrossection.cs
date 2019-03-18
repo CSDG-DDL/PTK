@@ -42,7 +42,7 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Param_CroSec(), "Cross Section", "S", "Cross Section data to be connected in the Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Cross Section", "S", "Cross Section data to be connected in the Element", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -67,9 +67,13 @@ namespace PTK
 
             // --- solve ---
             GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, material, height, width, alignment));
+            CompositeInput Composite = new CompositeInput(new RectangleCroSec(name, material, height, width, alignment));
+
+
+
 
             // --- output ---
-            DA.SetData(0, sec);
+            DA.SetData(0, Composite);
         }
 
         protected override System.Drawing.Bitmap Icon

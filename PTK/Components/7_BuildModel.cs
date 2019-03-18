@@ -49,6 +49,7 @@ namespace PTK.Components
             pManager.AddBrepParameter("ProcessingSurfaces", "", "", GH_ParamAccess.tree);
             pManager.AddBrepParameter("Processed Component", "", "", GH_ParamAccess.tree);
             pManager.AddBrepParameter("test", "", "", GH_ParamAccess.item);
+            pManager.AddPlaneParameter("", "", "", GH_ParamAccess.item);
             
 
             pManager.HideParameter(0);
@@ -92,10 +93,11 @@ namespace PTK.Components
             DataTree<Brep> ProcessedStock = GrasshopperProject.GetProcessedStock();
             DataTree<Brep> ProcessingSurfaces = GrasshopperProject.GetProcessSurfaces();
 
+            DA.SetData(5, GrasshopperProject.BuildingElements[0].Sub3DElements[0].BTLPartGeometry.Refsides[0].RefPlane);
+            
 
 
-
-            if(filepath.Length != 0)
+            if (filepath.Length != 0)
             {
                 ProjectType Project = GrasshopperProject.BTLProject;
 

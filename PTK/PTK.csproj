@@ -57,7 +57,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\IIS\Microsoft Web Deploy V3\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RhinoCommon">
+    <Reference Include="RhinoCommon, Version=5.1.30000.17, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\RhinoCommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -80,6 +81,7 @@
     <Compile Include="Classes\Assembly.cs" />
     <Compile Include="Classes\BTLProcesssClasses.cs" />
     <Compile Include="Classes\btlx_10.cs" />
+    <Compile Include="Classes\CompositeClass.cs" />
     <Compile Include="Classes\Detail.cs" />
     <Compile Include="Classes\DetailingGroup.cs" />
     <Compile Include="Classes\DetailingGroupRules.cs" />
@@ -404,7 +406,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "C:\Users\Steinar Hillersøy Dy\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
+    <PostBuildEvent>Copy "$(TargetPath)" "%25UserProfile%25\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

@@ -73,25 +73,7 @@ namespace PTK
                     Tags.Add(tag);
                 }
 
-                if(_element.CrossSection is Composite comp)
-                {
-                    var secs = comp.RecursionCrossSectionSearch();
-                    foreach(var sec in secs.ConvertAll(s=>s.Item1))
-                    {
-                        if (!CrossSections.Contains(sec))
-                        {
-                            CrossSections.Add(sec);
-                        }
-                    }
-                }
-                else
-                {
-                    CrossSection sec = _element.CrossSection;
-                    if (!CrossSections.Contains(sec))
-                    {
-                        CrossSections.Add(sec);
-                    }
-                }
+                
             }
             return Elements.Count;
         }

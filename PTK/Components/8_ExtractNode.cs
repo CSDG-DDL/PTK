@@ -13,8 +13,8 @@ namespace PTK
     public class PTK_ExtractNode : GH_Component
     {
         public PTK_ExtractNode()
-          : base("Extract Node", "Extract Node",
-              "Extract Node",
+          : base("Deconstruct Node", "DN",
+              "Deconstructs a node into its properties",
               CommonProps.category, CommonProps.subcate8)
         {
             Message = CommonProps.initialMessage;
