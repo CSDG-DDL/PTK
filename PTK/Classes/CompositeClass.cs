@@ -15,6 +15,10 @@ namespace PTK
         public List<SubElement> Subelements { get; private set; }
         public double WidthSimplified { get; private set; }
         public double HeightSimplified { get; private set; }
+        public Interval WidthInterval { get; private set; }
+        public Interval HeightInterval { get; private set; }
+        public MaterialProperty MaterialProperty { get; private set; }
+
 
 
         public CompositeNew()
@@ -80,12 +84,17 @@ namespace PTK
 
         public CompositeNew(CompositeInput Input, Element1D MainElement)
         {
-
+            
 
             CompositeName = Input.CompositeName;
             Subelements = new List<SubElement>();
 
+
+            //NBNB!!! THIS IS A SIMPLIFICATION!!!!!
+            MaterialProperty = Input.CrossSections[0].MaterialProperty;
+
             List<CrossSection> _crossections = Input.CrossSections;
+
 
             foreach (CrossSection CS in _crossections)
             {
@@ -95,7 +104,11 @@ namespace PTK
             if (_crossections.Count == 1)
             {
                 WidthSimplified = _crossections[0].GetWidth();
-                WidthSimplified = _crossections[0].GetWidth();
+                HeightSimplified = _crossections[0].GetHeight();
+                HeightInterval = new Interval(-HeightSimplified / 2, HeightSimplified / 2);
+                WidthInterval = new Interval(-WidthSimplified / 2, WidthSimplified / 2);
+
+
             }
             else
             {
@@ -129,6 +142,12 @@ namespace PTK
 
                 WidthSimplified = Widths.Last() - Widths.First();
                 HeightSimplified = Heights.Last() - Heights.First();
+
+
+                WidthInterval = new Interval(Widths.First(), Widths.Last());
+                HeightInterval = new Interval(Heights.First(), Heights.Last());
+
+
 
             }
 

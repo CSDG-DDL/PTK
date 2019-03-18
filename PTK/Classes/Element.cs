@@ -29,8 +29,7 @@ namespace PTK
         public Point3d PointAtStart { get; private set; } = new Point3d();
         public Point3d PointAtEnd { get; private set; } = new Point3d();
         public Plane CroSecLocalPlane { get; private set; }
-        public CrossSection CrossSection { get; private set; } = null;
-        public Alignment Alignment { get; private set; } = new Alignment("Alignment");
+        public CrossSection CrossSection { get; private set; } = null;  //THIS IS GOING OUT!
         public CompositeNew Composite { get; private set; }
         public Force Forces { get; private set; } = new Force();
         public List<Joint> Joints { get; private set; } = new List<Joint>();
@@ -62,30 +61,18 @@ namespace PTK
 
             Composite = new CompositeNew(_compositeInput, this);
 
+            CrossSection = new RectangleCroSec("", Composite.MaterialProperty, Composite.HeightSimplified, Composite.WidthSimplified, new Alignment());
 
+            
         }
 
-        public Element1D(string _tag, Curve _curve, CrossSection _crossSection, ElementAlign _elementalignmnet, Force _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
-        {
-            BaseCurve = _curve;
-            PointAtStart = _curve.PointAtStart;
-            PointAtEnd = _curve.PointAtEnd;
-            CrossSection = _crossSection;
-            Alignment = _crossSection.Alignment;
-            Elementalignment = _elementalignmnet;
-            Forces = _forces;
-            Joints = _joints;
-            IsIntersectWithOther = _intersect;
-            Priority = _priority;
-            InitializeLocalPlane();
-        }
+        
         public Element1D( Element1D _elem, Force _forces) : base()
         {
             BaseCurve = _elem.baseCurve;
             PointAtStart = _elem.PointAtStart;
             PointAtEnd = _elem.PointAtEnd;
-            CrossSection = _elem.CrossSection;
-            Alignment = _elem.Alignment;
+            Composite = _elem.Composite;
             Forces = _forces;
             Joints = _elem.Joints;
             IsIntersectWithOther = _elem.IsIntersectWithOther;
@@ -128,7 +115,7 @@ namespace PTK
                 Plane InitialPlane = new Plane(BaseCurve.PointAtStart, BaseCurve.TangentAtStart);
 
                 Vector3d Alignmentvector = Elementalignment.ElementAlignmentRule(BaseCurve);
-                Vector3d InitialXvector = InitialPlane.XAxis;
+                Vector3d InitialXvector = InitialPlane.YAxis;
 
                 double angle = Vector3d.VectorAngle(InitialXvector, Alignmentvector, InitialPlane);
 
@@ -168,11 +155,10 @@ namespace PTK
 
             Plane CornerPlane = CroSecLocalPlane;
 
-            Interval WidthDomain = new Interval(-Composite.WidthSimplified / 2, Composite.WidthSimplified);
-            Interval HeightDomain = new Interval(-Composite.HeightSimplified / 2, Composite.HeightSimplified);
 
 
-            Rectangle3d shape = new Rectangle3d(CornerPlane, WidthDomain, HeightDomain);
+
+            Rectangle3d shape = new Rectangle3d(CornerPlane, Composite.WidthInterval, Composite.HeightInterval);
 
             if (BaseCurve.IsLinear())
             {
@@ -260,9 +246,9 @@ namespace PTK
     public class SubElement
     {
         // --- field ---
-        private string Name;
-        private int Id;
-        private Curve BaseCurve;
+        public string Name { get; private set; }
+        public int Id { get; private set; }
+        public Curve BaseCurve { get; private set; }
         public Point3d PointAtStart { get; private set; } = new Point3d();
         public Point3d PointAtEnd { get; private set; } = new Point3d();
         public Plane CroSecLocalCenterPlane { get; private set; }
@@ -273,6 +259,7 @@ namespace PTK
         public List<Point3d> Shape2dCorners { get; private set; }
         public Alignment Alignment { get; private set; } = new Alignment("Alignment");
         public MaterialProperty Material { get; private set; }
+        public PartType BTLPart { get;  set; }
 
 
         // --- constructors --- 
@@ -293,10 +280,13 @@ namespace PTK
             CrosSecLocalCornerPlane = GenerateCrossSectionCornerPlane(MainElement.CroSecLocalPlane);
 
             Rectangle3d shape = new Rectangle3d(CrosSecLocalCornerPlane, Width, Height);
-            Shape2dCorners.Add(shape.Corner(0));
-            Shape2dCorners.Add(shape.Corner(1));
-            Shape2dCorners.Add(shape.Corner(2));
-            Shape2dCorners.Add(shape.Corner(3));
+            Shape2dCorners = new List<Point3d>();
+
+
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(0, 0));
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(0, Height));
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(Width,0));
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(Width, Height));
 
 
             Shape2d = shape.ToNurbsCurve();

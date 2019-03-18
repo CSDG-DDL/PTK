@@ -25,6 +25,10 @@ namespace PTK.Components
 {
     public class PTK_UtilizationPreview : GH_Component
     {
+
+        List<Brep> PublicElements = new List<Brep>();
+        List<Color> PublicColors = new List<Color>();
+
         Dictionary<Brep, Color> models = new Dictionary<Brep, Color>();
         /// <summary>
         /// Initializes a new instance of the _4_4_DimensioningMembers class.
@@ -157,9 +161,34 @@ namespace PTK.Components
             #endregion
 
             #region creating breps
-            
+            List<Brep> BrepElements = new List<Brep>();
+            List<Color> Colors = new List<Color>();
+
             foreach (var element in elements)
             {
+                BrepElements.Add( element.GenerateSimplifiedGeometry());
+
+                Color tmpColor = Color.White;
+                double tmpUtil = utiliziationDictionary[element];
+
+                if (tmpUtil > utilList[utilList.Count - 1])
+                {
+                    tmpColor = cList[utilList.Count - 1];
+                }
+                else
+                {
+                    tmpColor = Color.White;
+                    for (int i1 = 0; i1 < utilList.Count - 1; i1++)
+                    {
+                        if (tmpUtil >= utilList[i1] && tmpUtil < utilList[i1 + 1])
+                        {
+                            tmpColor = cList[i1];
+                        }
+                    }
+                };
+
+                Colors.Add(tmpColor);
+                /*
                 List<Tuple<CrossSection, Alignment>> subSections = new List<Tuple<CrossSection, Alignment>>();
                 if (element.CrossSection is Composite comp)
                 {
@@ -209,8 +238,13 @@ namespace PTK.Components
                                 = tmpColor;
                 }
 
+
+
+
                 foreach (Curve s in sectionCurves.Keys)
                 {
+
+
                     Curve c = element.BaseCurve;
                     if (c.IsLinear())
                     {
@@ -226,9 +260,10 @@ namespace PTK.Components
                             tmpModels[brep] = sectionCurves[s];
                         }
                     }
+                    
                 }
                 sectionCurves.Clear();
-
+                */
 
             }
             #endregion 
@@ -237,15 +272,20 @@ namespace PTK.Components
 
 
 
-
+            /*
             // --- output ---
             foreach (var m in tmpModels)
             {
                 models[m.Key] = m.Value;
             }
-            DA.SetDataList(1, tmpModels.Keys);
+            */
+            DA.SetDataList(1, BrepElements);
 
             DA.SetDataList(0, infolist);
+
+            PublicColors = Colors;
+            PublicElements = BrepElements;
+
         }
 
         protected override System.Drawing.Bitmap Icon
@@ -268,6 +308,8 @@ namespace PTK.Components
 
         public override void ExpireSolution(bool recompute)
         {
+            PublicElements.Clear();
+            PublicColors.Clear();
             models.Clear();
             base.ExpireSolution(recompute);
         }
@@ -275,16 +317,16 @@ namespace PTK.Components
         //public override BoundingBox ClippingBox => models.Keys.ToList()[0].GetBoundingBox(false);
         public override void DrawViewportMeshes(IGH_PreviewArgs args)
         {
-            foreach (var m in models)
+            for(int i =0;i<PublicColors.Count;i++)
             {
                 //args.Display.DrawObject(m.Key, new Rhino.Display.DisplayMaterial(m.Value, 0.5));
-                args.Display.DrawBrepShaded(m.Key, new Rhino.Display.DisplayMaterial(m.Value));
+                args.Display.DrawBrepShaded(PublicElements[i], new Rhino.Display.DisplayMaterial(PublicColors[i]));
             }
-            //base.DrawViewportMeshes(args);
+
         }
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
-            //base.DrawViewportWires(args);
+
         }
     }
 }

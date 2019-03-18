@@ -26,6 +26,7 @@ namespace PTK.Components
         {
             pManager.AddParameter(new Param_Element1D(), "Elements", "E", "Add elements here", GH_ParamAccess.item);
             pManager[0].Optional = true;
+            pManager.AddBooleanParameter("Show Simplified?", "D", "If true, the simplified element is outputed. If false, subElements are outputed", GH_ParamAccess.item,false);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -37,86 +38,31 @@ namespace PTK.Components
         {
             // --- variables ---
             GH_Element1D gElement = null;
+            bool check = true;
             Dictionary<Brep, Color> tmpModels = new Dictionary<Brep, Color>();
 
             // --- input --- 
             if (!DA.GetData(0, ref gElement)) { return; }
+            if (!DA.GetData(1, ref check)) { return; }
             Element1D element = gElement.Value;
 
-            // --- solve ---
-            Dictionary<Curve, Color> sectionCurves = new Dictionary<Curve, Color>();
-
-
-            //if(element.CrossSection is Composite comp)
-            //{
-            //    Vector3d localY = element.CroSecLocalPlane.XAxis;
-            //    Vector3d localZ = element.CroSecLocalPlane.YAxis;
-            //    Point3d originSection = element.CroSecLocalPlane.Origin;
-            //    List<Tuple<CrossSection, Alignment>> secs = comp.RecursionCrossSectionSearch();
-            //    foreach(var s in secs)
-            //    {
-            //        Point3d originSubSection = originSection + s.Item2.OffsetY * localY + s.Item2.OffsetZ * localZ;
-
-            //        Plane localPlaneSubSection = new Plane(originSubSection, localY, localZ);
-
-            //        sectionCurves[new Rectangle3d(
-            //                    localPlaneSubSection,
-            //                    new Interval(-s.Item1.GetWidth()/2, s.Item1.GetWidth()/2),
-            //                    new Interval(-s.Item1.GetHeight()/2, s.Item1.GetHeight()/2)).ToNurbsCurve()]
-            //                    =Color.GhostWhite;
-            //    }
-            //}
-            //else
-            //{
-            //    Plane templane = new Plane(element.CroSecLocalPlane);
-            //    templane.Rotate(element.CrossSection.Alignment.RotationAngle, templane.ZAxis, templane.Origin);
-
-
-            //    Vector3d localY = templane.XAxis;
-            //    Vector3d localZ = templane.YAxis;
-            //    Point3d originSection = templane.Origin;
-
-            //    Point3d originSubSection = originSection + element.CrossSection.Alignment.OffsetY * localY + element.CrossSection.Alignment.OffsetZ * localZ;
-
-            //    Plane localPlaneSubSection = new Plane(originSubSection, localY, localZ);
-
-            //    sectionCurves[new Rectangle3d(
-            //                    localPlaneSubSection,
-            //                    new Interval(-element.CrossSection.GetWidth() / 2, element.CrossSection.GetWidth() / 2),
-            //                    new Interval(-element.CrossSection.GetHeight() / 2, element.CrossSection.GetHeight() / 2)).ToNurbsCurve()]
-            //                    = Color.GhostWhite;
-            //}
-
-
-
-
-            //foreach (Curve s in sectionCurves.Keys)
-            //{
-            //    Curve c = element.BaseCurve;
-            //    if (c.IsLinear())
-            //    {
-            //        Line l = new Line(c.PointAtStart, c.PointAtEnd);
-            //        Brep brep = Extrusion.CreateExtrusion(s, l.Direction).ToBrep();
-            //        //brep = brep.CapPlanarHoles(CommonProps.tolerances);
-            //        tmpModels[brep] = sectionCurves[s];
-            //    }
-            //    else
-            //    {
-            //        Brep[] breps = Brep.CreateFromSweep(c, s, true, CommonProps.tolerances);
-            //        foreach(var brep in breps)
-            //        {
-            //            tmpModels[brep] = sectionCurves[s];
-            //        }
-            //    }
-            //}
 
 
             List<Brep> SubElements = new List<Brep>();
 
-            foreach (SubElement S in element.Composite.Subelements)
+
+            if (check)
             {
-                SubElements.Add(S.GenerateElementGeometry());
+                SubElements.Add(element.GenerateSimplifiedGeometry());
             }
+            else
+            {
+                foreach (SubElement S in element.Composite.Subelements)
+                {
+                    SubElements.Add(S.GenerateElementGeometry());
+                }
+            }
+            
 
 
 

@@ -13,8 +13,8 @@ namespace PTK
     public class PTK_ExtractForce : GH_Component
     {
         public PTK_ExtractForce()
-          : base("Extract Force", "Extract Force",
-              "Extract Force",
+          : base("Deconstruct Force", "DF",
+              "Deconstructs a force into into values",
               CommonProps.category, CommonProps.subcate8)
         {
             Message = CommonProps.initialMessage;
