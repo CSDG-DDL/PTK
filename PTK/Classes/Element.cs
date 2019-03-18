@@ -37,7 +37,9 @@ namespace PTK
         public int Priority { get; private set; } = 0;
         public ElementAlign Elementalignment { get; private set; }
 
-    // --- constructors --- 
+        public List<Curve> EdgeCurves { get; private set; } = new List<Curve>();
+
+        // --- constructors --- 
         public Element1D() : base()
         {
             InitializeLocalPlane();
