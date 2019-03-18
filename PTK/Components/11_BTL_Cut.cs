@@ -11,6 +11,7 @@ namespace PTK
         List<Plane> publicPlane = new List<Plane>();
         List<Plane> missingPlane = new List<Plane>();
         bool intersected = false;
+        bool run = false;
 
 
         public PTK_BTL_Cut()
@@ -28,12 +29,16 @@ namespace PTK
             pManager.AddPlaneParameter("Cut Plane", "P", "Cut Plane", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Flip Plane?", "F", "True flip plane", GH_ParamAccess.item, false);
 
-            pManager[0].Optional = true;
+            
+            
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("BTL-Cut", "B", "", GH_ParamAccess.item);
+            pManager.AddGenericParameter("BTL-Cut", "B", "", GH_ParamAccess.list);
+            pManager[0].Optional = true;
+            pManager[0].DataMapping = GH_DataMapping.Flatten;
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -97,6 +102,11 @@ namespace PTK
 
                 if (intersected == false)
             {
+                double param = 0;
+                Line templine = new Line(BaseCurve.PointAtStart, BaseCurve.PointAtEnd);
+                Rhino.Geometry.Intersect.Intersection.LinePlane(templine, Plane, out param);
+                templane.Origin = templine.PointAt(param);
+
                 missingPlane.Add(templane);
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Your cut does not intersect at some elements! The missing planes are marked Grey");
 
@@ -113,13 +123,16 @@ namespace PTK
             }
 
             // reset after use of bool
-            intersected = false;
+            
 
             OrderedTimberProcess Order = null;
 
-            if (publicPlane.Count == 0)
+            if (!intersected)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Your cut actually does not intersect at any elements!");
+                
+
+                List<OrderedTimberProcess> TempList = new List<OrderedTimberProcess>();
+                DA.SetDataList(0, TempList);
             }
             else
             {             
@@ -128,10 +141,19 @@ namespace PTK
 
                 // Making Object with delegate and ID
                 Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(cut.DelegateProcess));
+                List<OrderedTimberProcess> TempList = new List<OrderedTimberProcess>();
+                TempList.Add(Order);
+                DA.SetDataList(0, TempList);
+
             }
-            
+
             // --- output ---
-            DA.SetData(0, Order);
+
+            
+            
+
+            intersected = false;
+            run = true; 
         }
 
         protected override System.Drawing.Bitmap Icon
@@ -167,6 +189,12 @@ namespace PTK
                 }
                 
             }
+            else if (run)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Your cut actually does not intersect at any elements!");
+            }
+
+
 
             if (missingPlane.Count >=1)
             {

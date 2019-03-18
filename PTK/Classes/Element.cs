@@ -183,12 +183,12 @@ namespace PTK
         {
             
 
-            Plane CornerPlane = CroSecLocalPlane;
+            Plane WorkPlane = CroSecLocalPlane;
 
 
 
 
-            Rectangle3d shape = new Rectangle3d(CornerPlane, Composite.WidthInterval, Composite.HeightInterval);
+            Rectangle3d shape = new Rectangle3d(WorkPlane, Composite.WidthInterval, Composite.HeightInterval);
 
             if (BaseCurve.IsLinear())
             {
