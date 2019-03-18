@@ -62,6 +62,7 @@ namespace PTK
             InitializeLocalPlane();
 
             Composite = new CompositeNew(_compositeInput, this);
+            GenerateCornerLines();
 
             CrossSection = new RectangleCroSec("", Composite.MaterialProperty, Composite.HeightSimplified, Composite.WidthSimplified, new Alignment());
 
@@ -136,31 +137,7 @@ namespace PTK
                 Point3d test = CroSecLocalPlane.PointAt(ElementOffsetY, ElementOffsetZ);
                 CroSecLocalPlane = new Plane(test, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
 
-                Vector3d BaseVector = baseCurve.PointAtEnd - baseCurve.PointAtStart;
-
-                Point3d TRs = CroSecLocalPlane.PointAt(height / 2, width / 2);
-                Point3d BRs = CroSecLocalPlane.PointAt(height / -2, width / 2);
-                Point3d BLs = CroSecLocalPlane.PointAt(height / -2, width / -2);
-                Point3d TLs = CroSecLocalPlane.PointAt(height / 2, width / -2);
-
-                Point3d TRe = TRs;
-                TRe.Transform(Transform.Translation(BaseVector));
-                Point3d BRe = BRs;
-                BRe.Transform(Transform.Translation(BaseVector));
-                Point3d BLe = BLs;
-                BLe.Transform(Transform.Translation(BaseVector));
-                Point3d TLe = TLs;
-                TLe.Transform(Transform.Translation(BaseVector));
-
-                Curve edgeTR = new LineCurve(TRs, TRe);
-                Curve edgeBR = new LineCurve(BRs, BRe);
-                Curve edgeBL = new LineCurve(BLs, BLe);
-                Curve edgeTL = new LineCurve(TLs, TLe);
-
-                EdgeCurves.Add(edgeTR);
-                EdgeCurves.Add(edgeBR);
-                EdgeCurves.Add(edgeBL);
-                EdgeCurves.Add(edgeTL);
+                
 
             }
             else
@@ -168,6 +145,39 @@ namespace PTK
                 CroSecLocalPlane = new Plane();
             }
         }
+
+        public void GenerateCornerLines()
+        {
+            Vector3d BaseVector = baseCurve.PointAtEnd - baseCurve.PointAtStart;
+
+            double height = Composite.HeightSimplified;
+            double width = Composite.WidthSimplified;
+
+            Point3d TRs = CroSecLocalPlane.PointAt(height / 2, width / 2);
+            Point3d BRs = CroSecLocalPlane.PointAt(height / -2, width / 2);
+            Point3d BLs = CroSecLocalPlane.PointAt(height / -2, width / -2);
+            Point3d TLs = CroSecLocalPlane.PointAt(height / 2, width / -2);
+
+            Point3d TRe = TRs;
+            TRe.Transform(Transform.Translation(BaseVector));
+            Point3d BRe = BRs;
+            BRe.Transform(Transform.Translation(BaseVector));
+            Point3d BLe = BLs;
+            BLe.Transform(Transform.Translation(BaseVector));
+            Point3d TLe = TLs;
+            TLe.Transform(Transform.Translation(BaseVector));
+
+            Curve edgeTR = new LineCurve(TRs, TRe);
+            Curve edgeBR = new LineCurve(BRs, BRe);
+            Curve edgeBL = new LineCurve(BLs, BLe);
+            Curve edgeTL = new LineCurve(TLs, TLe);
+
+            EdgeCurves.Add(edgeTR);
+            EdgeCurves.Add(edgeBR);
+            EdgeCurves.Add(edgeBL);
+            EdgeCurves.Add(edgeTL);
+        }
+
 
         public Brep GenerateSimplifiedGeometry()
         {
