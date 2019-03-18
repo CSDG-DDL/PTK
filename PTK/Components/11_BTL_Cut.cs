@@ -9,7 +9,9 @@ namespace PTK
     public class PTK_BTL_Cut : GH_Component
     {
         List<Plane> publicPlane = new List<Plane>();
-        
+        List<Plane> missingPlane = new List<Plane>();
+        bool intersected = false;
+
 
         public PTK_BTL_Cut()
           : base("Cut", "Cut",
@@ -17,6 +19,7 @@ namespace PTK
               CommonProps.category, CommonProps.subcate11)
         {
             Message = CommonProps.initialMessage;
+
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -35,6 +38,7 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            
             // --- variables ---
             GH_Element1D gElement = null;
             Plane Plane = new Plane();
@@ -52,38 +56,80 @@ namespace PTK
                 Plane = new Plane(Plane.Origin, -Plane.ZAxis);
             }
 
-            Curve lineCurve = element.BaseCurve;
+            Curve BaseCurve = element.BaseCurve;
 
-            var intersection = Rhino.Geometry.Intersect.Intersection.CurvePlane(lineCurve, Plane, CommonProps.tolerances);
-            
+            int miss = 0;
 
-
-
-            
-
-            Plane templane = Plane;
-
-            if (intersection==null)
+            for (int i=0; i < element.EdgeCurves.Count; i++)
             {
-                throw new Exception("Your cut does not intersect!");
+                Curve edgeCurve = element.EdgeCurves[i];
+                var edgeIntersection = Rhino.Geometry.Intersect.Intersection.CurvePlane(edgeCurve, Plane, CommonProps.tolerances);
+
+                if (edgeIntersection == null)
+                {
+                    miss++;
+                    //intersected = false;
+                    //}
+                    //else
+                    //{
+                    //intersected = true;
+                    //}
+
+                    //if (edgeIntersection != null)
+                    //{
+                    //    intersected = true;
+                }
+
+            }
+
+            if (miss == 4)
+            {
+                intersected = false;
             }
             else
             {
-                templane.Origin = intersection[0].PointA;
+                intersected = true;
             }
-            publicPlane.Add(templane);
+            Plane templane = Plane;
+            
+            //Resets after use of counter
+            miss = 0;
 
+                if (intersected == false)
+            {
+                missingPlane.Add(templane);
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Your cut does not intersect at some elements! The missing planes are marked Grey");
 
+            }
 
+            else
+            {
+                double lenght = (BaseCurve.PointAtStart - BaseCurve.PointAtEnd).Length;
+                var extendedCurve = BaseCurve.Extend(CurveEnd.Both, lenght, CurveExtensionStyle.Line);
 
+                var intersection = Rhino.Geometry.Intersect.Intersection.CurvePlane(extendedCurve, Plane, CommonProps.tolerances);
+                templane.Origin = intersection[0].PointA;
+                publicPlane.Add(templane);
+            }
 
+            // reset after use of bool
+            intersected = false;
 
-            // --- solve ---
-            BTLCut cut = new BTLCut(Plane);
+            OrderedTimberProcess Order = null;
 
-            // Making Object with delegate and ID
-            OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(cut.DelegateProcess));
+            if (publicPlane.Count == 0)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Your cut actually does not intersect at any elements!");
+            }
+            else
+            {             
+                // --- solve ---
+                BTLCut cut = new BTLCut(Plane);
 
+                // Making Object with delegate and ID
+                Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(cut.DelegateProcess));
+            }
+            
             // --- output ---
             DA.SetData(0, Order);
         }
@@ -98,16 +144,17 @@ namespace PTK
 
         public override void ExpireSolution(bool recompute)
         {
-
+            publicPlane.Clear();
+            missingPlane.Clear();
             base.ExpireSolution(recompute);
+
         }
 
         public override void DrawViewportMeshes(IGH_PreviewArgs args)
         {
 
 
-
-            if (publicPlane.Count>1)
+            if (publicPlane.Count >=1)
             {
                 foreach (Plane pp in publicPlane)
                 {
@@ -115,12 +162,26 @@ namespace PTK
 
                     PlaneArrow Arrow = new PlaneArrow(pp, 50);
                     args.Display.DrawLineArrow(Arrow.NegLine, System.Drawing.Color.Red, 5, 10);
-                    args.Display.DrawLineArrow(Arrow.PosLine, System.Drawing.Color.Green, 5, 10);
+                    args.Display.DrawLineArrow(Arrow.PosLine, System.Drawing.Color.Green,5, 10);
                     args.Display.DrawBrepShaded(Arrow.SurfacePlane.ToBrep(), new Rhino.Display.DisplayMaterial(System.Drawing.Color.Red));
                 }
                 
             }
-            
+
+            if (missingPlane.Count >=1)
+            {
+                foreach (Plane pp in missingPlane)
+                {
+                    args.Display.DepthMode = Rhino.Display.DepthMode.AlwaysInFront;
+
+                    PlaneArrow Arrow2 = new PlaneArrow(pp, 50);
+                    args.Display.DrawLineArrow(Arrow2.NegLine, System.Drawing.Color.Red, 5, 10);
+                    args.Display.DrawLineArrow(Arrow2.PosLine, System.Drawing.Color.Green, 5, 10);
+                    args.Display.DrawBrepShaded(Arrow2.SurfacePlane.ToBrep(), new Rhino.Display.DisplayMaterial(System.Drawing.Color.SlateGray));
+                }
+
+            }
+
 
         }
 
