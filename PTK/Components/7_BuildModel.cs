@@ -35,9 +35,11 @@ namespace PTK.Components
             pManager.AddGenericParameter("Assembly", "A", "", GH_ParamAccess.item);
             pManager.AddGenericParameter("Timber Processes", "P", "", GH_ParamAccess.list);
             pManager.AddTextParameter("Filepath", "", "", GH_ParamAccess.item);
+            
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
+            pManager[1].DataMapping = GH_DataMapping.Flatten;
 
         }
 
@@ -48,8 +50,7 @@ namespace PTK.Components
             
             pManager.AddBrepParameter("ProcessingSurfaces", "", "", GH_ParamAccess.tree);
             pManager.AddBrepParameter("Processed Component", "", "", GH_ParamAccess.tree);
-            pManager.AddBrepParameter("test", "", "", GH_ParamAccess.item);
-            pManager.AddPlaneParameter("", "", "", GH_ParamAccess.item);
+            
             
 
             pManager.HideParameter(0);
