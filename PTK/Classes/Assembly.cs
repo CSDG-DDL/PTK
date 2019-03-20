@@ -31,6 +31,7 @@ namespace PTK
         public List<DetailingGroupRulesDefinition> DetailingGroupDefinitions { get; set; } = new List<DetailingGroupRulesDefinition>();
         public RTree ElementrTree { get; private set; } = new RTree();
         public RTree NoderTree { get; private set; } = new RTree();
+        public double counter; 
 
 
         // --- constructors --- 
@@ -63,7 +64,12 @@ namespace PTK
                 SearchNodes(_element);
 
                 ElementID.Add(ElementIDCounter);
-                ElementrTree.Insert(_element.BaseCurve.PointAtLength(_element.BaseCurve.GetLength() / 2), ElementIDCounter);
+                List<Point3d> points = new List<Point3d>();
+                points.Add(_element.PointAtEnd);
+                points.Add(_element.PointAtStart);
+                Box bounding = new Box(_element.CroSecLocalPlane, points);
+
+                ElementrTree.Insert(bounding.BoundingBox, ElementIDCounter);
                 ElementIDCounter++;
 
                 Elements.Add(_element);
@@ -80,6 +86,7 @@ namespace PTK
 
         private void SearchNodes(Element1D _element)
         {
+            counter++;
             // Add a new Key if NodeMap doesn't contain "_element"
             if (!NodeMap.ContainsKey(_element))
             {
@@ -92,10 +99,17 @@ namespace PTK
 
             //Register intersection with other elements as a node
 
-            double Length = _element.BaseCurve.GetLength();
-            Sphere TempSphere = new Sphere(_element.BaseCurve.PointAtLength(Length/2),Length/2);
+            Curve tempcurve = _element.BaseCurve.DuplicateCurve();
 
-            List<double> nIds = new List<double>();
+            tempcurve.Domain = new Interval(0, 1);
+
+
+            double Length = tempcurve.GetLength();
+
+            Point3d temppoint = tempcurve.PointAt(0.5);
+            Sphere TempSphere = new Sphere(tempcurve.PointAt(0.5),Length/1.9);
+
+            List<int> nIds = new List<int>();
             bool nodeExists;
 
             EventHandler<RTreeEventArgs> ElementClose =
@@ -111,7 +125,10 @@ namespace PTK
 
             for(int i = 0; i < nIds.Count; i++)
             {
-                Element1D otherElem = Elements[i];
+                
+                 
+
+                Element1D otherElem = Elements[nIds[i]];
                 if (otherElem.IsIntersectWithOther)
                 {
                     //Check if both curves are linear
@@ -121,16 +138,17 @@ namespace PTK
 
                     if (OtherCurve.IsLinear() && ThisCurve.IsLinear())
                     {
-                        Line OtherLine = new Line(OtherCurve.PointAtStart, OtherCurve.PointAtStart);
+                        Line OtherLine = new Line(OtherCurve.PointAtStart, OtherCurve.PointAtEnd);
                         Line ThisLine = new Line(ThisCurve.PointAtStart, ThisCurve.PointAtEnd);
-
 
 
                         
                         double OtherParam;
                         double ThisParam;
 
-                        var eventsLine = Intersection.LineLine(OtherLine, ThisLine, out OtherParam, out ThisParam, CommonProps.tolerances, false);
+                        var eventsLine = Intersection.LineLine(OtherLine, ThisLine, out OtherParam, out ThisParam, CommonProps.tolerances*1000,true);
+                        
+                        
 
                         if (eventsLine)
                         {
@@ -186,6 +204,7 @@ namespace PTK
         {
             // When there is no node found at the position
             if (!Nodes.Exists(n => n.Equals(_pt)))
+            
             {
                 Node newNode = new Node(_pt);
 

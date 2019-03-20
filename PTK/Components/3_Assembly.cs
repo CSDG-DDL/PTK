@@ -46,27 +46,41 @@ namespace PTK
             List<GH_Element1D> gElems = new List<GH_Element1D>();
             List<Element1D> elems = null;
 
-
+            
             // --- input --- 
             if (!DA.GetDataList(0, gElems))
             {
                 elems = new List<Element1D>();
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Add valid elements to generate an assembly");
+            }
+            if(gElems.Count == 0)
+            {
+                elems = new List<Element1D>();
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Add valid elements to generate an assembly");
+            }
+            if (gElems[0] != null)
+            {
+                elems = gElems.ConvertAll(e => e.Value);
+
+                // --- solve ---
+                Assembly assembly = new Assembly();
+
+                elems.ForEach(e => assembly.AddElement(e));
+
+
+
+                DA.SetData(0, new GH_Assembly(assembly));
+
+
             }
             else
             {
-                elems = gElems.ConvertAll(e => e.Value);
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Add valid elements to generate an assembly");
+                
             }
 
-            
 
-            // --- solve ---
-            Assembly assembly = new Assembly();
-
-            elems.ForEach(e => assembly.AddElement(e));
-                                     
             
-            
-            DA.SetData(0, new GH_Assembly(assembly));
 
         }
 

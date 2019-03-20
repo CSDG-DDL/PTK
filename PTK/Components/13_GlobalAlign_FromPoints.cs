@@ -12,7 +12,7 @@ namespace PTK.Components
         /// Initializes a new instance of the _13_GlobalAlign_FromPoints class.
         /// </summary>
         public _13_GlobalAlign_FromPoints()
-          : base("GlobalAlignFromPoints", "P",
+          : base("AlignFromPoints", "P",
               "Aligns element Z-vector from point(s). Closest point is used when several points are inserted.",
               CommonProps.category, CommonProps.subcate2)
         {
@@ -43,7 +43,7 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("GlobalAlignmenrt", "A", "Add global alignment to element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Alignment", "A", "Add alignment to element", GH_ParamAccess.item);
         }
 
 

@@ -31,7 +31,7 @@ namespace PTK
             pManager.AddNumberParameter("Width", "W", "", GH_ParamAccess.item,100);  
             pManager.AddNumberParameter("Height", "H", "", GH_ParamAccess.item,100);
             pManager.AddParameter(new Param_MaterialProperty(), "Material properties", "M", "Add material properties", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Alignment(), "Alignment", "A", "Local Alignment", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Alignment(), "Local Alignment", "LA", "Local Alignment", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;

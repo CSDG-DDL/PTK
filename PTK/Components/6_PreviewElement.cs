@@ -69,7 +69,7 @@ namespace PTK.Components
 
 
 
-            PrevElements = SubElements;
+            PrevElements.AddRange(SubElements);
 
 
             
