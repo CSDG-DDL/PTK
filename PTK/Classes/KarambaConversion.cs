@@ -71,13 +71,13 @@ namespace PTK
                         e.BaseCurve.PointAt(paramList[i + 1]) * CommonFunctions.ConversionUnit(Rhino.UnitSystem.Meters)
                         );
                     //複合断面暫定対応
-                    if(e.CrossSection is Composite comp)
+                    if (e.CrossSection is Composite comp)
                     {
                         elem.crosec = crosecMap[comp.SubCrossSections[0]];
                     }
                     else
                     {
-                        elem.crosec = crosecMap[e.CrossSection]; 
+                        elem.crosec = crosecMap[e.CrossSection];
                     }
                     elems.Add(elem);
                 }

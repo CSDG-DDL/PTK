@@ -9,8 +9,8 @@ namespace PTK
     public class PTK_SimpleAlignment : GH_Component
     {
         public PTK_SimpleAlignment()
-          : base("LocalAlignment", "Align",
-              "Alignment",
+          : base("LocalAlignment", "LA",
+              "LocalAlignment of crossSection.",
               CommonProps.category, CommonProps.subcate2)
         {
             Message = CommonProps.initialMessage;
@@ -42,7 +42,7 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Param_Alignment(), "Alignment", "A", "AlignmentData to be added to materializer", GH_ParamAccess.item);
+            pManager.RegisterParam(new Param_Alignment(), "Local Alignment", "A", "Local Alignment to be added to Cross Section", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

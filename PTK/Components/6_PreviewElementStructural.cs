@@ -47,30 +47,11 @@ namespace PTK.Components
             Vector3d localZ = element.CroSecLocalPlane.YAxis;
             Point3d originSection = element.CroSecLocalPlane.Origin;
 
-            if(element.CrossSection is Composite comp)
-            {
-                List<Tuple<CrossSection, Alignment>> secs = comp.RecursionCrossSectionSearch();
-                foreach(var s in secs)
-                {
-                    Point3d originSubSection = originSection + s.Item2.OffsetY * localY + s.Item2.OffsetZ * localZ;
-
-                    Plane localPlaneSubSection = new Plane(originSubSection, localY, localZ);
-
-                    sectionCurves[new Rectangle3d(
-                                localPlaneSubSection,
-                                new Interval(-s.Item1.GetWidth()/2, s.Item1.GetWidth()/2),
-                                new Interval(-s.Item1.GetHeight()/2, s.Item1.GetHeight()/2)).ToNurbsCurve()]
-                                =Color.GhostWhite;
-                }
-            }
-            else
-            {
-                sectionCurves[new Rectangle3d(
+            sectionCurves[new Rectangle3d(
                                 element.CroSecLocalPlane,
-                                new Interval(-element.CrossSection.GetWidth() / 2, element.CrossSection.GetWidth() / 2),
-                                new Interval(-element.CrossSection.GetHeight() / 2, element.CrossSection.GetHeight() / 2)).ToNurbsCurve()]
+                                element.Composite.WidthInterval,
+                                element.Composite.HeightInterval).ToNurbsCurve()]
                                 = Color.GhostWhite;
-            }
 
             foreach (Curve s in sectionCurves.Keys)
             {

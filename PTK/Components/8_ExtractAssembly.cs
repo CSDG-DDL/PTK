@@ -12,8 +12,8 @@ namespace PTK
     public class PTK_ExtractAssembly : GH_Component
     {
         public PTK_ExtractAssembly()
-          : base("Extract Assembly", "Extract Assembly",
-              "Extract Assemble",
+          : base("Deconstruct Assembly", "DA",
+              "Deconstructs an assembly into elements, nodes and details",
               CommonProps.category, CommonProps.subcate8)
         {
             Message = CommonProps.initialMessage;

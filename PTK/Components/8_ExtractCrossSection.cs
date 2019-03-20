@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Grasshopper;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
 namespace PTK.Components
@@ -12,8 +15,8 @@ namespace PTK.Components
         /// Initializes a new instance of the ExtractCrossSection class.
         /// </summary>
         public ExtractCrossSection()
-          : base("ExtractCrossSection", "CS",
-              "Description",
+          : base("Deconstruct Subelement", "SE",
+              "Deconstructs a SubeElement",
               CommonProps.category, CommonProps.subcate8)
         {
         }
@@ -23,7 +26,7 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new Param_CroSec(), "CrossSection", "CS", "Add cross-section from element extraction", GH_ParamAccess.item);
+            pManager.AddGenericParameter( "Subelement", "SubElement", "Deconstruct a subelement", GH_ParamAccess.item);
 
 
         }
@@ -33,11 +36,10 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Width", "W", "Extract Width(s)", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Height", "H", "Extract Height(s)", GH_ParamAccess.list);
-            pManager.AddNumberParameter("OffsetY", "OY", "Extract OffsetY", GH_ParamAccess.list);
-            pManager.AddNumberParameter("OffsetZ", "OZ", "Extract OffsetZ", GH_ParamAccess.list);
-
+            pManager.AddPlaneParameter("CroSecLocalPlaneCenter", "Ce", "Centric CrossSectionPlane of element", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Width", "W", "Subelement Width", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Height", "H", "Subelement Height", GH_ParamAccess.item);
+            pManager.AddBrepParameter("SubElementGeometry", "SE", "Geometry of subelement",GH_ParamAccess.item);
 
 
         }
@@ -48,53 +50,20 @@ namespace PTK.Components
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GH_CroSec GHCrossection = null;
-            
-
-
-            if (!DA.GetData(0, ref GHCrossection)) { return; }
-            CrossSection CrossSection = GHCrossection.Value;
-
-            
-            List<double> Width = new List<double>();
-            List<double> Height = new List<double>();
-            List<double> OffsetY = new List<double>();
-            List<double> OffsetZ = new List<double>();
+            SubElement SubElement = null;
 
 
 
+            if (!DA.GetData(0, ref SubElement)) { return; }
 
 
-            if (CrossSection is Composite comp)
-            {
-                List<Tuple<CrossSection, Alignment>> secs = comp.RecursionCrossSectionSearch();
-                foreach (var s in secs)
-                {
 
-                    Width.Add(s.Item1.GetWidth());
-                    Height.Add(s.Item1.GetHeight());
-                    OffsetY.Add(s.Item1.Alignment.OffsetY);
-                    OffsetZ.Add(s.Item1.Alignment.OffsetZ);
-
-                }
-            }
-            else
-            {
-                Width.Add(CrossSection.GetWidth());
-                Height.Add(CrossSection.GetHeight());
-                OffsetY.Add(CrossSection.Alignment.OffsetY);
-                OffsetZ.Add(CrossSection.Alignment.OffsetZ);
-                
-
-            }
-
-            DA.SetDataList(0, Width);
-            DA.SetDataList(1, Height);
-            DA.SetDataList(2, OffsetY);
-            DA.SetDataList(3, OffsetZ);
-
-
+            DA.SetData(0, SubElement.CroSecLocalCenterPlane);
+            DA.SetData(1, SubElement.Width);
+            DA.SetData(2, SubElement.Height);
+            DA.SetData(3, SubElement.GenerateElementGeometry());
         }
+
 
         /// <summary>
         /// Provides an Icon for the component.

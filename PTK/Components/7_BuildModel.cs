@@ -15,8 +15,8 @@ namespace PTK.Components
     public class BuildModel : GH_Component
     {
         public BuildModel()
-          : base("BuildModel", "Nickname",
-              "Exporting BTL file to the designated location",
+          : base("ProcessModel", "PM",
+              "This component lets process the  timber processings(cut/drill/custom/etc) and output NURBS. Additonally, A BTLX file is saved. This file can be used by most manufacturers",
               CommonProps.category, CommonProps.subcate11)
         {
         }
@@ -34,10 +34,15 @@ namespace PTK.Components
         {
             pManager.AddGenericParameter("Assembly", "A", "", GH_ParamAccess.item);
             pManager.AddGenericParameter("Timber Processes", "P", "", GH_ParamAccess.list);
-            pManager.AddTextParameter("Filepath", "", "", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Run?", "->", "Run processing? Might take minutes if complicated geometry", GH_ParamAccess.item, true);
+            pManager.AddGenericParameter("BTLX-setting", "x", "Use the BTLXSetting component to specify project/folder details", GH_ParamAccess.item);
+            
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
+            pManager[3].Optional = true;
+
+            pManager[1].DataMapping = GH_DataMapping.Flatten;
 
         }
 
@@ -48,7 +53,7 @@ namespace PTK.Components
             
             pManager.AddBrepParameter("ProcessingSurfaces", "", "", GH_ParamAccess.tree);
             pManager.AddBrepParameter("Processed Component", "", "", GH_ParamAccess.tree);
-            pManager.AddBrepParameter("test", "", "", GH_ParamAccess.item);
+            
             
 
             pManager.HideParameter(0);
@@ -60,57 +65,78 @@ namespace PTK.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            // --- variables ---
-            Assembly assembly = new Assembly();
-            GH_Assembly ghAssembly = new GH_Assembly();
-            List<OrderedTimberProcess> Orders = new List<OrderedTimberProcess>();
 
-            string Name = "";
-            int priorityKey = 0;
-            string filepath = "";
-
-            // --- input --- 
-            DA.GetData(0, ref ghAssembly);
-            DA.GetDataList(1, Orders);
-            DA.GetData(2, ref filepath);
-
-            // --- solve ---
-            BuildingProject GrasshopperProject = new BuildingProject(new ProjectType());
-            GrasshopperProject.PrepairElements(ghAssembly.Value.Elements, Orders);
-            GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
-
-            
+            DataTree<Brep> Stock = new DataTree<Brep>();
+            DataTree<Brep> Voids = new DataTree<Brep>();
+            DataTree<Brep> ProcessedStock = new DataTree<Brep>();
+            DataTree<Brep> ProcessingSurfaces = new DataTree<Brep>();
 
 
-            // Create a new XmlSerializer instance with the type of the test class
-            //Initializing the project
-            
+            bool run = true;
 
+            DA.GetData(2, ref run);
 
-            DataTree<Brep> Stock = GrasshopperProject.GetStock();
-            DataTree<Brep> Voids = GrasshopperProject.GetVoids();
-            DataTree<Brep> ProcessedStock = GrasshopperProject.GetProcessedStock();
-            DataTree<Brep> ProcessingSurfaces = GrasshopperProject.GetProcessSurfaces();
-
-
-
-
-            if(filepath.Length != 0)
+            if (run)
             {
+                // --- variables ---
+                Assembly assembly = new Assembly();
+                GH_Assembly ghAssembly = new GH_Assembly();
+                List<OrderedTimberProcess> Orders = new List<OrderedTimberProcess>();
+                ProjectType btlxInput = new ProjectType();
+
+                string Name = "";
+                int priorityKey = 0;
+                string filepath = "";
+
+
+                // --- input --- 
+                DA.GetData(0, ref ghAssembly);
+                DA.GetDataList(1, Orders);
+                if (!DA.GetData(3, ref btlxInput))
+                {
+                    btlxInput.Architect = "CSDG-NikkenDDL";
+                    btlxInput.Comment = @"C:\Users\Lokaladm\Desktop\PROJECTFOLDER";
+                    btlxInput.Name = "ILoveCSDG";
+                    
+
+                }
+
+
+                // --- solve ---
+                BuildingProject GrasshopperProject = new BuildingProject(new ProjectType());
+                GrasshopperProject.PrepairElements(ghAssembly.Value.Elements, Orders);
+                GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
+
+
+
+
+                // Create a new XmlSerializer instance with the type of the test class
+                //Initializing the project
+
+
+
+
+
+                
+
                 ProjectType Project = GrasshopperProject.BTLProject;
 
-                Project.Name = "ReindeerProject";
-                Project.Architect = "DDL-CSDG";
-                Project.Comment = "BetaTest";
+                Project.Name = btlxInput.Name;
+                Project.Architect = btlxInput.Architect;
+                Project.DeliveryDate = btlxInput.DeliveryDate;
+                Project.Customer = btlxInput.Customer;
+                Project.Comment = "BetaTest. THIS FILE MAY LACK PROCESSINGS OR CONTAIN ERRORS! ";
+
+
 
 
                 //Initializing the file;
 
                 BTLx BTLx = new BTLx();
 
-                BTLx.Project = Project;
-                BTLx.Language = "Norsk";
 
+
+                BTLx.Project = Project;
 
 
 
@@ -120,27 +146,36 @@ namespace PTK.Components
 
                 XmlSerializer SerializerObj = new XmlSerializer(typeof(BTLx));
 
+                if (btlxInput.Comment[btlxInput.Comment.Length-1].Equals(@"/"))
+                {
+                    filepath = btlxInput.Comment + BTLx.Project.Name + ".btlx";
+                }
+                else
+                {
+                    filepath = btlxInput.Comment + @"\" + BTLx.Project.Name + ".btlx";
+                }
 
-
+                
 
                 // Create a new file stream to write the serialized object to a file
-                TextWriter WriteFileStream = new StreamWriter(filepath);
-               
+                TextWriter WriteFileStream = new StreamWriter(@filepath);
+
 
 
                 SerializerObj.Serialize(WriteFileStream, BTLx);
 
                 WriteFileStream.Dispose();
 
-                List<BuildingElement> Elements = GrasshopperProject.BuildingElements;
+                Stock = GrasshopperProject.GetStock();
+                Voids = GrasshopperProject.GetVoids();
+                ProcessedStock = GrasshopperProject.GetProcessedStock();
+                ProcessingSurfaces = GrasshopperProject.GetProcessSurfaces();
             }
 
             
 
-            
 
 
-            
 
             // --- output ---
             DA.SetDataTree(0, Stock);

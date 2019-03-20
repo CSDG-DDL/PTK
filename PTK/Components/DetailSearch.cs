@@ -10,6 +10,10 @@ namespace PTK.Components
 {
     public class DetailSearch : GH_Component
     {
+        List<List<Plane>> PlanesLists = new List<List<Plane>>();
+        List<Color> Colors = new List<Color>();
+        List<String> names = new List<String>();
+
         /// <summary>
         /// Initializes a new instance of the DetailSearch class.
         /// </summary>
@@ -29,18 +33,22 @@ namespace PTK.Components
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
-    {
+        {
         pManager.AddParameter(new Param_Assembly(), "Assembly", "A", "Assembly", GH_ParamAccess.item);
         pManager.AddTextParameter("DetailingGroupName", "DN", "DetailingGroupName", GH_ParamAccess.item, "DetailingGroupName"); 
         pManager.AddGenericParameter("True Rules", "=", "Add rules that are true for the details in the detailing group", GH_ParamAccess.list);
         pManager.AddGenericParameter("False Rules", "≠", "Add rules that are false for the details in the detailing group", GH_ParamAccess.list);
         pManager.AddGenericParameter("NodePlaneRule", "NP", "Add a NodePlaneRule to generate nodeplane according to its detail", GH_ParamAccess.item);
         pManager.AddIntegerParameter("Sorting rule", "SR", "0=Structural, 1=Alphabetical, 2=ElementLength, 3=Clockwice(Based on detailPlane)", GH_ParamAccess.item, 0);
+        pManager.AddColourParameter("DetailPreviewColor", "C", "Color of detailpreview", GH_ParamAccess.item);
+        pManager.AddBooleanParameter("PreviewName?", "N", "True if you want to preview name of detail", GH_ParamAccess.item, false);
         pManager[1].Optional = true;
         pManager[2].Optional = true;
         pManager[3].Optional = true;
         pManager[4].Optional = true;
         pManager[5].Optional = true;
+        pManager[6].Optional = true;
+
 
 
         }
@@ -52,7 +60,11 @@ namespace PTK.Components
         pManager.AddPlaneParameter("Nodeplanes", "P", "", GH_ParamAccess.tree);
         pManager.AddGenericParameter("Elements", "E", "Elements", GH_ParamAccess.tree);
         pManager.AddVectorParameter("UnifiedElementVectors", "V", "", GH_ParamAccess.tree);
-    }
+        pManager.HideParameter(1);
+
+
+
+        }
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -68,6 +80,12 @@ namespace PTK.Components
             GH_Assembly ghAssembly = new GH_Assembly();
             Assembly assembly = new Assembly();
             int priorityKey = 0;
+            Color color = new Color();
+            bool preview = false;
+
+
+
+
 
             // --- input --- 
 
@@ -90,9 +108,24 @@ namespace PTK.Components
 
             }
             if (!DA.GetData(5, ref priorityKey)) { return; }
+            if(!DA.GetData(6, ref color))
+            {
+                color = Color.Red;
+            }
+            DA.GetData(7, ref preview);
 
 
+            Colors.Add(color);
 
+            if (preview)
+            {
+                names.Add(Name);
+            }
+            else
+            {
+                names.Add("");
+            }
+            
 
             //Extracting delegates to list from objects
             foreach (Rules.Rule R in TrueRulesObjects)
@@ -112,12 +145,10 @@ namespace PTK.Components
 
             DetailingGroup DetailingGroup = Definition.GenerateDetailingGroup(assembly.Details);
 
-            
-            
-
-            
 
 
+            PlanesLists.Add(DetailingGroup.NodeGroupPlanes);
+            
 
 
             // --- solve ---
@@ -201,10 +232,38 @@ namespace PTK.Components
             }
     }
 
-    /// <summary>
-    /// Provides an Icon for the component.
-    /// </summary>
-    protected override System.Drawing.Bitmap Icon
+        /// <summary>
+        /// Provides an Icon for the component.
+        /// </summary>
+        /// 
+
+    public override void ExpireSolution(bool recompute)
+    {
+        Colors.Clear();
+        PlanesLists.Clear();
+        names.Clear();
+        base.ExpireSolution(recompute);
+    }
+
+    //public override BoundingBox ClippingBox => models.Keys.ToList()[0].GetBoundingBox(false);
+    public override void DrawViewportMeshes(IGH_PreviewArgs args)
+    {
+        for (int i =0; i<PlanesLists.Count;i++ )
+        {
+                for(int j=0; j < PlanesLists[i].Count; j++)
+                {
+                    args.Display.DrawDot(PlanesLists[i][j].Origin, names[i], Colors[i], Color.White);
+                    //args.Display.DrawPoint(PlanesLists[i][j].Origin, Rhino.Display.PointStyle.Simple, Convert.ToInt16( CommonProps.tolerances*1000), Colors[i]);
+                }
+
+
+
+        }
+        //base.DrawViewportMeshes(args);
+    }
+
+
+        protected override System.Drawing.Bitmap Icon
         {
             get
             {

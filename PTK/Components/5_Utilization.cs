@@ -91,8 +91,8 @@ namespace PTK
                 element_report.elementLength = e1.BaseCurve.GetLength();
                 double w;
                 double h;
-                h = e1.CrossSection.GetHeight();
-                w = e1.CrossSection.GetWidth();
+                h = e1.Composite.HeightSimplified;
+                w = e1.Composite.WidthSimplified;
                 element_report.elementWidth = w;
                 element_report.elementHeight = h;
 
@@ -112,26 +112,26 @@ namespace PTK
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("SlendernessRatioDir1=" + element_report.elementSlendernessRatioDir1));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("SlendernessRatioDir2=" + element_report.elementSlendernessRatioDir2));
 
-                element_report.elementEulerForceDir1 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                element_report.elementEulerForceDir2 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+                element_report.elementEulerForceDir1 = EulerForce(w, h, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                element_report.elementEulerForceDir2 = EulerForce(w, h, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("EulerForceDir1=" + element_report.elementEulerForceDir1));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("EulerForceDir2=" + element_report.elementEulerForceDir2));
 
-                element_report.elementSlendernessRatioDir1 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                element_report.elementSlendernessRatioDir2 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+                element_report.elementSlendernessRatioDir1 = SlendernessRelative(w, h, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                element_report.elementSlendernessRatioDir2 = SlendernessRelative(w, h, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("SlendernessRatioDir1=" + element_report.elementSlendernessRatioDir1));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("SlendernessRatioDir2=" + element_report.elementSlendernessRatioDir2));
 
-                element_report.elementInstabilityFactorDir1 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                element_report.elementInstabilityFactorDir2 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+                element_report.elementInstabilityFactorDir1 = InstabilityFactor(w, h, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                element_report.elementInstabilityFactorDir2 = InstabilityFactor(w, h, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("InstabilityFactorDir1=" + element_report.elementInstabilityFactorDir1));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("InstabilityFactorDir2=" + element_report.elementInstabilityFactorDir2));
 
-                element_report.elementBucklingStrengthDir1 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                element_report.elementBucklingStrengthDir2 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+                element_report.elementBucklingStrengthDir1 = BucklingStrength(w, h, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                element_report.elementBucklingStrengthDir2 = BucklingStrength(w, h, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("BucklingStrengthDir1=" + element_report.elementBucklingStrengthDir1));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("BucklingStrengthDir2=" + element_report.elementBucklingStrengthDir2));
@@ -144,11 +144,11 @@ namespace PTK
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending dir1 [Nmm]=" + structuralAssembly.ElementForce[e1].Max_My_bending));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending dir2 [Nmm]=" + structuralAssembly.ElementForce[e1].Max_Mz_bending));
 
-                element_report.elementCompressionUtilization = CompressionUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
-                element_report.elementCompressionUtilizationAngle = CompressionUtilizationAngle(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
-                element_report.elementTensionUtilization = TensionUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1]);
-                element_report.elementBendingUtilization = BendingUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1]);
-                element_report.elementCombinedBendingAndAxial = CombinedBendingAndAxial(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+                element_report.elementCompressionUtilization = CompressionUtilization(w, h, e1.Composite.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+                element_report.elementCompressionUtilizationAngle = CompressionUtilizationAngle(w, h, e1.Composite.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+                element_report.elementTensionUtilization = TensionUtilization(w, h, e1.Composite.MaterialProperty, structuralAssembly.ElementForce[e1]);
+                element_report.elementBendingUtilization = BendingUtilization(w, h, e1.Composite.MaterialProperty, structuralAssembly.ElementForce[e1]);
+                element_report.elementCombinedBendingAndAxial = CombinedBendingAndAxial(w, h, e1.Composite.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
 
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The compression utilization =" + element_report.elementCompressionUtilization));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The compression utilizataion (grain angle)=" + element_report.elementCompressionUtilizationAngle));
@@ -176,19 +176,19 @@ namespace PTK
                 tmpslender_dir1 = SlendernessRatio(w, h, 1, e1.BaseCurve.GetLength());
                 tmpslender_dir2 = SlendernessRatio(w, h, 2, e1.BaseCurve.GetLength());
 
-                tmp_euler_dir1 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                tmp_euler_dir2 = EulerForce(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+                tmp_euler_dir1 = EulerForce(w, h, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                tmp_euler_dir2 = EulerForce(w, h, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                tmp_rel_slender_dir1 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                tmp_rel_slender_dir2 = SlendernessRelative(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+                tmp_rel_slender_dir1 = SlendernessRelative(w, h, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                tmp_rel_slender_dir2 = SlendernessRelative(w, h, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                tmp_ins_factor_dir1 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                tmp_ins_factor_dir2 = InstabilityFactor(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+                tmp_ins_factor_dir1 = InstabilityFactor(w, h, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                tmp_ins_factor_dir2 = InstabilityFactor(w, h, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                tmp_buc_strength_dir1 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                tmp_buc_strength_dir2 = BucklingStrength(w, h, e1.CrossSection.MaterialProperty, 2, e1.BaseCurve.GetLength());
+                tmp_buc_strength_dir1 = BucklingStrength(w, h, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                tmp_buc_strength_dir2 = BucklingStrength(w, h, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength());
 
-                tmp_util_compression = CompressionUtilization(w, h, e1.CrossSection.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
+                tmp_util_compression = CompressionUtilization(w, h, e1.Composite.MaterialProperty, structuralAssembly.ElementForce[e1], e1.BaseCurve.GetLength());
 
 
                 ///This part is just for checking, after validation of calculation can be deleted

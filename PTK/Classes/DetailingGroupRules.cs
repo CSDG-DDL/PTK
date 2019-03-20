@@ -406,7 +406,9 @@ namespace PTK.Rules
             List<Element1D> elements = _detail.Elements;
             Node node = _detail.Node;
 
-            Interval IntervalNotOnEnd = new Interval(0 + CommonProps.tolerances, 1 - CommonProps.tolerances);
+            double tolerance = .000000001;
+
+            Interval IntervalNotOnEnd = new Interval(0 + tolerance, 1 - tolerance);
 
             int AmountOnends = 0;
             int ElemCount = elements.Count;
@@ -419,8 +421,9 @@ namespace PTK.Rules
                 TempCurve.Domain = new Interval(0, 1);
                 TempCurve.ClosestPoint(node.Point, out t);
 
+       
                 centerPts.Add(TempCurve.PointAt(0.5));
-
+                
                 if (!IntervalNotOnEnd.IncludesParameter(t))
                 {
                     AmountOnends += 1;
@@ -477,11 +480,16 @@ namespace PTK.Rules
                         if (j != i)
                         {
                             Vector3d SecondVector = new Line(node.Point, centerPts[j]).Direction;
-                            double angle = Vector3d.VectorAngle(FirstVector, SecondVector);
+                            double angle = Vector3d.VectorAngle(elements[j].BaseCurve.TangentAtStart, elements[i].BaseCurve.TangentAtStart);
 
+                            angle = angle - Math.PI / 2;
                             double rest = angle % (Math.PI / 2);
                             rest = Math.Abs(rest);
-                            if (rest < CommonProps.tolerances) { return true; } else { return false; }
+                            if (rest < Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians) { return true; }
+
+
+
+                            else { return false; }
                         }
                     }
 

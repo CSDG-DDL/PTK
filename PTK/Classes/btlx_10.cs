@@ -27,11 +27,6 @@ namespace PTK {
     
 
 
-
-
-
-
-
     public partial class BTLx {
         
         private BTLxFileHistory fileHistoryField;

@@ -21,7 +21,7 @@ namespace PTK
         public static readonly string subcate5 = "Structual";
         public static readonly string subcate6 = "Visualize";
         public static readonly string subcate7 = "Export";
-        public static readonly string subcate8 = "Extract";
+        public static readonly string subcate8 = " Deconstruct";
         public static readonly string subcate9 = "Tool";
         public static readonly string subcate10 = "DetailGroupRules";
         public static readonly string subcate11 = "TimberDetailing";

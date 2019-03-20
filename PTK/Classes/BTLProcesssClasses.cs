@@ -148,10 +148,32 @@ namespace PTK
 
         }
 
-        
+
+        public static Refside FindRefSideFromPlane(Plane testplane, List<Refside> Refsides)
+        {
+            Vector3d ZdirTestplane = testplane.ZAxis;
+            double smallestAngle = Math.PI;
+            Refside RefSide = null;
 
 
-        
+            foreach (Refside side in Refsides)  //Cycling through refsides and choosing the one with smallest angle
+            {
+                Vector3d ZdirRefplane = side.RefPlane.ZAxis;
+
+
+                double angle = Vector3d.VectorAngle(ZdirRefplane, ZdirTestplane);
+                if (angle < smallestAngle)
+                {
+                    smallestAngle = angle;
+                    RefSide = side;
+                }
+            }
+
+            return RefSide;
+
+        }
+
+
 
 
         public static void GeneratePlaneAnglesParallell(BTLPartGeometry _BTLPartGeometry, double Length, Plane WorkPlane, bool FlipDirection, out double Angle, out double Inclination, out double Slope, out Point3d LocalStartPoint, out Refside Refside, out Plane UpdatedWorkPlane)  //used when when plane is closed to parallell to refplane
@@ -241,6 +263,11 @@ namespace PTK
 
 
         }
+
+
+        
+
+
         public static Brep GenerateTenonShape(Plane _localPlane, double _height, Interval _BottomWidth, Interval _TopWidth, Interval _length, TenonShapeType Type, double Radius)
         {
             Point3d CenterTopPt = _localPlane.Origin;
@@ -582,7 +609,6 @@ namespace PTK
 
                     if (distance < smallestDistance)
                     {
-
                         smallestDistance = distance;
                         sideIndex = i;
                     }
@@ -631,6 +657,9 @@ namespace PTK
             RefSideZLength = _refSideZLength;
         }
     }
+
+    
+
 
 
     public class BTLDrill
@@ -896,6 +925,326 @@ namespace PTK
 
     }
 
+
+    public class BTLPocket
+    {
+        // --- field ---
+        public Curve ParalellogramBtm { get; private set; }
+        public Curve ParalellogramTop { get; private set; }
+        public bool Flip { get; private set; }
+        public double TiltRefside { get; private set; }
+        public double TiltEndside { get; private set; }
+        public double TiltOppside { get; private set; }
+        public double TiltStartSide { get; private set; }
+        public Line Y { get; private set; }
+        public Line X { get; private set; }
+        public Point3d pt { get; private set; }
+        public Plane refPlanepublic { get; private set; }
+
+
+        // --- constructors --- 
+        public BTLPocket(Curve _paralellogramBtm, bool _flip, double _tiltRefSide, double _tiltEndSide, double _tiltOppSide, double _tiltStartSide)
+        {
+            ParalellogramBtm = _paralellogramBtm;
+            TiltRefside = _tiltRefSide;
+            TiltEndside = _tiltEndSide;
+            TiltStartSide = _tiltStartSide;
+            TiltOppside = _tiltOppSide;
+            Flip = _flip;
+            
+
+        }
+
+        //Check if parallellogram is valid
+        public bool CheckParallogramValidity(Curve _poly)
+        {
+
+            Curve[] Poly = _poly.DuplicateSegments();
+            List<Line> Lines = new List<Line>();
+            
+           
+            if (Poly.Length != 4 || !_poly.IsClosed)
+            {
+                return false;
+            }
+            foreach(Curve c in Poly)
+            {
+                if (!c.IsLinear())
+                {
+                    return false;
+                }
+                Lines.Add(new Line(c.PointAtStart, c.PointAtEnd));
+            }
+
+            double RestAngleA = Vector3d.VectorAngle(Lines[0].Direction, Lines[2].Direction)%(Math.PI- Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians);
+            double RestAngleB = Vector3d.VectorAngle(Lines[1].Direction, Lines[3].Direction) % (Math.PI - Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians);
+
+            if (RestAngleA < Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians && RestAngleB < Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians)
+            {
+                return true;
+            }
+
+            else return false;
+
+
+
+        }
+
+
+        // --- methods ---
+        
+        public PerformedProcess DelegateProcess(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode)
+        {
+            List<Point3d> cutpoints = new List<Point3d>();
+
+            List<Refside> Refsides = _BTLPartGeometry.Refsides;
+            List<Point3d> CornerPoints = _BTLPartGeometry.CornerPoints;
+            List<Point3d> EndPoints = _BTLPartGeometry.Endpoints;
+            List<Point3d> StartPoints = _BTLPartGeometry.StartPoints;
+
+            
+
+
+
+            //Check validity of paralellogram
+
+            if (ParalellogramTop != null)
+            {
+                if (!CheckParallogramValidity(ParalellogramTop))
+                {
+                    return new PerformedProcess();
+                }
+            }
+            if (!CheckParallogramValidity(ParalellogramBtm))
+            {
+                return new PerformedProcess();
+            }
+
+            Plane ShapePlane = new Plane();
+            ParalellogramBtm.TryGetPlane(out ShapePlane);
+
+            if (Flip)
+            {
+                ShapePlane = new Plane(ShapePlane.Origin, -ShapePlane.ZAxis);
+            }
+
+            Refside Refside = BTLFunctions.FindRefSideFromPlane(ShapePlane, Refsides);
+            Plane RefPlane = Refside.RefPlane; 
+
+
+            //FINDING THE zeropoint
+
+            List<Curve> AllcurveSegments= ParalellogramBtm.DuplicateSegments().ToList();
+            List<Line> AllLineSegments = new List<Line>();
+            for(int i =0;i<AllcurveSegments.Count;i++)
+            {
+                AllLineSegments.Add(new Line(AllcurveSegments[i].PointAtStart, AllcurveSegments[i].PointAtEnd));
+            }
+
+            double EvenLinesAngleRest =  Vector3d.VectorAngle(RefPlane.XAxis, AllLineSegments[0].Direction);
+            
+            
+
+
+            double OddLinesAngleRest = Vector3d.VectorAngle(RefPlane.XAxis, AllLineSegments[1].Direction);
+            
+            
+
+
+
+            List<Line> MostParallellCurveSegments = new List<Line>();
+
+
+            if (EvenLinesAngleRest > OddLinesAngleRest)
+            {
+                MostParallellCurveSegments.Add(AllLineSegments[0]);
+                MostParallellCurveSegments.Add(AllLineSegments[2]);
+            }
+            else
+            {
+                MostParallellCurveSegments.Add(AllLineSegments[1]);
+                MostParallellCurveSegments.Add(AllLineSegments[3]);
+            }
+
+            List<double> DistToXAxis = new List<double>();
+            foreach(Line l in MostParallellCurveSegments)
+            {
+                
+                Point3d socalPt = new Point3d();
+                Point3d midPoint = l.From + l.UnitTangent * l.Length / 2;
+                RefPlane.RemapToPlaneSpace(midPoint, out socalPt);
+                DistToXAxis.Add(socalPt.Y);
+            }
+            Line XAxisLine = new Line();
+            if (DistToXAxis[0] < DistToXAxis[1])
+            {
+                XAxisLine = MostParallellCurveSegments[0];
+            }
+            else
+            {
+                XAxisLine = MostParallellCurveSegments[1];
+            }
+
+            int index = AllLineSegments.IndexOf(XAxisLine);
+
+            Vector3d Xvector = new Vector3d();
+            Vector3d Yvector = new Vector3d();
+            Point3d startPoint = new Point3d();
+            Line XLine;
+            Line YLine; 
+
+            if (XAxisLine.From.DistanceTo(RefPlane.Origin)< XAxisLine.To.DistanceTo(RefPlane.Origin))
+            {
+                
+                XLine = AllLineSegments[index];
+                Xvector = XLine.Direction;
+                startPoint = XLine.From;
+
+                if (index == 0) { index = 3; } else { index = index - 1; }
+                YLine = AllLineSegments[index];
+                YLine.Flip();
+                Yvector = YLine.Direction;
+                
+            }
+            else
+            {
+                XLine = AllLineSegments[index];
+                XLine.Flip();
+                Xvector = XLine.Direction;
+                startPoint = XLine.From;
+
+                if (index == 3) { index = 0; }else { index = index + 1; }
+
+                YLine = AllLineSegments[index];
+                Yvector = YLine.Direction;
+
+            }
+
+            Point3d localPt = new Point3d();
+            RefPlane.RemapToPlaneSpace(startPoint, out localPt);
+
+            double InternalAngle = Vector3d.VectorAngle(Xvector, Yvector);
+            double smallAngle = InternalAngle % Math.PI;
+
+            double Length = XLine.Length * Math.Sin(smallAngle);
+            double Width = YLine.Length * Math.Sin(smallAngle);
+
+            double Angle = Vector3d.VectorAngle(RefPlane.XAxis, Xvector, RefPlane);
+            Plane Y1Pln = new Plane(RefPlane);
+            Y1Pln.Origin = startPoint;
+
+            //MAKING NEW REFERENCE PLANE
+            Y1Pln.Rotate(Angle, Y1Pln.ZAxis, Y1Pln.Origin);
+            Y1Pln = new Plane(Y1Pln.Origin, Y1Pln.XAxis, Y1Pln.ZAxis);
+
+            double Inclination = Vector3d.VectorAngle(Y1Pln.XAxis, Xvector, Y1Pln);
+
+
+            Plane X2Pln = new Plane(startPoint, Xvector, Y1Pln.ZAxis);
+            X2Pln = new Plane(startPoint, X2Pln.YAxis, X2Pln.ZAxis);
+
+            double Slope = Vector3d.VectorAngle(X2Pln.XAxis, Yvector, X2Pln);
+            
+
+
+
+            
+
+            double AngleFix(double _anglefix)
+            {
+                if (_anglefix > Math.PI) { _anglefix = _anglefix - Math.PI * 2; }
+                return Rhino.RhinoMath.ToDegrees(_anglefix);
+            }
+
+            MachiningLimitType type = new MachiningLimitType();
+            type.FaceLimitedBack = BooleanType.yes;
+            type.FaceLimitedBottom = BooleanType.yes;
+            type.FaceLimitedEnd = BooleanType.yes;
+            type.FaceLimitedFront = BooleanType.yes;
+            type.FaceLimitedStart = BooleanType.yes;
+            type.FaceLimitedTop = BooleanType.no;
+
+
+            PocketType Pocket = new PocketType();
+            Pocket.ReferencePlaneID = Refside.RefSideID;
+            Pocket.Name = "Pocket";
+            Pocket.StartX = localPt.X;
+            Pocket.StartY = localPt.Y;
+            Pocket.StartDepth = -localPt.Z;
+            Pocket.InternalAngle = Rhino.RhinoMath.ToDegrees( InternalAngle);
+            Pocket.Length = Length;
+            Pocket.Width = Width;
+            Pocket.Angle = AngleFix(Angle);
+            Pocket.Inclination = AngleFix(Inclination);
+            Pocket.Slope = AngleFix(Slope);
+            Pocket.TiltRefSide = TiltRefside;
+            Pocket.TiltOppSide = TiltOppside;
+            Pocket.TiltEndSide = TiltEndside;
+            Pocket.TiltStartSide = TiltStartSide;
+            Pocket.MachiningLimits = type;
+
+
+
+
+
+
+
+
+
+
+
+
+
+            Y = YLine;
+            X = XLine;
+            pt = startPoint;
+            refPlanepublic = X2Pln;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //Generate new parallelogram (To be sure)
+            //Flipping plane?
+            /// From seamPoint
+            /// Finding correct refside
+            /// Finding startpoint
+            //Flipping plane?
+            //Generate plane. X-axis along "Side that is closest and most paralell to refside.
+
+
+            Box box = new Box();
+
+            //Creating BTL processing
+            JackRafterCutType JackRafterCut = new JackRafterCutType();
+            JackRafterCut.Name = "NotInUse";
+
+
+
+
+            return new PerformedProcess(Pocket, Brep.CreateFromBox(box));
+
+        }
+        
+
+
+    }
+
+
     public enum TenonMode
     {
         PlaneMode,RectangleMode
@@ -949,7 +1298,7 @@ namespace PTK
 
         }
         
-
+        
 
 
 

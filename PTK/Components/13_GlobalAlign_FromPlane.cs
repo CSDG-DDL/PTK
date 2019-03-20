@@ -12,8 +12,8 @@ namespace PTK.Components
         /// Initializes a new instance of the _13_GlobalAlign_FromPlane class.
         /// </summary>
         public _13_GlobalAlign_FromPlane()
-          : base("GlobalAlignFromPlane", "Pl",
-              "Aligns element Z-vectors to plane",
+          : base("AlignFromPlane", "Pl",
+              "Align element Z-vectors to plane",
               CommonProps.category, CommonProps.subcate2)
         {   
         }
@@ -42,7 +42,7 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("GlobalAlignmenrt", "A", "Add global alignment to element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Alignment", "A", "Add alignment to element", GH_ParamAccess.item);
         }
 
 

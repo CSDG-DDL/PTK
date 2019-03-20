@@ -31,7 +31,7 @@ namespace PTK
             pManager.AddNumberParameter("Width", "W", "", GH_ParamAccess.item,100);  
             pManager.AddNumberParameter("Height", "H", "", GH_ParamAccess.item,100);
             pManager.AddParameter(new Param_MaterialProperty(), "Material properties", "M", "Add material properties", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Alignment(), "Alignment", "A", "Local Alignment", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Alignment(), "Local Alignment", "LA", "Local Alignment", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -42,7 +42,7 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.RegisterParam(new Param_CroSec(), "Cross Section", "S", "Cross Section data to be connected in the Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Cross Section", "S", "Cross Section data to be connected in the Element", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -67,9 +67,13 @@ namespace PTK
 
             // --- solve ---
             GH_CroSec sec = new GH_CroSec(new RectangleCroSec(name, material, height, width, alignment));
+            CompositeInput Composite = new CompositeInput(new RectangleCroSec(name, material, height, width, alignment));
+
+
+
 
             // --- output ---
-            DA.SetData(0, sec);
+            DA.SetData(0, Composite);
         }
 
         protected override System.Drawing.Bitmap Icon

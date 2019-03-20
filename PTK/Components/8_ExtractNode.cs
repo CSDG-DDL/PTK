@@ -13,8 +13,8 @@ namespace PTK
     public class PTK_ExtractNode : GH_Component
     {
         public PTK_ExtractNode()
-          : base("Extract Node", "Extract Node",
-              "Extract Node",
+          : base("Deconstruct Node", "DN",
+              "Deconstructs a node into its properties. 0.5 Version has limited options",
               CommonProps.category, CommonProps.subcate8)
         {
             Message = CommonProps.initialMessage;
@@ -42,6 +42,7 @@ namespace PTK
 
             // --- solve ---
             Point3d p = node.Point;
+            
 
             // --- output ---
             DA.SetData(0, p);

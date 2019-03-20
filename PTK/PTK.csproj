@@ -58,7 +58,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RhinoCommon">
+    <Reference Include="RhinoCommon, Version=5.1.30000.17, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\RhinoCommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -81,6 +82,7 @@
     <Compile Include="Classes\Assembly.cs" />
     <Compile Include="Classes\BTLProcesssClasses.cs" />
     <Compile Include="Classes\btlx_10.cs" />
+    <Compile Include="Classes\CompositeClass.cs" />
     <Compile Include="Classes\Detail.cs" />
     <Compile Include="Classes\DetailingGroup.cs" />
     <Compile Include="Classes\DetailingGroupRules.cs" />
@@ -108,6 +110,7 @@
     <Compile Include="Components\11_BTL_Cut.cs" />
     <Compile Include="Components\11_BTL_DoveTailMortise.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
+    <Compile Include="Components\11_BTL_Pocket.cs" />
     <Compile Include="Components\11_BTL_Tenon.cs" />
     <Compile Include="Components\11_CustomBoolean.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />
@@ -142,6 +145,7 @@
     <Compile Include="Components\11_BTL_Mortise.cs" />
     <Compile Include="Components\10_Rule_ElementAngle.cs" />
     <Compile Include="Components\8_ExtractCrossSection.cs" />
+    <Compile Include="Components\BTLxSettings.cs" />
     <Compile Include="Components\DetailSearch.cs" />
     <Compile Include="Forms\F01_Supports.cs">
       <SubType>Form</SubType>
@@ -407,7 +411,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "C:\Users\Steinar Hillersøy Dy\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
+    <PostBuildEvent>Copy "$(TargetPath)" "%25UserProfile%25\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

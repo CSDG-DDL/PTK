@@ -29,12 +29,15 @@ namespace PTK
         public Point3d PointAtStart { get; private set; } = new Point3d();
         public Point3d PointAtEnd { get; private set; } = new Point3d();
         public Plane CroSecLocalPlane { get; private set; }
-        public CrossSection CrossSection { get; private set; } = null;
-        public Alignment Alignment { get; private set; } = new Alignment("Alignment");
+        public CrossSection CrossSection { get; private set; } = null;  //THIS IS GOING OUT!
+        public CompositeNew Composite { get; private set; }
         public Force Forces { get; private set; } = new Force();
         public List<Joint> Joints { get; private set; } = new List<Joint>();
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
+        public ElementAlign Elementalignment { get; private set; }
+
+        public List<Curve> EdgeCurves { get; private set; } = new List<Curve>();
 
         // --- constructors --- 
         public Element1D() : base()
@@ -45,26 +48,34 @@ namespace PTK
         {
             InitializeLocalPlane();
         }
-        public Element1D(string _tag, Curve _curve, CrossSection _crossSection, Alignment _alignmnet, Force _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
+
+        public Element1D(string _tag, Curve _curve, CompositeInput _compositeInput, ElementAlign _elementalignmnet, Force _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
         {
             BaseCurve = _curve;
             PointAtStart = _curve.PointAtStart;
             PointAtEnd = _curve.PointAtEnd;
-            CrossSection = _crossSection;
-            Alignment = _alignmnet;
+            Elementalignment = _elementalignmnet;
             Forces = _forces;
             Joints = _joints;
             IsIntersectWithOther = _intersect;
             Priority = _priority;
             InitializeLocalPlane();
+
+            Composite = new CompositeNew(_compositeInput, this);
+            GenerateCornerLines();
+
+            CrossSection = new RectangleCroSec("", Composite.MaterialProperty, Composite.HeightSimplified, Composite.WidthSimplified, new Alignment());
+
+            
         }
+
+        
         public Element1D( Element1D _elem, Force _forces) : base()
         {
             BaseCurve = _elem.baseCurve;
             PointAtStart = _elem.PointAtStart;
             PointAtEnd = _elem.PointAtEnd;
-            CrossSection = _elem.CrossSection;
-            Alignment = _elem.Alignment;
+            Composite = _elem.Composite;
             Forces = _forces;
             Joints = _elem.Joints;
             IsIntersectWithOther = _elem.IsIntersectWithOther;
@@ -72,12 +83,21 @@ namespace PTK
             InitializeLocalPlane();
         }
 
+
+
+
         // --- methods ---
         public Curve BaseCurve
         {
             get { return baseCurve.DuplicateCurve(); }
             set { baseCurve = value; }
         }
+
+
+
+
+        
+
 
         private void InitializeLocalPlane()
         {
@@ -93,74 +113,107 @@ namespace PTK
                 // localY direction is obtained by the cross product of globalZ and localX.
 
 
+                
 
-                Plane tempPlane = new Plane(BaseCurve.PointAtStart, BaseCurve.TangentAtStart);
+                Plane InitialPlane = new Plane(BaseCurve.PointAtStart, BaseCurve.TangentAtStart);
+
+                Vector3d Alignmentvector = Elementalignment.ElementAlignmentRule(BaseCurve);
+                Vector3d InitialXvector = InitialPlane.YAxis;
+
+                double angle = Vector3d.VectorAngle(InitialXvector, Alignmentvector, InitialPlane);
+
+                Plane BaseCurveYZPlane = new Plane(InitialPlane);
+
+                BaseCurveYZPlane.Rotate(angle, BaseCurveYZPlane.ZAxis, BaseCurveYZPlane.Origin);
+
+
+
+                double ElementOffsetY = Elementalignment.OffsetY;
+                double ElementOffsetZ = Elementalignment.OffsetZ;
+
+                CroSecLocalPlane = new Plane(BaseCurveYZPlane);
+
+                
+                Point3d test = CroSecLocalPlane.PointAt(ElementOffsetY, ElementOffsetZ);
+                CroSecLocalPlane = new Plane(test, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
 
                 
 
-
-
-
-
-                Vector3d localY = tempPlane.XAxis;   //case B
-                if (localY.Length == 0)
-                {
-                    localY = Vector3d.YAxis;    //case A
-                }
-
-                Vector3d localZ = Vector3d.CrossProduct(localX, localY);
-                Plane localYZ = tempPlane;// new Plane(BaseCurve.PointAtStart, localY, localZ);
-
-                //AlongVector
-                if (Alignment.AlongVector.Length != 0)
-                {
-                    if (Alignment.AlongVector.IsParallelTo(localYZ.ZAxis)  ==0)
-                    {
-                        double rot = Vector3d.VectorAngle(localYZ.YAxis, Alignment.AlongVector, localYZ);
-                        localYZ.Rotate(rot, localYZ.ZAxis);
-                    }
-                    
-                }
-
-                // rotation
-                if (Alignment.RotationAngle != 0.0)
-                {
-                    double rot = Alignment.RotationAngle * Math.PI / 180; // degree to radian
-                    localYZ.Rotate(rot, localYZ.ZAxis);
-                }
-
-                // move origin
-                double offsetV = 0.0;
-                double offsetU = 0.0;
-                double height = CrossSection.GetHeight();
-                double width = CrossSection.GetWidth();
-                if (Alignment.AnchorVert == AlignmentAnchorVert.Top)
-                {
-                    offsetV += height / 2;
-                }
-                else if (Alignment.AnchorVert == AlignmentAnchorVert.Bottom)
-                {
-                    offsetV -= height / 2;
-                }
-                if (Alignment.AnchorHori == AlignmentAnchorHori.Right)
-                {
-                    offsetV += width / 2;
-                }
-                else if (Alignment.AnchorHori == AlignmentAnchorHori.Left)
-                {
-                    offsetV -= width / 2;
-                }
-                offsetV += Alignment.OffsetZ;
-                offsetU += Alignment.OffsetY;
-                localYZ.Origin = localYZ.PointAt(offsetU, offsetV);
-
-                CroSecLocalPlane = localYZ;
             }
             else
             {
                 CroSecLocalPlane = new Plane();
             }
         }
+
+        public void GenerateCornerLines()
+        {
+            Vector3d BaseVector = baseCurve.PointAtEnd - baseCurve.PointAtStart;
+
+            double height = Composite.HeightSimplified;
+            double width = Composite.WidthSimplified;
+
+            Point3d TRs = CroSecLocalPlane.PointAt(height / 2, width / 2);
+            Point3d BRs = CroSecLocalPlane.PointAt(height / -2, width / 2);
+            Point3d BLs = CroSecLocalPlane.PointAt(height / -2, width / -2);
+            Point3d TLs = CroSecLocalPlane.PointAt(height / 2, width / -2);
+
+            Point3d TRe = TRs;
+            TRe.Transform(Transform.Translation(BaseVector));
+            Point3d BRe = BRs;
+            BRe.Transform(Transform.Translation(BaseVector));
+            Point3d BLe = BLs;
+            BLe.Transform(Transform.Translation(BaseVector));
+            Point3d TLe = TLs;
+            TLe.Transform(Transform.Translation(BaseVector));
+
+            Curve edgeTR = new LineCurve(TRs, TRe);
+            Curve edgeBR = new LineCurve(BRs, BRe);
+            Curve edgeBL = new LineCurve(BLs, BLe);
+            Curve edgeTL = new LineCurve(TLs, TLe);
+
+            EdgeCurves.Add(edgeTR);
+            EdgeCurves.Add(edgeBR);
+            EdgeCurves.Add(edgeBL);
+            EdgeCurves.Add(edgeTL);
+        }
+
+
+        public Brep GenerateSimplifiedGeometry()
+        {
+            
+
+            Plane WorkPlane = CroSecLocalPlane;
+
+
+
+
+            Rectangle3d shape = new Rectangle3d(WorkPlane, Composite.WidthInterval, Composite.HeightInterval);
+
+            if (BaseCurve.IsLinear())
+            {
+                Line line = new Line(BaseCurve.PointAtStart, BaseCurve.PointAtEnd);
+                Brep brep = Extrusion.CreateExtrusion(shape.ToNurbsCurve(), line.Direction).ToBrep();
+                brep = brep.CapPlanarHoles(CommonProps.tolerances);
+                return brep;
+            }
+            else
+            {
+                Brep[] sweepreps = Brep.CreateFromSweep(BaseCurve, shape.ToNurbsCurve(), true, CommonProps.tolerances);
+                if (sweepreps.Length > 0)
+                {
+                    return sweepreps[0];
+                }
+                else
+                {
+                    return new Brep();
+                }
+
+            }
+
+
+        }
+
 
         public Element1D DeepCopy()
         {
@@ -172,8 +225,7 @@ namespace PTK
             info = "<Element1D>\n" +
                 " Tag:" + Tag + "\n" +
                 " PointAtStart:" + PointAtStart.ToString() +
-                " PointAtEnd:" + PointAtEnd.ToString() + "\n" +
-                " CrossSection:" + CrossSection.Name;
+                " PointAtEnd:" + PointAtEnd.ToString() + "\n";
             return info;
         }
         public bool IsValid()
@@ -220,5 +272,115 @@ namespace PTK
             return GH_GetterResult.success;
         }
     }
+
+    public class SubElement
+    {
+        // --- field ---
+        public string Name { get; private set; }
+        public int Id { get; private set; }
+        public Curve BaseCurve { get; private set; }
+        public Point3d PointAtStart { get; private set; } = new Point3d();
+        public Point3d PointAtEnd { get; private set; } = new Point3d();
+        public Plane CroSecLocalCenterPlane { get; private set; }
+        public Plane CrosSecLocalCornerPlane { get; private set; }
+        public double Width { get; private set; }
+        public double Height { get; private set; }
+        public NurbsCurve Shape2d { get; private set; }
+        public List<Point3d> Shape2dCorners { get; private set; }
+        public Alignment Alignment { get; private set; } = new Alignment("Alignment");
+        public MaterialProperty Material { get; private set; }
+        public PartType BTLPart { get;  set; }
+
+
+        // --- constructors --- 
+
+
+        public SubElement(Element1D MainElement, CrossSection CrossSection)
+        {
+            Name = CrossSection.Name;
+
+            Alignment = CrossSection.Alignment;
+            Material = CrossSection.MaterialProperty;
+            Width = CrossSection.GetWidth();
+            Height = CrossSection.GetHeight();
+
+            BaseCurve = MainElement.BaseCurve.DuplicateCurve();
+
+            CroSecLocalCenterPlane = GenerateCrossSectionCenterPlanePlane(MainElement.CroSecLocalPlane);
+            CrosSecLocalCornerPlane = GenerateCrossSectionCornerPlane(MainElement.CroSecLocalPlane);
+
+            Rectangle3d shape = new Rectangle3d(CrosSecLocalCornerPlane, Width, Height);
+            Shape2dCorners = new List<Point3d>();
+
+
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(0, 0));
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(0, Height));
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(Width,0));
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(Width, Height));
+
+
+            Shape2d = shape.ToNurbsCurve();
+
+        }
+
+        public Plane GenerateCrossSectionCenterPlanePlane(Plane CroSecLocalPlane)
+        {
+            Plane plane = CroSecLocalPlane;
+
+            plane.Rotate(Alignment.RotationAngle, plane.ZAxis);
+            double offsety = Alignment.OffsetY;
+            double offsetz = Alignment.OffsetZ;
+
+            plane.Origin = plane.Origin + plane.XAxis * offsety + plane.YAxis * offsetz;
+            BaseCurve.Translate(plane.XAxis * offsety + plane.YAxis * offsetz);
+
+            return plane;
+
+        }
+
+        public Plane GenerateCrossSectionCornerPlane(Plane _croSecLocalPlane)
+        {
+            Plane plane = GenerateCrossSectionCenterPlanePlane(_croSecLocalPlane);
+            plane.Origin = plane.Origin - plane.XAxis * Width / 2 - plane.YAxis * Height / 2;
+
+            return plane;
+
+        }
+
+
+
+
+        public Brep GenerateElementGeometry()
+        {
+
+            if (BaseCurve.IsLinear())
+            {
+                Line line = new Line(BaseCurve.PointAtStart, BaseCurve.PointAtEnd);
+                Brep brep = Extrusion.CreateExtrusion(Shape2d.ToNurbsCurve(), line.Direction).ToBrep();
+                brep = brep.CapPlanarHoles(CommonProps.tolerances);
+                return brep;
+            }
+            else
+            {
+                Brep[] sweepreps = Brep.CreateFromSweep(BaseCurve, Shape2d.ToNurbsCurve(), true, CommonProps.tolerances);
+                if (sweepreps.Length > 0)
+                {
+                    return sweepreps[0];
+                }
+                else
+                {
+                    return new Brep();
+                }
+            }
+
+        }
+
+
+
+
+    }
+
+
+
 }
 
