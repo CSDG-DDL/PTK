@@ -23,6 +23,11 @@ namespace PTK.Components
         {
             pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
             pManager.AddCurveParameter("Paralellogram", "", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("FirstAngle", "1", "Angle of first side. Corresponding to segment number", GH_ParamAccess.item, Math.PI / 2);
+            pManager.AddNumberParameter("SecondAngle", "2", "Angle of second side", GH_ParamAccess.item, Math.PI / 2);
+            pManager.AddNumberParameter("ThirdAngle", "3", "Angle of third side", GH_ParamAccess.item, Math.PI / 2);
+            pManager.AddNumberParameter("FourthANgle", "4", "Angle of fourth side", GH_ParamAccess.item, Math.PI / 2);
+            pManager.AddBooleanParameter("Flip?", "F", "Flip directon of pocket?", GH_ParamAccess.item, false);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -41,14 +46,28 @@ namespace PTK.Components
             // --- variables ---
             GH_Element1D gElement = null;
             Curve Parallellogram = null;
+            double n1 = 0;
+            double n2 = 0;
+            double n3 = 0;
+            double n4 = 0;
+            bool Flip = false; 
 
             
+            //Fix angles in btlx
+            //Fix opposite direction of angles
+            //Add extra component
+
 
 
             // --- input --- 
             if (!DA.GetData(0, ref gElement)) { return; }
             Element1D element = gElement.Value;
             DA.GetData(1, ref Parallellogram);
+            DA.GetData(2, ref n1);
+            DA.GetData(3, ref n2);
+            DA.GetData(4, ref n3);
+            DA.GetData(5, ref n4);
+            DA.GetData(6, ref Flip);
 
             ////////////////////////////////////////////////////////////////
             ///THIS IS A TEMPORARY GENERATION OF AN ASSEMBLY! START
@@ -56,13 +75,18 @@ namespace PTK.Components
             List<Element1D> elems = new List<Element1D>();
             elems.Add(element);
 
+            List<double> tilts = new List<double>();
+            tilts.Add(n1);
+            tilts.Add(n2);
+            tilts.Add(n3);
+            tilts.Add(n4);
 
-            BTLPocket BTLPocket = new BTLPocket(Parallellogram, false, 90, 90, 90, 90);
+            BTLPocket BTLPocket = new BTLPocket(Parallellogram, Flip, tilts);
 
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(BTLPocket.DelegateProcess));
             List<OrderedTimberProcess> Orders = new List<OrderedTimberProcess>();
             Orders.Add(Order);
-
+            /*
             BuildingProject GrasshopperProject = new BuildingProject(new ProjectType());
             GrasshopperProject.PrepairElements(elems, Orders);
             GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
@@ -77,7 +101,7 @@ namespace PTK.Components
             DA.SetData(3, BTLPocket.Y);
             DA.SetData(4, BTLPocket.pt);
             DA.SetData(5, BTLPocket.refPlanepublic);
-
+            */
 
 
 
