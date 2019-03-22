@@ -29,7 +29,7 @@ namespace PTK
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Element1D(), "Elements", "E", "Add elements here", GH_ParamAccess.list);
-            pManager[0].Optional = true;
+            
             pManager[0].DataMapping = GH_DataMapping.Flatten;
 
         }
