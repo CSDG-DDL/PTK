@@ -17,6 +17,14 @@ namespace PTK.Components
               CommonProps.category, CommonProps.subcate11)
         {
         }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
+        }
 
         /// <summary>
         /// Registers all the input parameters for this component.
