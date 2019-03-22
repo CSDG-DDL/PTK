@@ -13,6 +13,8 @@ namespace PTK.Components
         List<List<Plane>> PlanesLists = new List<List<Plane>>();
         List<Color> Colors = new List<Color>();
         List<String> names = new List<String>();
+        int height = 14;
+        bool showText = false;
 
         /// <summary>
         /// Initializes a new instance of the DetailSearch class.
@@ -42,12 +44,16 @@ namespace PTK.Components
         pManager.AddIntegerParameter("Sorting rule", "SR", "0=Structural, 1=Alphabetical, 2=ElementLength, 3=Clockwice(Based on detailPlane)", GH_ParamAccess.item, 0);
         pManager.AddColourParameter("DetailPreviewColor", "C", "Color of detailpreview", GH_ParamAccess.item);
         pManager.AddBooleanParameter("PreviewName?", "N", "True if you want to preview name of detail", GH_ParamAccess.item, false);
+        //pManager.AddIntegerParameter("PreviewSize", "S", "Optional Size of the detailpreview", GH_ParamAccess.item, 14);
         pManager[1].Optional = true;
         pManager[2].Optional = true;
         pManager[3].Optional = true;
         pManager[4].Optional = true;
         pManager[5].Optional = true;
         pManager[6].Optional = true;
+        pManager[7].Optional = true;
+        //pManager[8].Optional = true;
+
 
 
 
@@ -82,6 +88,7 @@ namespace PTK.Components
             int priorityKey = 0;
             Color color = new Color();
             bool preview = false;
+            //int size = 14;
 
 
 
@@ -113,8 +120,7 @@ namespace PTK.Components
                 color = Color.Red;
             }
             DA.GetData(7, ref preview);
-
-
+            //DA.GetData(8, ref size);
             Colors.Add(color);
 
             if (preview)
@@ -123,7 +129,7 @@ namespace PTK.Components
             }
             else
             {
-                names.Add("");
+                names.Add(".'");
             }
             
 
@@ -148,7 +154,8 @@ namespace PTK.Components
 
 
             PlanesLists.Add(DetailingGroup.NodeGroupPlanes);
-            
+            //height = size;
+            showText = preview;
 
 
             // --- solve ---
@@ -220,6 +227,9 @@ namespace PTK.Components
 
                 }
 
+ 
+
+                //}
 
                 // --- output ---
                 DA.SetDataTree(0, Nodes);
@@ -250,15 +260,26 @@ namespace PTK.Components
     {
         for (int i =0; i<PlanesLists.Count;i++ )
         {
-                for(int j=0; j < PlanesLists[i].Count; j++)
+                for (int j = 0; j < PlanesLists[i].Count; j++)
                 {
-                    args.Display.DrawDot(PlanesLists[i][j].Origin, names[i], Colors[i], Color.White);
+                    if (showText)
+                    {
+                        args.Display.DrawDot(PlanesLists[i][j].Origin, names[i], Colors[i], Color.White);
+
+                        //    args.Display.Draw3dText(names[i], Colors[i], PlanesLists[i][j], height, "Arial");
+                        //    args.Display.Draw2dText(names[i], Colors[i], PlanesLists[i][j].Origin, true, height, "Arial");
+                    }
+
+                    else
+                        args.Display.DrawDot(PlanesLists[i][j].Origin, names[i], Colors[i], Colors[i]);
+
+                    //args.Display.DrawPoint(PlanesLists[i][j].Origin, Rhino.Display.PointStyle.ControlPoint, height, Colors[i]);
                     //args.Display.DrawPoint(PlanesLists[i][j].Origin, Rhino.Display.PointStyle.Simple, Convert.ToInt16( CommonProps.tolerances*1000), Colors[i]);
                 }
 
 
 
-        }
+            }
         //base.DrawViewportMeshes(args);
     }
 

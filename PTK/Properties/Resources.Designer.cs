@@ -533,6 +533,16 @@ namespace PTK.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ReindeerAssemble {
+            get {
+                object obj = ResourceManager.GetObject("ReindeerAssemble", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SearchDetail {
             get {
                 object obj = ResourceManager.GetObject("SearchDetail", resourceCulture);
