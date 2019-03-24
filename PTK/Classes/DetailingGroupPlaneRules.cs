@@ -203,4 +203,125 @@ namespace PTK.PlaneRules
 
 
     }
+    public class MeshNormalPlane
+    {
+        // --- field ---
+        private Mesh Mesh;
+        private string AlignmentElementName;
+
+
+        // --- constructors --- 
+        public MeshNormalPlane(Mesh _mesh, string _alignmentElementName)
+        {
+            Mesh = _mesh;
+            AlignmentElementName = _alignmentElementName;
+
+        }
+
+        // --- methods ---
+        public Plane GenerateDetailingGroupPlane(Detail _detail)  //Checking element length
+        {
+            Detail detail = _detail;
+
+
+            Point3d NodePoint = detail.Node.Point;
+            Vector3d normal;
+            Point3d MeshCP;
+
+            Mesh.ClosestPoint(NodePoint,out MeshCP, out normal, 99999);
+
+
+            Plane NodeGroupPlane = new Plane(NodePoint, normal);
+
+
+            List<Element1D> ValidElements = detail.Elements.Where(o => o.Tag == AlignmentElementName).ToList();
+            if (ValidElements.Count > 0)
+            {
+                Element1D AlignmentElement = ValidElements[0];
+
+                Vector3d AlignmentVector = new Vector3d();
+                if (NodePoint.DistanceTo(AlignmentElement.PointAtStart) < NodePoint.DistanceTo(AlignmentElement.PointAtEnd))
+                {
+                    AlignmentVector = AlignmentElement.BaseCurve.TangentAtStart;
+                }
+                else
+                {
+                    AlignmentVector = -AlignmentElement.BaseCurve.TangentAtEnd;
+                }
+                double Angle = Vector3d.VectorAngle(NodeGroupPlane.XAxis, AlignmentVector, NodeGroupPlane);
+                NodeGroupPlane.Rotate(Angle, NodeGroupPlane.ZAxis);
+
+
+            }
+
+            return NodeGroupPlane;
+        }
+
+
+    }
+    public class ElementAverage
+    {
+        // --- field ---
+        private string AlignmentElementName;
+
+
+        // --- constructors --- 
+        public ElementAverage(string _alignmentElementName)
+        {
+            AlignmentElementName = _alignmentElementName;
+
+        }
+
+        // --- methods ---
+        public Plane GenerateDetailingGroupPlane(Detail _detail)  //Checking element length
+        {
+            Detail detail = _detail;
+
+
+            Point3d NodePoint = detail.Node.Point;
+            List <Element1D> elements= detail.Elements;
+            List<Plane> planes = new List<Plane>();
+            double normalX = 0;
+            double normalY = 0;
+            double normalZ = 0;
+
+
+            for (int i=0; i<elements.Count; i++)
+            {
+                //planes.Add(elm.CroSecLocalPlane);
+                normalX += elements[i].CroSecLocalPlane.YAxis.X;
+                normalY += elements[i].CroSecLocalPlane.YAxis.Y;
+                normalZ += elements[i].CroSecLocalPlane.YAxis.Z;
+            }
+
+            Vector3d normal = new Vector3d(normalX, normalY, normalZ);
+           
+            Plane NodeGroupPlane = new Plane(NodePoint, normal);
+
+
+            List<Element1D> ValidElements = detail.Elements.Where(o => o.Tag == AlignmentElementName).ToList();
+            if (ValidElements.Count > 0)
+            {
+                Element1D AlignmentElement = ValidElements[0];
+
+                Vector3d AlignmentVector = new Vector3d();
+                if (NodePoint.DistanceTo(AlignmentElement.PointAtStart) < NodePoint.DistanceTo(AlignmentElement.PointAtEnd))
+                {
+                    AlignmentVector = AlignmentElement.BaseCurve.TangentAtStart;
+                }
+                else
+                {
+                    AlignmentVector = -AlignmentElement.BaseCurve.TangentAtEnd;
+                }
+                double Angle = Vector3d.VectorAngle(NodeGroupPlane.XAxis, AlignmentVector, NodeGroupPlane);
+                NodeGroupPlane.Rotate(Angle, NodeGroupPlane.ZAxis);
+
+
+            }
+
+            return NodeGroupPlane;
+        }
+
+
+    }
 }
