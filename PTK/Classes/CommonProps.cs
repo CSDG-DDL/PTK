@@ -60,7 +60,7 @@ namespace PTK
     }
     public enum ManufactureMode
     {
-        BTL, NURBS, BOTH
+        BTL, NURBS, BOTH, NONE
     }
 
 }

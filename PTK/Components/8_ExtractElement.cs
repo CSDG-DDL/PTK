@@ -38,6 +38,7 @@ namespace PTK
             pManager.AddGenericParameter( "Subelements", "S", "Deconstructs the composite into subelements", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Intersect Other", "I", "Is Intersect With Other", GH_ParamAccess.item);
             pManager.RegisterParam(new Param_Force(), "Forces", "F", "forces in the element", GH_ParamAccess.item);
+            pManager.AddPlaneParameter("SidePlanes", "P", "0BtmSide,1Leftside,2Topside, 3Rightside", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -62,7 +63,17 @@ namespace PTK
             CompositeNew Composite = elem.Composite;
             bool intersect = elem.IsIntersectWithOther;
             GH_Force forc = new GH_Force(elem.Forces);
-            
+
+            List<Refside> refsides = elem.GenerateRefsides();
+
+            List<Plane> refplanes = new List<Plane>();
+            refplanes.Add(refsides[0].RefPlane);
+            refplanes.Add(refsides[1].RefPlane);
+            refplanes.Add(refsides[2].RefPlane);
+            refplanes.Add(refsides[3].RefPlane);
+
+
+
 
             // --- output ---
             DA.SetData(0, tag);
@@ -75,6 +86,7 @@ namespace PTK
             DA.SetDataList(7, SubElements);
             DA.SetData(8, intersect);
             DA.SetData(9, forc );
+            DA.SetDataList(10, refplanes);
         }
 
 

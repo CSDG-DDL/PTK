@@ -6166,7 +6166,37 @@ namespace PTK {
                 this.inclinationField = value;
             }
         }
-        
+
+        /// <remarks/>
+        //[System.ComponentModel.DefaultValueAttribute(90D)]
+        public double Inclination1
+        {
+            get
+            {
+                return this.inclinationField;
+            }
+            set
+            {
+                this.inclinationField = value;
+            }
+        }
+
+        //[System.ComponentModel.DefaultValueAttribute(90D)]
+        public double Inclination2
+        {
+            get
+            {
+                return this.rotationField;
+            }
+            set
+            {
+                this.rotationField = value;
+            }
+        }
+
+
+
+
         /// <remarks/>
         //[System.ComponentModel.DefaultValueAttribute(90D)]
         public double Rotation {
