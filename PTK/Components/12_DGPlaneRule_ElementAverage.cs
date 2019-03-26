@@ -6,17 +6,18 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _12_DGPlaneRule_NormalVectorFromElementName : GH_Component
+    public class _12_DGPlaneRule_ElementAverage : GH_Component
     {
         /// <summary>
-        /// Initializes a new instance of the _12_DGPlaneRule_NormalVectorFromElementName class.
+        /// Initializes a new instance of the _12_DGPlaneRule_ElementAverage class.
         /// </summary>
-        public _12_DGPlaneRule_NormalVectorFromElementName()
-          : base("DetailPlaneNormalAlongElement", "DetNorElm",
-              "Sets the Detail Plane Z-axis parallel to an element. Optional Align X-axis along an element. ",
+        public _12_DGPlaneRule_ElementAverage()
+          : base("DetailPlaneNormalFromElementAverage", "DetNorElem",
+              "Sets the detail z-axis to surface normal at the closest point to the detail node. Optional Align X-axis along an element.",
               CommonProps.category, CommonProps.subcate10)
         {
         }
+
         /// <summary>
         /// Overrides the exposure level in the components category 
         /// </summary>
@@ -31,9 +32,8 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name of NormalElement Z-axis", "Z", "Name of element to adjust the detail plane z-axis along", GH_ParamAccess.item);
-            pManager.AddTextParameter("Name of AlignmentElement for X-axis", "X", "Optional. Name of an element to align the detail plane x-axis along", GH_ParamAccess.item);
-            pManager[1].Optional = true;
+            pManager.AddTextParameter("Name of AlignmentElement for x-axis", "X", "Optional. Name of an element to align the detail plane x-axis along", GH_ParamAccess.item);
+            pManager[0].Optional = true;
         }
 
 
@@ -53,20 +53,17 @@ namespace PTK.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-
-
             //Variables 
-            string NormalElementName = "";
             string AlignmentElementName = "";
 
 
             //Input 
-            DA.GetData(0, ref NormalElementName);
-            DA.GetData(1, ref AlignmentElementName);
+            DA.GetData(0, ref AlignmentElementName);
 
 
             //Solve 
-            PlaneRules.NormalParallellToElementPlane PlaneRule = new PlaneRules.NormalParallellToElementPlane(NormalElementName, AlignmentElementName);
+            PlaneRules.ElementAverage PlaneRule = new PlaneRules.ElementAverage(AlignmentElementName);
+
 
             //Output
             DA.SetData(0, new PlaneRules.PlaneRule(PlaneRule.GenerateDetailingGroupPlane));
@@ -92,7 +89,7 @@ namespace PTK.Components
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("fb54a28a-8908-4be9-896a-aaf0b475d8fa"); }
+            get { return new Guid("a3cd6ca7-e44c-403e-9631-5d5ffb32972a"); }
         }
     }
 }

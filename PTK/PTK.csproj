@@ -19,19 +19,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\AppData\Roaming\Grasshopper\Libraries\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <Optimize>false</Optimize>
+    <OutputPath>.\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
@@ -55,7 +56,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\IIS\Microsoft Web Deploy V3\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\Library\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RhinoCommon, Version=5.1.30000.17, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -114,6 +115,8 @@
     <Compile Include="Components\11_CustomBoolean.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVectorFromElementName.cs" />
+    <Compile Include="Components\12_DGPlaneRule_MeshNormal.cs" />
+    <Compile Include="Components\12_DGPlaneRule_ElementAverage.cs" />
     <Compile Include="Components\12_DGPlaneRule_SurfaceNormal.cs" />
     <Compile Include="Components\13_GlobalAlign_FromPlane.cs" />
     <Compile Include="Components\13_GlobalAlign_FromPoints.cs" />
@@ -146,6 +149,7 @@
     <Compile Include="Components\8_ExtractCrossSection.cs" />
     <Compile Include="Components\BTLxSettings.cs" />
     <Compile Include="Components\DetailSearch.cs" />
+    <Compile Include="Components\MyComponent1.cs" />
     <Compile Include="Forms\F01_Supports.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -341,6 +345,10 @@
     <Content Include="ParaCoorFormItem\Viewer.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\ReindeerAssemble.png" />
+    <None Include="Resources\ReindeerAssemble.bmp" />
+    <None Include="Resources\RectangleCS1.png" />
+    <None Include="Resources\Alignment1.png" />
     <None Include="Resources\RectangleCS.png" />
     <None Include="Resources\CircularCS.png" />
     <None Include="Resources\Joint.png" />
