@@ -12,8 +12,8 @@ namespace PTK.Components
         /// Initializes a new instance of the _11_BTL_Pocket class.
         /// </summary>
         public _11_BTL_Pocket()
-            : base("Drill", "D",
-              "Define the Drill process",
+            : base("Pocket", "P",
+              "Define the Pocket process",
               CommonProps.category, CommonProps.subcate11)
         {
             Message = CommonProps.initialMessage;
@@ -23,10 +23,10 @@ namespace PTK.Components
         {
             pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
             pManager.AddCurveParameter("Paralellogram", "", "", GH_ParamAccess.item);
-            pManager.AddNumberParameter("FirstAngle", "1", "Angle of first side. Corresponding to segment number", GH_ParamAccess.item, Math.PI / 2);
-            pManager.AddNumberParameter("SecondAngle", "2", "Angle of second side", GH_ParamAccess.item, Math.PI / 2);
-            pManager.AddNumberParameter("ThirdAngle", "3", "Angle of third side", GH_ParamAccess.item, Math.PI / 2);
-            pManager.AddNumberParameter("FourthANgle", "4", "Angle of fourth side", GH_ParamAccess.item, Math.PI / 2);
+            pManager.AddNumberParameter("FirstAngle", "1", "Angle(Between 0.1 and 179.9 degrees) of first side. Corresponding to segment number", GH_ParamAccess.item, Math.PI / 2);
+            pManager.AddNumberParameter("SecondAngle", "2", "Angle(Between 0.1 and 179.9 degrees) of second side", GH_ParamAccess.item, Math.PI / 2);
+            pManager.AddNumberParameter("ThirdAngle", "3", "Angle(Between 0.1 and 179.9 degrees) of third side", GH_ParamAccess.item, Math.PI / 2);
+            pManager.AddNumberParameter("FourthANgle", "4", "Angle(Between 0.1 and 179.9 degrees) of fourth side", GH_ParamAccess.item, Math.PI / 2);
             pManager.AddBooleanParameter("Flip?", "F", "Flip directon of pocket?", GH_ParamAccess.item, false);
         }
 
@@ -69,38 +69,46 @@ namespace PTK.Components
             DA.GetData(5, ref n4);
             DA.GetData(6, ref Flip);
 
-            ////////////////////////////////////////////////////////////////
-            ///THIS IS A TEMPORARY GENERATION OF AN ASSEMBLY! START
+            
 
-            List<Element1D> elems = new List<Element1D>();
-            elems.Add(element);
+            
 
             List<double> tilts = new List<double>();
-            tilts.Add(n1);
-            tilts.Add(n2);
-            tilts.Add(n3);
-            tilts.Add(n4);
+            tilts.Add(Math.PI- n1);
+            tilts.Add(Math.PI - n2);
+            tilts.Add(Math.PI - n3);
+            tilts.Add(Math.PI - n4);
 
             BTLPocket BTLPocket = new BTLPocket(Parallellogram, Flip, tilts);
 
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(BTLPocket.DelegateProcess));
+
+
+            /*
+            ////////////////////////////////////////////////////////////////
+            ///THIS IS A TEMPORARY GENERATION OF AN ASSEMBLY! START
+            List<Element1D> elems = new List<Element1D>();
+            elems.Add(element);
+
             List<OrderedTimberProcess> Orders = new List<OrderedTimberProcess>();
             Orders.Add(Order);
-            /*
+
+            
             BuildingProject GrasshopperProject = new BuildingProject(new ProjectType());
             GrasshopperProject.PrepairElements(elems, Orders);
             GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
 
 
 
-            ///THIS IS A TEMPORARY GENERATION OF AN ASSEMBLY! END
-            ////////////////////////////////////////////////////////////////
+            
 
             
             DA.SetData(2, BTLPocket.X);
             DA.SetData(3, BTLPocket.Y);
             DA.SetData(4, BTLPocket.pt);
             DA.SetData(5, BTLPocket.refPlanepublic);
+            ///THIS IS A TEMPORARY GENERATION OF AN ASSEMBLY! END
+            ////////////////////////////////////////////////////////////////
             */
 
 

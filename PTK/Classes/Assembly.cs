@@ -146,7 +146,7 @@ namespace PTK
                         double OtherParam;
                         double ThisParam;
 
-                        var eventsLine = Intersection.LineLine(OtherLine, ThisLine, out OtherParam, out ThisParam, CommonProps.tolerances*1000,true);
+                        var eventsLine = Intersection.LineLine(OtherLine, ThisLine, out OtherParam, out ThisParam, CommonProps.tolerances,true);
                         
                         
 
