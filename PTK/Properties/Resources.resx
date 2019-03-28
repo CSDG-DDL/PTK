@@ -274,4 +274,43 @@
   <data name="ReindeerAssemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ReindeerAssemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="LocalAnalysisCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LocalAnalysisCheck.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mortise" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mortise.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaForce" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaForce.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaSMP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaSMP.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PreElementStr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PreElementStr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StructuralMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\StructuralMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Subtraction" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Subtraction.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tenon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tenon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNAlongEle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNAlongEle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNEleAve" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNEleAve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNMesh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNMesh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNNormal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNNormal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNSrf" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNSrf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
