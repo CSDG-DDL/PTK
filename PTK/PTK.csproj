@@ -111,6 +111,7 @@
     <Compile Include="Components\11_BTL_DoveTailMortise.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
     <Compile Include="Components\11_BTL_Pocket.cs" />
+    <Compile Include="Components\11_BTL_PocketFromElement.cs" />
     <Compile Include="Components\11_BTL_Tenon.cs" />
     <Compile Include="Components\11_CustomBoolean.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />

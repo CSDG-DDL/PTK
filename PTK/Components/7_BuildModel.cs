@@ -42,6 +42,7 @@ namespace PTK.Components
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
+            pManager[4].Optional = true;
 
             pManager[1].DataMapping = GH_DataMapping.Flatten;
 
