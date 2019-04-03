@@ -105,16 +105,7 @@ namespace PTK.Components
             //////////////////////////////////////////////////////////////////
             /////THIS IS A TEMPORARY GENERATION OF AN ASSEMBLY! START
 
-            List<Element1D> elems = new List<Element1D>();
-            elems.Add(element);
-
-            List<OrderedTimberProcess> Orders = new List<OrderedTimberProcess>();
-            Orders.Add(Order);
-
-
-            BuildingProject GrasshopperProject = new BuildingProject(new ProjectType());
-            GrasshopperProject.PrepairElements(elems, Orders);
-            GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
+            
 
 
 

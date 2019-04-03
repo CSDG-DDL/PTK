@@ -111,6 +111,7 @@
     <Compile Include="Components\11_BTL_DoveTailMortise.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
     <Compile Include="Components\11_BTL_Pocket.cs" />
+    <Compile Include="Components\11_BTL_PocketFromElement.cs" />
     <Compile Include="Components\11_BTL_Tenon.cs" />
     <Compile Include="Components\11_CustomBoolean.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />
@@ -149,7 +150,6 @@
     <Compile Include="Components\8_ExtractCrossSection.cs" />
     <Compile Include="Components\BTLxSettings.cs" />
     <Compile Include="Components\DetailSearch.cs" />
-    <Compile Include="Components\MyComponent1.cs" />
     <Compile Include="Forms\F01_Supports.cs">
       <SubType>Form</SubType>
     </Compile>

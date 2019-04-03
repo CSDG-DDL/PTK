@@ -65,8 +65,12 @@ namespace PTK.Components
             GlobalAlignmentRules.AlignmentFromPlane VectorAlign = new GlobalAlignmentRules.AlignmentFromPlane(plane);
 
 
+            
 
-            GH_Alignment Alignment = new GH_Alignment(new Alignment("", OffsetY, offsetZ, VectorAlign.GenerateVector));
+            ElementAlign Alignment = new ElementAlign(VectorAlign.GenerateVector, OffsetY, offsetZ);
+
+            
+
 
             DA.SetData(0, Alignment);
 

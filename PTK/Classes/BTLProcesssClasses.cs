@@ -933,6 +933,7 @@ namespace PTK
         public Line X { get; private set; }
         public Point3d pt { get; private set; }
         public Plane refPlanepublic { get; private set; }
+        public double extrudeHeight { get; private set; }
 
 
         // --- constructors --- 
@@ -945,6 +946,30 @@ namespace PTK
             Tilts = _tilts;
             Flip = _flip;
             
+
+        }
+
+        public BTLPocket(Element1D _elemOther, double _tolerance)
+        {
+            Plane plane = _elemOther.CroSecLocalPlane;
+            Interval Width = _elemOther.Composite.WidthInterval;
+            Interval Height = _elemOther.Composite.HeightInterval;
+
+            Width.MakeIncreasing();
+            Width.T0 = Width.T0 - _tolerance;
+            Width.T1 = Width.T1 - +_tolerance;
+
+            Height.MakeIncreasing();
+            Height.T0 = Height.T0 - _tolerance;
+            Height.T1 = Height.T1 - +_tolerance;
+
+            ParalellogramBtm = new Rectangle3d(plane, Width, Height).ToNurbsCurve();
+
+            Tilts = new List<double>();
+            Tilts.Add(Math.PI / 2);
+            Tilts.Add(Math.PI / 2);
+            Tilts.Add(Math.PI / 2);
+            Tilts.Add(Math.PI / 2);
 
         }
 
@@ -1210,7 +1235,7 @@ namespace PTK
             Pocket.MachiningLimits = type;
 
             double vectorangle = Vector3d.VectorAngle(RefPlane.ZAxis, ShapePlane.ZAxis);
-            double extrudeHeight = -localPt.Z /Math.Cos(vectorangle) * 2;
+            extrudeHeight = -localPt.Z /Math.Cos(vectorangle) * 2;
 
             Curve GetOffsetedPolygon(List<Line> _lines, List<double> Angles,double _height,Vector3d exrudeDir)
             {
@@ -1451,7 +1476,7 @@ namespace PTK
             voidpoints = BTLFunctions.GetValidVoidPoints(TenonPlane, voidpoints);
 
             Box box = new Box(TenonPlane, voidpoints);
-            double extra = box.X.T0 * 5;
+            double extra = 1000;
             box.X = new Interval(box.X.T0 - extra, box.X.T1 + extra);
             box.Y = new Interval(box.Y.T0 - extra, box.Y.T1 + extra);
             box.Z = new Interval(box.Z.T0, box.Z.T1 + extra);

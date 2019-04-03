@@ -6,14 +6,14 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _11_BTL_Pocket : GH_Component
+    public class _11_BTL_PocketFromElement : GH_Component
     {
         /// <summary>
-        /// Initializes a new instance of the _11_BTL_Pocket class.
+        /// Initializes a new instance of the _11_BTL_PocketFromElement class.
         /// </summary>
-        public _11_BTL_Pocket()
-            : base("PocketParallelogram", "P",
-              "Define the Pocket process from parallelogram",
+        public _11_BTL_PocketFromElement()
+            : base("PocketElement", "P",
+              "Define the Pocket process from other element",
               CommonProps.category, CommonProps.subcate11)
         {
             Message = CommonProps.initialMessage;
@@ -21,13 +21,11 @@ namespace PTK.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
-            pManager.AddCurveParameter("Paralellogram", "", "", GH_ParamAccess.item);
-            pManager.AddNumberParameter("FirstAngle", "1", "Angle(Between 0.1 and 179.9 degrees) of first side. Corresponding to segment number", GH_ParamAccess.item, Math.PI / 2);
-            pManager.AddNumberParameter("SecondAngle", "2", "Angle(Between 0.1 and 179.9 degrees) of second side", GH_ParamAccess.item, Math.PI / 2);
-            pManager.AddNumberParameter("ThirdAngle", "3", "Angle(Between 0.1 and 179.9 degrees) of third side", GH_ParamAccess.item, Math.PI / 2);
-            pManager.AddNumberParameter("FourthANgle", "4", "Angle(Between 0.1 and 179.9 degrees) of fourth side", GH_ParamAccess.item, Math.PI / 2);
-            pManager.AddBooleanParameter("Flip?", "F", "Flip directon of pocket?", GH_ParamAccess.item, false);
+            pManager.AddParameter(new Param_Element1D(), "ElementToPocket", "E", "Insert the element that should be pocketed", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Element1D(), "ElementThatPockets", "E", "Insert the element that is used to determine the pocket", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Tolerance ", "tb", "Extra cutout for tolerances", GH_ParamAccess.item, 0);
+            
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -45,14 +43,12 @@ namespace PTK.Components
 
             // --- variables ---
             GH_Element1D gElement = null;
-            Curve Parallellogram = null;
-            double n1 = 0;
-            double n2 = 0;
-            double n3 = 0;
-            double n4 = 0;
-            bool Flip = false; 
-
+            GH_Element1D gElementOther = null;
+            double Tolerance = 0;
             
+
+
+
             //Fix angles in btlx
             //Fix opposite direction of angles
             //Add extra component
@@ -62,24 +58,19 @@ namespace PTK.Components
             // --- input --- 
             if (!DA.GetData(0, ref gElement)) { return; }
             Element1D element = gElement.Value;
-            DA.GetData(1, ref Parallellogram);
-            DA.GetData(2, ref n1);
-            DA.GetData(3, ref n2);
-            DA.GetData(4, ref n3);
-            DA.GetData(5, ref n4);
-            DA.GetData(6, ref Flip);
 
+            if (!DA.GetData(1, ref gElementOther)) { return; }
+            Element1D elementOther = gElementOther.Value;
+
+            if (!DA.GetData(2, ref Tolerance)) { return; }
             
 
-            
 
-            List<double> tilts = new List<double>();
-            tilts.Add(Math.PI- n1);
-            tilts.Add(Math.PI - n2);
-            tilts.Add(Math.PI - n3);
-            tilts.Add(Math.PI - n4);
 
-            BTLPocket BTLPocket = new BTLPocket(Parallellogram, Flip, tilts);
+
+
+
+            BTLPocket BTLPocket = new BTLPocket(elementOther,Tolerance);
 
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(BTLPocket.DelegateProcess));
 
@@ -113,18 +104,11 @@ namespace PTK.Components
 
 
 
-
-
-
-
-
-
-            bool check = BTLPocket.CheckParallogramValidity(Parallellogram);
-
+           
 
             // --- output ---
             DA.SetData(0, Order);
-            DA.SetData(1, check);
+            
         }
 
         /// <summary>
@@ -145,7 +129,7 @@ namespace PTK.Components
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("bcf6f04d-b933-4966-b8ef-6434b15915be"); }
+            get { return new Guid("7074242f-5d75-4226-b039-afe299da4aae"); }
         }
     }
 }
