@@ -12,7 +12,7 @@ namespace PTK
     public static class CommonProps
     {
         public static double tolerances = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
-        
+
         public static readonly string category = "Reindeer";
         public static readonly string subcate0 = "   Param";
         public static readonly string subcate1 = "Material"; //Is moved into Element, Exposure 3
@@ -67,8 +67,6 @@ namespace PTK
     // -------------
     //     Function    
     // -------------
-    
-
 
 
 }
