@@ -37,6 +37,7 @@ namespace PTK
             pManager.AddNumberParameter("Simplified Width", "W", "Simplified width of composite", GH_ParamAccess.item);
             pManager.AddGenericParameter( "Subelements", "S", "Deconstructs the composite into subelements", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Intersect Other", "I", "Is Intersect With Other", GH_ParamAccess.item);
+            pManager.AddGenericParameter("StructuralData", "Sd", "returns structural data, forces and results", GH_ParamAccess.list);
 
         }
 
@@ -63,6 +64,10 @@ namespace PTK
             bool intersect = elem.IsIntersectWithOther;
 
 
+            StructuralData sData= elem.StructuralData;
+            GH_StructuralData gsData = new GH_StructuralData(sData);
+
+
             // --- output ---
             DA.SetData(0, tag);
             DA.SetData(1, curve);
@@ -73,6 +78,7 @@ namespace PTK
             DA.SetData(6, width);
             DA.SetDataList(7, SubElements);
             DA.SetData(8, intersect);
+            DA.SetData(9, gsData );
 
         }
 
