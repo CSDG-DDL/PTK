@@ -959,11 +959,11 @@ namespace PTK
 
             Width.MakeIncreasing();
             Width.T0 = Width.T0 - _tolerance;
-            Width.T1 = Width.T1 - +_tolerance;
+            Width.T1 = Width.T1  +_tolerance;
 
             Height.MakeIncreasing();
             Height.T0 = Height.T0 - _tolerance;
-            Height.T1 = Height.T1 - +_tolerance;
+            Height.T1 = Height.T1  +_tolerance;
 
             ParalellogramBtm = new Rectangle3d(plane, Width, Height).ToNurbsCurve();
 

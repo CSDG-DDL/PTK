@@ -398,7 +398,13 @@ namespace PTK
 
                         if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
                         {
-                            VoidProcess.Add(PerformedProcess.VoidProcess);
+                            if (PerformedProcess.VoidProcess!=null && PerformedProcess.VoidProcess.GetVolume() > 1)
+                            {
+                                VoidProcess.Add(PerformedProcess.VoidProcess);
+                            }
+
+
+                            
 
                         }
                     }
@@ -424,6 +430,10 @@ namespace PTK
                     Interval iy = new Interval(0, height);
                     Interval iz = new Interval(0, length);
 
+                    Point3d centerPt = CornerPlane.Origin;
+
+                    centerPt = centerPt + CornerPlane.XAxis * width / 2 + CornerPlane.YAxis * height / 2 + CornerPlane.ZAxis * length / 2;
+
                     Box boxstock = new Box(CornerPlane, ix, iy, iz);
                     Stock = Brep.CreateFromBox(boxstock);
                     List<Brep> boolBrep = new List<Brep>();
@@ -448,7 +458,7 @@ namespace PTK
                     boolBrep.Add(Stock);
 
 
-                    if (VoidProcess.Count > 0)
+                    if (VoidProcess.Count > 0 && VoidProcess[0]!=null)
                     {
                         if (true)
                         {
@@ -457,6 +467,9 @@ namespace PTK
                             
 
                             Rhino.Geometry.Brep[] breps = Rhino.Geometry.Brep.CreateBooleanDifference(boolBrep, VoidProcess, tolerance);
+
+                            
+                            
                             if (breps != null)
                             {
                                 ProcessedStock.AddRange(breps);
@@ -480,8 +493,32 @@ namespace PTK
                                         
                                 }
 
+                                
+
 
                             }
+                            if (false)
+                            {
+                                if (breps.Length == 0)
+                                {
+                                    bool valid = false;
+                                    foreach (Brep b in VoidProcess)
+                                    {
+                                        if (b.IsPointInside(centerPt, CommonProps.tolerances, true))
+                                        {
+                                            valid = true;
+                                        }
+                                    }
+                                    if (valid)
+                                    {
+                                        ProcessedStock.Add(Stock);
+                                    }
+
+                                }
+                            }
+                            
+
+                            
                                 
                                     
                                         
