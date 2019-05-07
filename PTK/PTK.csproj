@@ -19,9 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-
     <OutputPath>..\..\..\..\..\..\..\</OutputPath>
-
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
@@ -61,7 +59,7 @@
     </Reference>
     <Reference Include="RhinoCommon, Version=5.1.30000.17, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\RhinoCommon.dll</HintPath>
+      <HintPath>Library\RhinoCommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -146,12 +144,8 @@
     <Compile Include="Components\7_BuildModel.cs" />
     <Compile Include="Components\8_ExtractDetail.cs" />
     <Compile Include="Components\8_ExtractForce.cs" />
-
     <Compile Include="Components\8_ExtractStructuralForces.cs" />
     <Compile Include="Components\8_ExtractStructuralResults.cs" />
-    <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
-    <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
-
     <Compile Include="Components\11_BTL_Mortise.cs" />
     <Compile Include="Components\10_Rule_ElementAngle.cs" />
     <Compile Include="Components\8_ExtractCrossSection.cs" />

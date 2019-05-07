@@ -65,7 +65,7 @@ namespace PTK
             Composite = new CompositeNew(_compositeInput, this);
             GenerateCornerLines();
 
-            CrossSection = new RectangleCroSec("", Composite.MaterialProperty, Composite.HeightSimplified, Composite.WidthSimplified, new Alignment());
+            //CrossSection = new RectangleCroSec("", Composite.MaterialProperty, Composite.HeightSimplified, Composite.WidthSimplified, new Alignment());
 
             
         }
