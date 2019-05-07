@@ -6,14 +6,14 @@ using Rhino.Geometry;
 
 namespace PTK.Components
 {
-    public class _10_Rule_Tension : GH_Component
+    public class _10_Rule_ForceBendingMZ : GH_Component
     {
         /// <summary>
-        /// Initializes a new instance of the _10_Rule_Tension class.
+        /// Initializes a new instance of the _10_Rule_ForceBendingMZ class.
         /// </summary>
-        public _10_Rule_Tension()
-          : base("ElementForceCompression", "FX",
-              "Detail search based on tension force in the element's detail",
+        public _10_Rule_ForceBendingMZ()
+          : base("ElementForceBending MZ", "MZ",
+              "Detail search based on bending moment (MZ) in the element's detail",
               CommonProps.category, CommonProps.subcate10)
         {
         }
@@ -23,7 +23,7 @@ namespace PTK.Components
         public override GH_Exposure Exposure
         {
             get
-            { return GH_Exposure.tertiary; }
+            { return GH_Exposure.quarternary; }
         }
 
         /// <summary>
@@ -31,8 +31,8 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Min Tension", "<", "Minimum Tension force in element", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("Max Tension", ">", "Maximum Tension force in element", GH_ParamAccess.item, 10000000);
+            pManager.AddNumberParameter("Min BendingMZ", "<", "Minimum BendingMZ moment in element", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Max BendingMZ", ">", "Maximum BendingMZ moment in element", GH_ParamAccess.item, 10000000);
             pManager.AddBooleanParameter("All Elements", "A", "True: All elements must be within the domain. False: Only one element must be inside the domain", GH_ParamAccess.item, true);
         }
 
@@ -63,7 +63,7 @@ namespace PTK.Components
             DA.GetData(2, ref all);
 
             //CHANGE
-            Rules.ForceMode Mode = Rules.ForceMode.Tension;
+            Rules.ForceMode Mode = Rules.ForceMode.BendingDir2;
             //CHANGE
 
             //Solve 
@@ -94,7 +94,7 @@ namespace PTK.Components
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("b490dd85-b31f-465b-8f95-168cec9ba7ae"); }
+            get { return new Guid("340447d8-160f-49b8-976e-51f18a721f6f"); }
         }
     }
 }
