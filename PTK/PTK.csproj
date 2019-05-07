@@ -146,6 +146,12 @@
     <Compile Include="Components\7_BuildModel.cs" />
     <Compile Include="Components\8_ExtractDetail.cs" />
     <Compile Include="Components\8_ExtractForce.cs" />
+
+    <Compile Include="Components\8_ExtractStructuralForces.cs" />
+    <Compile Include="Components\8_ExtractStructuralResults.cs" />
+    <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
+    <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
+
     <Compile Include="Components\11_BTL_Mortise.cs" />
     <Compile Include="Components\10_Rule_ElementAngle.cs" />
     <Compile Include="Components\8_ExtractCrossSection.cs" />
