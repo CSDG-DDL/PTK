@@ -77,6 +77,7 @@ namespace PTK
             PointAtStart = _elem.PointAtStart;
             PointAtEnd = _elem.PointAtEnd;
             Composite = _elem.Composite;
+            Elementalignment = _elem.Elementalignment;
             StructuralData = _StructuralData;
             Joints = _elem.Joints;
             IsIntersectWithOther = _elem.IsIntersectWithOther;
