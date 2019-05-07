@@ -2,7 +2,7 @@
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
-
+/*
 namespace PTK
 {
     public class PTK_UtilizationCheck : GH_Component
@@ -353,6 +353,7 @@ namespace PTK
                 utilization_dir1 = stress / strength;
                 utilization_dir2 = stress / (relative_slenderness_dir2 * strength);
 
+
                 //choose the bigger utilization to be the element utilization
                 utilization = utilization_dir1;
                 if (utilization_dir1 < utilization_dir2)
@@ -614,3 +615,5 @@ namespace PTK
         }
     }
 }
+
+    */

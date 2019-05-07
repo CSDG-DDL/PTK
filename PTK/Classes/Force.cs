@@ -12,38 +12,17 @@ namespace PTK
     public class Force
     {
         // --- field ---
-        public double Max_Fx_compression { get; set; }
-        public double Max_Fx_tension { get; set; }
-        public double Max_Fy_shear { get; set; }
-        public double Max_Fz_shear { get; set; }
-        public double Max_Mx_torsion { get; set; }
-        public double Max_My_bending { get; set; }
-        public double Max_Mz_bending { get; set; }
+        public Point3d positionPoint { get; set; }
+        public double position { get; set; }
+        public int karambaElementID { get; set; }
+        public int loadcase { get; set; }
 
-        public Point3d Position_Max_Fx_compression { get; set; }
-        public Point3d Position_Max_Fx_tension { get; set; }
-        public Point3d Position_Max_Fy_shear { get; set; }
-        public Point3d Position_Max_Fz_shear { get; set; }
-        public Point3d Position_Max_Mx_torsion { get; set; }
-        public Point3d Position_Max_My_bending { get; set; }
-        public Point3d Position_Max_Mz_bending { get; set; }
-
-        public int Loadcase_Max_Fx_compression { get; set; }
-        public int Loadcase_Max_Fx_tension { get; set; }
-        public int Loadcase_Max_Fy_shear { get; set; }
-        public int Loadcase_Max_Fz_shear { get; set; }
-        public int Loadcase_Max_Mx_torsion { get; set; }
-        public int Loadcase_Max_My_bending { get; set; }
-        public int Loadcase_Max_Mz_bending { get; set; }
-
-
-        public List<double> FXc { get; set; }
-        public List<double> FXt { get; set; }
-        public List<double> FY { get; set; }
-        public List<double> FZ { get; set; }
-        public List<double> MX { get; set; }
-        public List<double> MY { get; set; }
-        public List<double> MZ { get; set; }
+        public double FX { get; set; }
+        public double FY { get; set; }
+        public double FZ { get; set; }
+        public double MX { get; set; }
+        public double MY { get; set; }
+        public double MZ { get; set; }
 
         // --- constructors --- 
         #region constructors
@@ -53,18 +32,16 @@ namespace PTK
 
         }
         public Force(
-            List<double> _fxc,
-            List<double> _fxt,
-            List<double> _fy,
-            List<double> _fz,
-            List<double> _mx,
-            List<double> _my,
-            List<double> _mz
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz
             )
         {
             // only list of forces
-            FXc = _fxc;
-            FXt = _fxc;
+            FX = _fx;
             FY = _fy;
             FZ = _fz;
             MX = _mx;
@@ -72,38 +49,32 @@ namespace PTK
             MZ = _mz;
         }
         public Force(
-            List<double> _fxc,
-            List<double> _fxt,
-            List<double> _fy,
-            List<double> _fz,
-            List<double> _mx,
-            List<double> _my,
-            List<double> _mz,
-            int _loadcase_max_Fx_compression,
-            int _loadcase_max_Fx_tension,
-            int _loadcase_max_Fy_shear,
-            int _loadcase_max_Fz_shear,
-            int _loadcase_max_Mx_torsion,
-            int _loadcase_max_My_bending,
-            int _loadcase_max_Mz_bending
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz,
+            int _loadcase,
+            Point3d _positionPoint,
+            double _position
             )
         {
             // only list of forces
-            FXc = _fxc;
-            FXt = _fxc;
+            FX = _fx;
             FY = _fy;
             FZ = _fz;
             MX = _mx;
             MY = _my;
             MZ = _mz;
-            Loadcase_Max_Fx_compression = _loadcase_max_Fx_compression;
-            Loadcase_Max_Fx_tension = _loadcase_max_Fx_tension;
-            Loadcase_Max_Fy_shear = _loadcase_max_Fy_shear;
-            Loadcase_Max_Fz_shear = _loadcase_max_Fz_shear;
-            Loadcase_Max_Mx_torsion = _loadcase_max_Mx_torsion;
-            Loadcase_Max_My_bending = _loadcase_max_My_bending;
-            Loadcase_Max_Mz_bending = _loadcase_max_Mz_bending;
+            loadcase = _loadcase;
+            positionPoint = _positionPoint;
+            position = _position;
         }
+
+
+
+
 
         #endregion
 
@@ -116,13 +87,12 @@ namespace PTK
         {
             string info;
             info = "<Force>\n" +
-                " FXc:" + Max_Fx_compression.ToString() +
-                " FXt:" + Max_Fx_tension.ToString() +
-                " FY:" + Max_Fy_shear.ToString() + "\n" +
-                " MZ:" + Max_Fz_shear.ToString() +
-                " MX:" + Max_Mx_torsion.ToString() +
-                " MY:" + Max_My_bending.ToString() +
-                " MZ:" + Max_Mz_bending.ToString();
+                " FX:" + FX.ToString() +
+                " FY:" + FY.ToString() +
+                " MZ:" + FZ.ToString() +
+                " MX:" + MX.ToString() +
+                " MY:" + MY.ToString() +
+                " MZ:" + MZ.ToString();
             return info;
         }
         public bool IsValid()
@@ -159,7 +129,7 @@ namespace PTK
 
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Force; } }  //Set icon image
 
-        public override Guid ComponentGuid => new Guid("FB9C3075-220A-424E-AC7B-E515303D8A2F");
+        public override Guid ComponentGuid => new Guid("FB9C3075-220C-424E-AC7B-E515303D8A2F");
 
         protected override GH_GetterResult Prompt_Plural(ref List<GH_Force> values)
         {
@@ -170,5 +140,216 @@ namespace PTK
         {
             return GH_GetterResult.success;
         }
+    }
+
+
+    public class MaxCompression: Force
+    {
+        private string forceType="Compression";
+        private string forceUnits = "kN";
+
+
+        public MaxCompression(
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz,
+            int _loadcase,
+            Point3d _positionPoint,
+            double _position
+            ) : base(
+             _fx,
+             _fy,
+             _fz,
+             _mx,
+             _my,
+             _mz,
+             _loadcase,
+             _positionPoint,
+             _position)
+        {
+        }
+
+    }
+
+    public class MaxTension : Force
+    {
+        private string forceType = "Tension";
+        private string forceUnits = "kN";
+
+        public MaxTension(
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz,
+            int _loadcase,
+            Point3d _positionPoint,
+            double _position
+            ) : base(
+             _fx,
+             _fy,
+             _fz,
+             _mx,
+             _my,
+             _mz,
+             _loadcase,
+             _positionPoint,
+             _position)
+        {
+        }
+
+    }
+
+    public class MaxShearDir1 : Force
+    {
+        private string forceType = "ShearDir1";
+        private string forceUnits = "kN";
+
+        public MaxShearDir1(
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz,
+            int _loadcase,
+            Point3d _positionPoint,
+            double _position
+            ) : base(
+             _fx,
+             _fy,
+             _fz,
+             _mx,
+             _my,
+             _mz,
+             _loadcase,
+             _positionPoint,
+             _position)
+        {
+        }
+
+    }
+
+    public class MaxShearDir2 : Force
+    {
+        private string forceType = "ShearDir2";
+        private string forceUnits = "kN";
+
+        public MaxShearDir2(
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz,
+            int _loadcase,
+            Point3d _positionPoint,
+            double _position
+            ) : base(
+             _fx,
+             _fy,
+             _fz,
+             _mx,
+             _my,
+             _mz,
+             _loadcase,
+             _positionPoint,
+             _position)
+        {
+        }
+
+    }
+
+    public class MaxBendingDir1 : Force
+    {
+        private string forceType = "BendingDir1";
+        private string forceUnits = "kNm";
+
+        public MaxBendingDir1(
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz,
+            int _loadcase,
+            Point3d _positionPoint,
+            double _position
+            ) : base(
+             _fx,
+             _fy,
+             _fz,
+             _mx,
+             _my,
+             _mz,
+             _loadcase,
+             _positionPoint,
+             _position)
+        {
+        }
+
+    }
+
+    public class MaxBendingDir2 : Force
+    {
+        private string forceType = "BendingDir2";
+        private string forceUnits = "kNm";
+
+        public MaxBendingDir2(
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz,
+            int _loadcase,
+            Point3d _positionPoint,
+            double _position
+            ) : base(
+             _fx,
+             _fy,
+             _fz,
+             _mx,
+             _my,
+             _mz,
+             _loadcase,
+             _positionPoint,
+             _position)
+        {
+        }
+
+    }
+    public class MaxTorsion : Force
+    {
+        private string forceType = "Torsion";
+        private string forceUnits = "kNm";
+
+        public MaxTorsion(
+            double _fx,
+            double _fy,
+            double _fz,
+            double _mx,
+            double _my,
+            double _mz,
+            int _loadcase,
+            Point3d _positionPoint,
+            double _position
+            ) : base(
+             _fx,
+             _fy,
+             _fz,
+             _mx,
+             _my,
+             _mz,
+             _loadcase,
+             _positionPoint,
+             _position)
+        {
+        }
+
     }
 }

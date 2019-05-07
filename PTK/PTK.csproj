@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\AppData\Roaming\Grasshopper\Libraries\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\Program Files\Rhinoceros 5 %2864-bit%29\Plug-ins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
@@ -50,7 +50,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="karamba">
-      <HintPath>..\..\Library\karamba.gha</HintPath>
+      <HintPath>C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\karamba.gha</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -89,6 +89,9 @@
     <Compile Include="Classes\Element.cs" />
     <Compile Include="Classes\CommonFunctions.cs" />
     <Compile Include="Classes\BuildingProject.cs" />
+    <Compile Include="Classes\Result.cs" />
+    <Compile Include="Classes\StructuralData.cs" />
+    <Compile Include="Classes\StructuralForce.cs" />
     <Compile Include="Classes\GlobalAlignmentRules.cs" />
     <Compile Include="Classes\Joint.cs" />
     <Compile Include="Classes\KarambaConversion.cs" />
@@ -100,6 +103,7 @@
     <Compile Include="Classes\DetailingGroupPlaneRules.cs" />
     <Compile Include="Classes\ParetoSolution.cs" />
     <Compile Include="Classes\StructuralReport.cs" />
+    <Compile Include="Classes\StructuralResult.cs" />
     <Compile Include="Components\10_Rule_ElementForce.cs" />
     <Compile Include="Components\10_Rule_ElementForceTension.cs" />
     <Compile Include="Components\10_Rule_ElementForceCompression.cs" />
@@ -408,7 +412,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "%25UserProfile%25\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
+    <PostBuildEvent>Copy "$(TargetPath)" "C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\$(ProjectName).gha"
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

@@ -25,7 +25,7 @@ namespace PTK
             pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
             pManager.AddGenericParameter( "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
             pManager.AddGenericParameter("Alignment", "A", "Global Alignment", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_StructuralData(), "Forces", "F", "Add forces", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Joint(), "Joint", "J", "Add joint", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Structural Priority", "P", "Add integer value to set the priority of the member", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Intersection Nodes?", "I?", "Whether the element intersects other members at other than the end point", GH_ParamAccess.item, true);
@@ -55,8 +55,8 @@ namespace PTK
             GH_CroSec gCroSec = null;
             ElementAlign ElementAlignment = null;
             CompositeInput Composite = null;
-            GH_Force gForces = null;
-            Force forces = null;
+            //GH_StructuralData gStructuralData = null;
+            StructuralData structuralData = null;
             List<GH_Joint> gJoints = new List<GH_Joint>();
             List<Joint> joints = null;
             int priority = new int();
@@ -90,15 +90,17 @@ namespace PTK
             
             //Generating Alignment
             
-
-            if (!DA.GetData(4, ref gForces))
+            /*
+            if (!DA.GetData(4, ref gStructuralData))
             {
-                forces = new Force();
+                structuralData = new StructuralData();
             }
             else
             {
-                forces = gForces.Value;
+                structuralData = gStructuralData.Value;
             }
+            */
+
             if (!DA.GetDataList(5, gJoints))
             {
                 joints = new List<Joint>();
@@ -118,7 +120,7 @@ namespace PTK
 
 
             // --- solve ---
-            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, Composite, ElementAlignment, forces, joints, priority, intersect));
+            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, Composite, ElementAlignment, structuralData, joints, priority, intersect));
 
             // --- output ---
             DA.SetData(0, elem);

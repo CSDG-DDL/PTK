@@ -28,7 +28,16 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Force List", "FL", "List of forces in the element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("LoadCase", "LC", "Load case of the force", GH_ParamAccess.item);               //0
+            pManager.AddNumberParameter("KarambaID", "KID", "Index of the karamba element", GH_ParamAccess.item);       //1
+            pManager.AddNumberParameter("Position", "P", "Position on the element", GH_ParamAccess.item);               //2
+            pManager.AddPointParameter("PositionPT", "PPT", "Point3d of the force", GH_ParamAccess.item);               //3
+            pManager.AddNumberParameter("AxialForce", "FX", "Axial force", GH_ParamAccess.item);                        //4
+            pManager.AddNumberParameter("ShearForce1", "FY", "Shear force in direction 1", GH_ParamAccess.item);        //5
+            pManager.AddNumberParameter("ShearForce2", "FZ", "Shear force in direction 2", GH_ParamAccess.item);        //6
+            pManager.AddNumberParameter("TorsionMoment", "MX", "Torsion moment", GH_ParamAccess.item);                  //7
+            pManager.AddNumberParameter("BendingMoment1", "MY", "Bending moment in direction 1", GH_ParamAccess.item);  //8
+            pManager.AddNumberParameter("BendingMoment2", "MZ", "Bending moment in direction 2", GH_ParamAccess.item);  //9
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -41,18 +50,20 @@ namespace PTK
             Force force = gForce.Value;
 
             // --- solve ---
-            List<double> forceList = new List<double>();
-            forceList.Add(force.Max_Fx_compression);
-            forceList.Add(force.Max_Fx_tension);
-            forceList.Add(force.Max_Fy_shear);
-            forceList.Add(force.Max_Fz_shear);
 
-            forceList.Add(force.Max_Mx_torsion);
-            forceList.Add(force.Max_My_bending);
-            forceList.Add(force.Max_Mz_bending);
             
             // --- output ---
-            DA.SetDataList(0, forceList);
+            DA.SetData(0, force.loadcase);
+            DA.SetData(1, force.karambaElementID);
+            DA.SetData(2, force.position);
+            DA.SetData(3, force.positionPoint);
+            DA.SetData(4, force.FX);
+            DA.SetData(5, force.FY);
+            DA.SetData(6, force.FZ);
+            DA.SetData(7, force.MX);
+            DA.SetData(8, force.MY);
+            DA.SetData(9, force.MZ);
+
         }
 
         protected override System.Drawing.Bitmap Icon

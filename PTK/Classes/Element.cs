@@ -20,7 +20,7 @@ namespace PTK
             Tag = _tag;
         }
     }
-
+    
     public class Element1D : Element
     {
         // --- field ---
@@ -31,7 +31,7 @@ namespace PTK
         public Plane CroSecLocalPlane { get; private set; }
         public CrossSection CrossSection { get; private set; } = null;  //THIS IS GOING OUT!
         public CompositeNew Composite { get; private set; }
-        public Force Forces { get; private set; } = new Force();
+        public StructuralData StructuralData { get; private set; } = new StructuralData();
         public List<Joint> Joints { get; private set; } = new List<Joint>();
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
@@ -49,13 +49,13 @@ namespace PTK
             InitializeLocalPlane();
         }
 
-        public Element1D(string _tag, Curve _curve, CompositeInput _compositeInput, ElementAlign _elementalignmnet, Force _forces, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
+        public Element1D(string _tag, Curve _curve, CompositeInput _compositeInput, ElementAlign _elementalignmnet, StructuralData _StructuralData, List<Joint> _joints, int _priority, bool _intersect) : base(_tag)
         {
             BaseCurve = _curve;
             PointAtStart = _curve.PointAtStart;
             PointAtEnd = _curve.PointAtEnd;
             Elementalignment = _elementalignmnet;
-            Forces = _forces;
+            StructuralData = _StructuralData;
             Joints = _joints;
             IsIntersectWithOther = _intersect;
             Priority = _priority;
@@ -70,13 +70,13 @@ namespace PTK
         }
 
         
-        public Element1D( Element1D _elem, Force _forces) : base()
+        public Element1D( Element1D _elem, StructuralData _StructuralData) : base()
         {
             BaseCurve = _elem.baseCurve;
             PointAtStart = _elem.PointAtStart;
             PointAtEnd = _elem.PointAtEnd;
             Composite = _elem.Composite;
-            Forces = _forces;
+            StructuralData = _StructuralData;
             Joints = _elem.Joints;
             IsIntersectWithOther = _elem.IsIntersectWithOther;
             Priority = _elem.Priority;
@@ -103,6 +103,7 @@ namespace PTK
         {
             if (BaseCurve != null)
             {
+                /*
                 Vector3d localX = BaseCurve.TangentAtStart;
                 Vector3d globalZ = Vector3d.ZAxis;
 
@@ -136,7 +137,7 @@ namespace PTK
                 
                 Point3d test = CroSecLocalPlane.PointAt(ElementOffsetY, ElementOffsetZ);
                 CroSecLocalPlane = new Plane(test, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
-
+                */
                 
 
             }
