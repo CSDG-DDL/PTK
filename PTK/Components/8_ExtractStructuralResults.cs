@@ -13,8 +13,8 @@ namespace PTK
     public class PTK_ExtractStructuralResults : GH_Component
     {
         public PTK_ExtractStructuralResults()
-          : base("Deconstruct Force", "DF",
-              "Deconstructs a force into into values",
+          : base("Deconstruct Structural Result", "DR",
+              "Deconstructs a results into into values",
               CommonProps.category, CommonProps.subcate8)
         {
             Message = CommonProps.initialMessage;
@@ -28,7 +28,10 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddParameter(new Param_Force(), "StructuralData", "SD", "StructuralData", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Utilization Compression","UC","Maximum compression utilization for the element",GH_ParamAccess.item);
+            pManager.AddNumberParameter("Utilization Tension", "UT", "Maximum tension utilization for the element", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Utilization Bending", "UB", "Maximum bedning utilization for the element", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Utilization Combined", "UCB", "Maximum combined compression/bending utilization for the element", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -44,9 +47,10 @@ namespace PTK
 
             
             // --- output ---
-            DA.SetData(0, sd.StructuralForces);
-            DA.SetData(1, sd.StructuralResults);
-           
+            DA.SetData(0, sd.StructuralResults.CompressionUtilization);
+            DA.SetData(1, sd.StructuralResults.TensionUtilization);
+            DA.SetData(2, sd.StructuralResults.BendingUtilization);
+            DA.SetData(3, sd.StructuralResults.CombinedBendingAndAxial);
 
         }
 
