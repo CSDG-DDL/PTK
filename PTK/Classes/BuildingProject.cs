@@ -317,15 +317,17 @@ namespace PTK
             CoordinateSystem.ReferencePoint = new PointType();
 
 
+            double ToMM = CommonFunctions.ConvertToMM();
+
             CoordinateSystem.XVector.X = btlPlane.XAxis.X;
             CoordinateSystem.XVector.Y = btlPlane.XAxis.Y;
             CoordinateSystem.XVector.Z = btlPlane.XAxis.Z;
             CoordinateSystem.YVector.X = btlPlane.YAxis.X;
             CoordinateSystem.YVector.Y = btlPlane.YAxis.Y;
             CoordinateSystem.YVector.Z = btlPlane.YAxis.Z;
-            CoordinateSystem.ReferencePoint.X = btlPlane.OriginX;
-            CoordinateSystem.ReferencePoint.Y = btlPlane.OriginY;
-            CoordinateSystem.ReferencePoint.Z = btlPlane.OriginZ;
+            CoordinateSystem.ReferencePoint.X = btlPlane.OriginX * ToMM;
+            CoordinateSystem.ReferencePoint.Y = btlPlane.OriginY * ToMM;
+            CoordinateSystem.ReferencePoint.Z = btlPlane.OriginZ * ToMM;
 
             ReferenceType Reference = new ReferenceType();
             Reference.Position = CoordinateSystem;
@@ -347,11 +349,11 @@ namespace PTK
 
 
 
-            BTLPart.Width = width;
-            BTLPart.Length = length;
-            BTLPart.Height = height;
-            BTLPart.StartOffset = 0.3;
-            BTLPart.EndOffset = 0.3;
+            BTLPart.Width = width * ToMM;
+            BTLPart.Length = length * ToMM;
+            BTLPart.Height = height * ToMM;
+            BTLPart.StartOffset = 0;
+            BTLPart.EndOffset = 0;
 
 
             BTLPartGeometry = new BTLPartGeometry(refSides, cornerPoints, endPoints, startPoints);

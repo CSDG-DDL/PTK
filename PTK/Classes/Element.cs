@@ -65,7 +65,7 @@ namespace PTK
             Composite = new CompositeNew(_compositeInput, this);
             GenerateCornerLines();
 
-            CrossSection = new RectangleCroSec("", Composite.MaterialProperty, Composite.HeightSimplified, Composite.WidthSimplified, new Alignment());
+            //CrossSection = new RectangleCroSec("", Composite.MaterialProperty, Composite.HeightSimplified, Composite.WidthSimplified, new Alignment());
 
             
         }
@@ -104,7 +104,7 @@ namespace PTK
         {
             if (BaseCurve != null)
             {
-                /*
+                
                 Vector3d localX = BaseCurve.TangentAtStart;
                 Vector3d globalZ = Vector3d.ZAxis;
 
@@ -139,7 +139,7 @@ namespace PTK
                 Point3d test = CroSecLocalPlane.PointAt(ElementOffsetY, ElementOffsetZ);
                 CroSecLocalPlane = new Plane(test, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
 
-                */
+                
 
                 
 

@@ -44,35 +44,37 @@ namespace PTK
         }
 
 
-        public static string units = Rhino.RhinoDoc.ActiveDoc.GetUnitSystemName(true, false, false, false);
         
 
-        public static double ToMM(double number)
+
+        public static double ConvertToMM()
         {
-            if (units == "mm")
+
+            string units = Rhino.RhinoDoc.ActiveDoc.GetUnitSystemName(true, false, false, false);
+
+            if (units == "millimeters")
             {
-                return number;
+                return 1;
             }
-            if (units == "cm")
+            if (units == "centimeters")
             {
-                return number * 10;
+                return 10;
             }
-            if (units == "dm")
+            if (units == "desimeters")
             {
-                return number * 10;
+                return 100;
             }
 
 
-            if (units == "m")
+            if (units == "meters")
             {
-                return number * 1000;
+                return 1000;
             }
-        
+
 
             return 1;
 
 
         }
-
     }
 }

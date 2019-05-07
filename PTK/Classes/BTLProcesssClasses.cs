@@ -737,14 +737,16 @@ namespace PTK
             Point3d localpPlaneProjectedEndPoint = new Point3d(localPlaneEndPoint);
             localpPlaneProjectedEndPoint.Z = 0;
 
+            double ToMM = CommonFunctions.ConvertToMM();
+
             DrillingType Drill = new DrillingType();
-            Drill.StartX = localPlaneInsertPoint.X;
-            Drill.StartY = localPlaneInsertPoint.Y;
+            Drill.StartX = localPlaneInsertPoint.X*ToMM;
+            Drill.StartY = localPlaneInsertPoint.Y * ToMM;
 
 
             if (Math.Abs(localPlaneEndPoint.Z) < Refside.RefSideZLength)
             {
-                Drill.Depth = -localPlaneEndPoint.Z;
+                Drill.Depth = -localPlaneEndPoint.Z * ToMM;
                 Drill.DepthLimited = BooleanType.yes;
             }
             else
@@ -755,7 +757,7 @@ namespace PTK
 
             
 
-            Drill.Diameter = Radius * 2;
+            Drill.Diameter = Radius * 2 * ToMM;
 
 
             Point3d LocaldirectionPoint = new Point3d(localPlaneInsertPoint);
@@ -893,16 +895,16 @@ namespace PTK
             box.X = new Interval(box.X.T0 * 4, box.X.T1 * 4);
             box.Y = new Interval(box.Y.T0 * 4, box.Y.T1 * 4);
 
-            
 
 
 
+            double ToMM = CommonFunctions.ConvertToMM();
             //Creating BTL processing
             JackRafterCutType JackRafterCut = new JackRafterCutType();
             JackRafterCut.Orientation = orientation;
             JackRafterCut.ReferencePlaneID = RefSideId;
             JackRafterCut.Process = BooleanType.yes;
-            JackRafterCut.StartX = localaxispoint.Z;
+            JackRafterCut.StartX = localaxispoint.Z *ToMM;
             JackRafterCut.StartY = 0.0;
             JackRafterCut.StartDepth = 0.0;
             JackRafterCut.Angle = Vector3d.VectorAngle(RefVector, CutPlane.XAxis);
@@ -1216,15 +1218,18 @@ namespace PTK
             type.FaceLimitedTop = BooleanType.no;
 
 
+
+            double ToMM = CommonFunctions.ConvertToMM();
+
             PocketType Pocket = new PocketType();
             Pocket.ReferencePlaneID = Refside.RefSideID;
             Pocket.Name = "Pocket";
-            Pocket.StartX = localPt.X;
-            Pocket.StartY = localPt.Y;
-            Pocket.StartDepth = -localPt.Z;
+            Pocket.StartX = localPt.X * ToMM;
+            Pocket.StartY = localPt.Y * ToMM;
+            Pocket.StartDepth = -localPt.Z * ToMM;
             Pocket.InternalAngle = Rhino.RhinoMath.ToDegrees( InternalAngle);
-            Pocket.Length = Length;
-            Pocket.Width = Width;
+            Pocket.Length = Length * ToMM;
+            Pocket.Width = Width * ToMM;
             Pocket.Angle = AngleFix(Angle);
             Pocket.Inclination = AngleFix(Inclination);
             Pocket.Slope = AngleFix(Slope);
@@ -1442,19 +1447,21 @@ namespace PTK
             OrientationType type = BTLFunctions.GeneratePlaneAnglesPerp(RefPlane, TenonPlane, out Angle, out Inclination, out Rotation);
 
 
+            double ToMM = CommonFunctions.ConvertToMM();
+
             TenonType Tenon = new TenonType();
             Tenon.Name = "Tenon";
-            Tenon.StartX = LocalStartPoint.X;
-            Tenon.StartY = LocalStartPoint.Y;
-            Tenon.StartDepth = Math.Abs(LocalStartPoint.Z);
+            Tenon.StartX = LocalStartPoint.X*ToMM;
+            Tenon.StartY = LocalStartPoint.Y * ToMM;
+            Tenon.StartDepth = Math.Abs(LocalStartPoint.Z) * ToMM;
             Tenon.Orientation = type;
             Tenon.LengthLimitedBottom = LengthLimitedBottom;
             Tenon.LengthLimitedTop = LengthLimitedTop;
-            Tenon.Length = Length;
-            Tenon.Width = Width;
-            Tenon.Height = Height;
+            Tenon.Length = Length * ToMM;
+            Tenon.Width = Width * ToMM;
+            Tenon.Height = Height * ToMM;
             Tenon.Shape = Shapetype;
-            Tenon.ShapeRadius = ShapeRadius;
+            Tenon.ShapeRadius = ShapeRadius * ToMM;
             Tenon.Chamfer = Chamfer;
             Tenon.Angle = Rhino.RhinoMath.ToDegrees(Angle);
             Tenon.Inclination1 = Rhino.RhinoMath.ToDegrees(Inclination);
@@ -1476,7 +1483,7 @@ namespace PTK
             voidpoints = BTLFunctions.GetValidVoidPoints(TenonPlane, voidpoints);
 
             Box box = new Box(TenonPlane, voidpoints);
-            double extra = 1000;
+            double extra = 1000/ ToMM;
             box.X = new Interval(box.X.T0 - extra, box.X.T1 + extra);
             box.Y = new Interval(box.Y.T0 - extra, box.Y.T1 + extra);
             box.Z = new Interval(box.Z.T0, box.Z.T1 + extra);
@@ -1664,20 +1671,22 @@ namespace PTK
             BTLFunctions.GeneratePlaneAnglesParallell(_BTLPartGeometry, Length, WorkPlane, FlipDirection, out Angle, out Inclination, out Slope, out LocalStartPoint, out Refside, out UpdatedWorkPlane);
 
 
+            double ToMM = CommonFunctions.ConvertToMM();
+
             RefPlane = Refside.RefPlane;
 
             MortiseType Mortise = new MortiseType();
             Mortise.Name = "Mortise";
-            Mortise.StartX = LocalStartPoint.X;
-            Mortise.StartY = LocalStartPoint.Y;
-            Mortise.StartDepth = Math.Abs(LocalStartPoint.Z);
+            Mortise.StartX = LocalStartPoint.X*ToMM;
+            Mortise.StartY = LocalStartPoint.Y*ToMM;
+            Mortise.StartDepth = Math.Abs(LocalStartPoint.Z)*ToMM;
             Mortise.LengthLimitedBottom = LengthLimitedBottom;
             Mortise.LengthLimitedTop = LengthLimitedBottom;
-            Mortise.Length = Length;
-            Mortise.Width = Width;
-            Mortise.Depth = Depth;
+            Mortise.Length = Length*ToMM;
+            Mortise.Width = Width*ToMM;
+            Mortise.Depth = Depth*ToMM;
             Mortise.Shape = Shapetype;
-            Mortise.ShapeRadius = ShapeRadius;
+            Mortise.ShapeRadius = ShapeRadius*ToMM;
 
 
             Mortise.Angle = Rhino.RhinoMath.ToDegrees(Angle);
@@ -1689,7 +1698,7 @@ namespace PTK
             Interval Topwidth = new Interval(-Width / 2, Width / 2);
             Interval BtmWidth = Topwidth; //Not Mortise for tenon, but simplifies the code
             Interval LengthInterval = new Interval(0, Length);
-            Interval DepthInternval = new Interval(-Depth, 1000);
+            Interval DepthInternval = new Interval(-Depth, 1000/ToMM);
 
             Brep MortiseShape = BTLFunctions.GenerateMortiseShape(UpdatedWorkPlane, DepthInternval, BtmWidth, Topwidth, LengthInterval, Shapetype, ShapeRadius,0);
             return new PerformedProcess(Mortise, MortiseShape);
@@ -1785,20 +1794,20 @@ namespace PTK
             DovetailMortiseType DovetailMortise = new DovetailMortiseType();
 
             DovetailMortise.ConeAngleSpecified = true;
-            
-            
+
+            double ToMM = CommonFunctions.ConvertToMM();
 
             DovetailMortise.Name = "DovetailMortise";
-            DovetailMortise.StartX = LocalStartPoint.X;
-            DovetailMortise.StartY = LocalStartPoint.Y;
-            DovetailMortise.StartDepth = Math.Abs(LocalStartPoint.Z);
+            DovetailMortise.StartX = LocalStartPoint.X*ToMM;
+            DovetailMortise.StartY = LocalStartPoint.Y*ToMM;
+            DovetailMortise.StartDepth = Math.Abs(LocalStartPoint.Z)*ToMM;
             DovetailMortise.LengthLimitedBottom = LengthLimitedBottom;
             DovetailMortise.LimitationTop = LimitationTopType.limited;
-            DovetailMortise.Length = Length;
-            DovetailMortise.Width = Width;
-            DovetailMortise.Depth = Depth;
+            DovetailMortise.Length = Length*ToMM;
+            DovetailMortise.Width = Width*ToMM;
+            DovetailMortise.Depth = Depth*ToMM;
             DovetailMortise.Shape = TenonShapeType.radius;
-            DovetailMortise.ShapeRadius = ShapeRadius;
+            DovetailMortise.ShapeRadius = ShapeRadius*ToMM;
             DovetailMortise.UseFlankAngle = UseFlankAngle;
             DovetailMortise.FlankAngle = Rhino.RhinoMath.ToDegrees( FlankAngle);
             DovetailMortise.ConeAngle = Rhino.RhinoMath.ToDegrees(ConeAngle);
@@ -1815,7 +1824,7 @@ namespace PTK
             Interval BtmWidth = new Interval(-Width / 2, Width / 2);
             Interval Topwidth = new Interval(-ExtraWidth / 2, ExtraWidth / 2);
             Interval LengthInterval = new Interval(0, Length);
-            Interval DepthInternval = new Interval(-Depth, 1000);
+            Interval DepthInternval = new Interval(-Depth, 1000/ToMM);
 
             Brep MortiseShape = BTLFunctions.GenerateMortiseShape(UpdatedWorkPlane, DepthInternval, BtmWidth, Topwidth, LengthInterval, Shapetype, ShapeRadius,FlankAngle);
             return new PerformedProcess(DovetailMortise, MortiseShape);
