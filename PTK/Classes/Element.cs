@@ -104,7 +104,7 @@ namespace PTK
         {
             if (BaseCurve != null)
             {
-                /*
+                
                 Vector3d localX = BaseCurve.TangentAtStart;
                 Vector3d globalZ = Vector3d.ZAxis;
 
@@ -139,7 +139,7 @@ namespace PTK
                 Point3d test = CroSecLocalPlane.PointAt(ElementOffsetY, ElementOffsetZ);
                 CroSecLocalPlane = new Plane(test, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
 
-                */
+                
 
                 
 

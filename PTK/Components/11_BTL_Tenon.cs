@@ -31,24 +31,20 @@ namespace PTK.Components
             pManager.AddNumberParameter("Length", "L", "Add Length-parameter", GH_ParamAccess.item,50);
             pManager.AddNumberParameter("Width", "W", "Add Width-parameter", GH_ParamAccess.item,50);
             pManager.AddNumberParameter("Height", "H", "Add Height-parameter", GH_ParamAccess.item,80);
-            pManager.AddBooleanParameter("ExtendTop?", "T", "Extend tenon upwards?", GH_ParamAccess.item, false);
-            pManager.AddBooleanParameter("ExtendBottom?", "B", "Extend tenon Downwards?", GH_ParamAccess.item, false);
-            pManager.AddBooleanParameter("Chamfer?", "C", "Chamfer end tip of tenon?", GH_ParamAccess.item, false);
+
             pManager.AddNumberParameter("Shaperadius", "R", "Add shaperadius. (Active if Shapemode is set to Radius)", GH_ParamAccess.item, 20);
             pManager.AddIntegerParameter("Shapemode", "M", "Choose Shapemode. 0=Automatic, 1=Square, 2=Round, 3=rounded by tool radius, 4=Radius-based",GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("FlipDirection?", "F", "set True if you want to flip direction of the Mortise", GH_ParamAccess.item, false);
+
             pManager[5].Optional = true;
             pManager[6].Optional = true;
-            pManager[7].Optional = true;
-            pManager[8].Optional = true;
-            pManager[9].Optional = true;
 
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("BTL-Tenon", "T", "", GH_ParamAccess.item);
-            pManager.AddPlaneParameter("Plane", "", "", GH_ParamAccess.item);
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -78,12 +74,9 @@ namespace PTK.Components
             if (!DA.GetData(2, ref Length)) { return; }
             if (!DA.GetData(3, ref Width)) { return; }
             if (!DA.GetData(4, ref Height)) { return; }
-            DA.GetData(5, ref LengthLimitedTop);
-            DA.GetData(6, ref LengthLimitedBottom);
-            DA.GetData(7, ref Chamfer);
-            DA.GetData(8, ref Shaperadius);
-            DA.GetData(9, ref Shapetype);
-            DA.GetData(10, ref FlipPlane);
+            DA.GetData(5, ref Shaperadius);
+            DA.GetData(6, ref Shapetype);
+            DA.GetData(7, ref FlipPlane);
 
 
             BooleanType top = BooleanType.no;
