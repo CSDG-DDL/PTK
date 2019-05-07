@@ -37,7 +37,7 @@ namespace PTK
             pManager.AddNumberParameter("Simplified Width", "W", "Simplified width of composite", GH_ParamAccess.item);
             pManager.AddGenericParameter( "Subelements", "S", "Deconstructs the composite into subelements", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Intersect Other", "I", "Is Intersect With Other", GH_ParamAccess.item);
-
+            pManager.AddPlaneParameter("SidePlanes", "P", "0BtmSide,1Leftside,2Topside, 3Rightside", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
