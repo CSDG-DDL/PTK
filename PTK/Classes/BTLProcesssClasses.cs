@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Rhino.Geometry;
 
 
+
 namespace PTK
 {
 
@@ -178,12 +179,7 @@ namespace PTK
 
         public static void GeneratePlaneAnglesParallell(BTLPartGeometry _BTLPartGeometry, double Length, Plane WorkPlane, bool FlipDirection, out double Angle, out double Inclination, out double Slope, out Point3d LocalStartPoint, out Refside Refside, out Plane UpdatedWorkPlane)  //used when when plane is closed to parallell to refplane
         {
-            //Flipping plane
-            if (FlipDirection)
-            {
-                Plane tempplane = new Plane(WorkPlane.Origin, WorkPlane.XAxis, -WorkPlane.YAxis);
-                WorkPlane = tempplane;
-            }
+            
 
             UpdatedWorkPlane = WorkPlane; 
 
@@ -932,26 +928,48 @@ namespace PTK
         public Curve ParalellogramBtm { get; private set; }
         public Curve ParalellogramTop { get; private set; }
         public bool Flip { get; private set; }
-        public double TiltRefside { get; private set; }
-        public double TiltEndside { get; private set; }
-        public double TiltOppside { get; private set; }
-        public double TiltStartSide { get; private set; }
+        public List<double> Tilts { get; private set; }
         public Line Y { get; private set; }
         public Line X { get; private set; }
         public Point3d pt { get; private set; }
         public Plane refPlanepublic { get; private set; }
+        public double extrudeHeight { get; private set; }
 
 
         // --- constructors --- 
-        public BTLPocket(Curve _paralellogramBtm, bool _flip, double _tiltRefSide, double _tiltEndSide, double _tiltOppSide, double _tiltStartSide)
+        public BTLPocket(Curve _paralellogramBtm, bool _flip, List<double> _tilts)
         {
+
+
+
             ParalellogramBtm = _paralellogramBtm;
-            TiltRefside = _tiltRefSide;
-            TiltEndside = _tiltEndSide;
-            TiltStartSide = _tiltStartSide;
-            TiltOppside = _tiltOppSide;
+            Tilts = _tilts;
             Flip = _flip;
             
+
+        }
+
+        public BTLPocket(Element1D _elemOther, double _tolerance)
+        {
+            Plane plane = _elemOther.CroSecLocalPlane;
+            Interval Width = _elemOther.Composite.WidthInterval;
+            Interval Height = _elemOther.Composite.HeightInterval;
+
+            Width.MakeIncreasing();
+            Width.T0 = Width.T0 - _tolerance;
+            Width.T1 = Width.T1 - +_tolerance;
+
+            Height.MakeIncreasing();
+            Height.T0 = Height.T0 - _tolerance;
+            Height.T1 = Height.T1 - +_tolerance;
+
+            ParalellogramBtm = new Rectangle3d(plane, Width, Height).ToNurbsCurve();
+
+            Tilts = new List<double>();
+            Tilts.Add(Math.PI / 2);
+            Tilts.Add(Math.PI / 2);
+            Tilts.Add(Math.PI / 2);
+            Tilts.Add(Math.PI / 2);
 
         }
 
@@ -1042,20 +1060,23 @@ namespace PTK
             }
 
             double EvenLinesAngleRest =  Vector3d.VectorAngle(RefPlane.XAxis, AllLineSegments[0].Direction);
-            
-            
+            double EvenLinesAngleRestReverse = Vector3d.VectorAngle(RefPlane.XAxis, -AllLineSegments[0].Direction);
+            if (EvenLinesAngleRest > EvenLinesAngleRestReverse) { EvenLinesAngleRest = EvenLinesAngleRestReverse; }
+
 
 
             double OddLinesAngleRest = Vector3d.VectorAngle(RefPlane.XAxis, AllLineSegments[1].Direction);
-            
-            
+            double OddLinesAngleRestRevers = Vector3d.VectorAngle(RefPlane.XAxis, -AllLineSegments[1].Direction);
+            if (OddLinesAngleRest > OddLinesAngleRestRevers) { OddLinesAngleRest = OddLinesAngleRestRevers; }
+
+
 
 
 
             List<Line> MostParallellCurveSegments = new List<Line>();
 
 
-            if (EvenLinesAngleRest > OddLinesAngleRest)
+            if (EvenLinesAngleRest < OddLinesAngleRest)
             {
                 MostParallellCurveSegments.Add(AllLineSegments[0]);
                 MostParallellCurveSegments.Add(AllLineSegments[2]);
@@ -1086,13 +1107,19 @@ namespace PTK
             }
 
             int index = AllLineSegments.IndexOf(XAxisLine);
+            int loopIndex = index;
 
             Vector3d Xvector = new Vector3d();
             Vector3d Yvector = new Vector3d();
             Point3d startPoint = new Point3d();
             Line XLine;
-            Line YLine; 
+            Line YLine;
 
+            List<double> AdjustedTilts = new List<double>();
+
+
+
+            //THe X-line as correct direction
             if (XAxisLine.From.DistanceTo(RefPlane.Origin)< XAxisLine.To.DistanceTo(RefPlane.Origin))
             {
                 
@@ -1104,7 +1131,17 @@ namespace PTK
                 YLine = AllLineSegments[index];
                 YLine.Flip();
                 Yvector = YLine.Direction;
-                
+
+                //Adjusting the tilts
+                for (int i = 0; i < 4; i++)
+                {
+
+                    AdjustedTilts.Add(Tilts[loopIndex]);
+
+                    loopIndex++;
+                    if (loopIndex == 4) { loopIndex = 0; }
+                }
+
             }
             else
             {
@@ -1117,6 +1154,16 @@ namespace PTK
 
                 YLine = AllLineSegments[index];
                 Yvector = YLine.Direction;
+
+                for (int i = 0; i < 4; i++)
+                {
+
+                    AdjustedTilts.Add(Tilts[loopIndex]);
+
+                    loopIndex--;
+                    if (loopIndex == -1) { loopIndex = 3; }
+                }
+
 
             }
 
@@ -1135,13 +1182,17 @@ namespace PTK
 
             //MAKING NEW REFERENCE PLANE
             Y1Pln.Rotate(Angle, Y1Pln.ZAxis, Y1Pln.Origin);
-            Y1Pln = new Plane(Y1Pln.Origin, Y1Pln.XAxis, Y1Pln.ZAxis);
+            
+            Y1Pln = new Plane(Y1Pln.Origin, Y1Pln.XAxis, -Y1Pln.ZAxis);
 
             double Inclination = Vector3d.VectorAngle(Y1Pln.XAxis, Xvector, Y1Pln);
 
 
             Plane X2Pln = new Plane(startPoint, Xvector, Y1Pln.ZAxis);
+            
             X2Pln = new Plane(startPoint, X2Pln.YAxis, X2Pln.ZAxis);
+            refPlanepublic = X2Pln;
+
 
             double Slope = Vector3d.VectorAngle(X2Pln.XAxis, Yvector, X2Pln);
             
@@ -1177,19 +1228,98 @@ namespace PTK
             Pocket.Angle = AngleFix(Angle);
             Pocket.Inclination = AngleFix(Inclination);
             Pocket.Slope = AngleFix(Slope);
-            Pocket.TiltRefSide = TiltRefside;
-            Pocket.TiltOppSide = TiltOppside;
-            Pocket.TiltEndSide = TiltEndside;
-            Pocket.TiltStartSide = TiltStartSide;
+            Pocket.TiltRefSide = 180- Rhino.RhinoMath.ToDegrees(AdjustedTilts[0]);
+            Pocket.TiltEndSide = 180- Rhino.RhinoMath.ToDegrees(AdjustedTilts[1]);
+            Pocket.TiltOppSide = 180- Rhino.RhinoMath.ToDegrees(AdjustedTilts[2]);
+            Pocket.TiltStartSide = 180- Rhino.RhinoMath.ToDegrees(AdjustedTilts[3]);
             Pocket.MachiningLimits = type;
 
+            double vectorangle = Vector3d.VectorAngle(RefPlane.ZAxis, ShapePlane.ZAxis);
+            extrudeHeight = -localPt.Z /Math.Cos(vectorangle) * 2;
+
+            Curve GetOffsetedPolygon(List<Line> _lines, List<double> Angles,double _height,Vector3d exrudeDir)
+            {
+                List<int> LeftIndex = new List<int>(new int[] { 3,0,1,2 });
+                double Height = _height;
+                List<Point3d> points = new List<Point3d>();
+
+                for (int i = 0; i < _lines.Count; i++)
+                {
+
+                    Line LineR = _lines[i];
+                    Double RightFaceAngle = Math.PI/2- Angles[i];
+
+                    Line LineL = _lines[LeftIndex[i]];
+                    LineL.Flip();
+                    Double LeftFaceAngle = Math.PI / 2- Angles[LeftIndex[i]];
+
+                    double MainAngle = Vector3d.VectorAngle(LineR.Direction, LineL.Direction);
+
+                    Plane Plane = new Plane(LineR.From, LineR.To, LineL.To);
+
+                    double RFy = Math.Tan(RightFaceAngle) * Height;
+                    double RFx = RFy / Math.Tan(MainAngle);
+
+                    double LF = Math.Tan(LeftFaceAngle) * Height;
+                    double LFX =LF / Math.Sin(MainAngle);
+
+                    double Xtranslation = -RFx - LFX;
+                    double Ytranslation = -RFy;
+                    double Ztranslation = Height;
+
+
+                    Point3d pt = Plane.PointAt(Xtranslation, Ytranslation);
+                    pt = pt + Ztranslation * exrudeDir;
+
+                    points.Add(pt);
+
+                }
+
+                points.Add(points[0]);
+
+
+
+                PolylineCurve test = new PolylineCurve(points);
+
+                return test.ToNurbsCurve();
+
+
+            }
 
 
 
 
 
+            ParalellogramTop = GetOffsetedPolygon(AllLineSegments, Tilts, extrudeHeight,ShapePlane.ZAxis);
+
+            List<Curve> LoftCurves = new List<Curve>();
+            LoftCurves.Add(ParalellogramBtm.ToNurbsCurve());
+            LoftCurves.Add(ParalellogramTop);
 
 
+
+            var breps = Brep.CreateFromLoft(LoftCurves, Point3d.Unset, Point3d.Unset, LoftType.Straight,false);
+            
+            
+
+            //Brep shape = Extrusion.Create(ParalellogramBtm, extrudeHeight, true).ToBrep();
+            Brep shape = breps.ToList()[0];
+            
+
+            
+            shape.CapPlanarHoles(0.2);
+            Brep btmShape = Rhino.Geometry.Brep.CreatePlanarBreps(ParalellogramBtm)[0];
+            Brep topShape = Rhino.Geometry.Brep.CreatePlanarBreps(ParalellogramTop)[0];
+
+            List<Brep> brepss = new List<Brep>();
+            brepss.Add(shape);
+            brepss.Add(btmShape);
+            brepss.Add(topShape);
+
+
+
+            shape = Brep.JoinBreps(brepss, 1)[0];
+            
 
 
 
@@ -1198,45 +1328,11 @@ namespace PTK
             Y = YLine;
             X = XLine;
             pt = startPoint;
-            refPlanepublic = X2Pln;
+            
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            //Generate new parallelogram (To be sure)
-            //Flipping plane?
-            /// From seamPoint
-            /// Finding correct refside
-            /// Finding startpoint
-            //Flipping plane?
-            //Generate plane. X-axis along "Side that is closest and most paralell to refside.
-
-
-            Box box = new Box();
-
-            //Creating BTL processing
-            JackRafterCutType JackRafterCut = new JackRafterCutType();
-            JackRafterCut.Name = "NotInUse";
-
-
-
-
-            return new PerformedProcess(Pocket, Brep.CreateFromBox(box));
+            return new PerformedProcess(Pocket, shape);
 
         }
         
@@ -1268,6 +1364,7 @@ namespace PTK
         public double ShapeRadius { get; private set; }
         public TenonShapeType Shapetype { get; private set; }
         public bool FlipDirection { get; private set; }
+        public Plane RefPlane { get; private set; }
 
 
         public BTLTenon(Plane _tenonPlane, double _width, double _length, double _height, BooleanType _lengthLimitedTop, BooleanType _lengthLimitedBottom, BooleanType _chamfer, int _shapetype, double _radius, bool _flipDirection)
@@ -1297,11 +1394,108 @@ namespace PTK
             
 
         }
-        
-        
 
 
 
+        public PerformedProcess DelegateProcess(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode)
+        {
+            
+
+
+
+            //Calculating tenontplane, width/ height depth here if needed
+
+            //Finding the refside's negative z-axis that has a has the smallest angle compared to the x-axis of the tenon-plane
+            List<Refside> Refsides = _BTLPartGeometry.Refsides;
+
+
+            Refside Refside = Refsides[0];
+            Vector3d TenonLengthVector = TenonPlane.XAxis;
+            Vector3d RefsideAngle = new Vector3d();
+            double smallestAngle = 1000;
+            foreach (Refside side in Refsides)  //Cycling through refsides and choosing the one with smallest angle
+            {
+                RefsideAngle = -side.RefPlane.ZAxis;
+
+                double angle = Vector3d.VectorAngle(TenonLengthVector, RefsideAngle);
+                if (angle < smallestAngle)
+                {
+                    smallestAngle = angle;
+                    Refside = side;
+                }
+            }
+
+
+            RefPlane = Refside.RefPlane;
+            
+
+
+
+            Point3d LocalStartPoint = new Point3d();
+            RefPlane.RemapToPlaneSpace(TenonPlane.Origin, out LocalStartPoint);
+
+
+            double Angle;
+            double Inclination;
+            double Rotation;
+
+            OrientationType type = BTLFunctions.GeneratePlaneAnglesPerp(RefPlane, TenonPlane, out Angle, out Inclination, out Rotation);
+
+
+            TenonType Tenon = new TenonType();
+            Tenon.Name = "Tenon";
+            Tenon.StartX = LocalStartPoint.X;
+            Tenon.StartY = LocalStartPoint.Y;
+            Tenon.StartDepth = Math.Abs(LocalStartPoint.Z);
+            Tenon.Orientation = type;
+            Tenon.LengthLimitedBottom = LengthLimitedBottom;
+            Tenon.LengthLimitedTop = LengthLimitedTop;
+            Tenon.Length = Length;
+            Tenon.Width = Width;
+            Tenon.Height = Height;
+            Tenon.Shape = Shapetype;
+            Tenon.ShapeRadius = ShapeRadius;
+            Tenon.Chamfer = Chamfer;
+            Tenon.Angle = Rhino.RhinoMath.ToDegrees(Angle);
+            Tenon.Inclination1 = Rhino.RhinoMath.ToDegrees(Inclination);
+            Tenon.Inclination2 = Rhino.RhinoMath.ToDegrees(Rotation);
+            Tenon.Inclination = Rhino.RhinoMath.ToDegrees(Inclination);
+            Tenon.Rotation = Rhino.RhinoMath.ToDegrees(Rotation);
+            Tenon.ReferencePlaneID = Refside.RefSideID;
+
+            //Making intervals for tenonshape
+            Interval Topwidth = new Interval(-Width / 2, Width / 2);
+            Interval BtmWidth = Topwidth; //Not relevant for tenon, but simplifies the code
+            Interval LengthInterval = new Interval(0, Length);
+
+
+            //Generating points for boundingbox
+            List<Point3d> voidpoints = new List<Point3d>();
+            voidpoints.AddRange(BTLFunctions.GetCutPoints(TenonPlane, Refsides));  //adding the four points where the refEdge and the cutplane intersects
+            voidpoints.AddRange(_BTLPartGeometry.CornerPoints);
+            voidpoints = BTLFunctions.GetValidVoidPoints(TenonPlane, voidpoints);
+
+            Box box = new Box(TenonPlane, voidpoints);
+            double extra = 1000;
+            box.X = new Interval(box.X.T0 - extra, box.X.T1 + extra);
+            box.Y = new Interval(box.Y.T0 - extra, box.Y.T1 + extra);
+            box.Z = new Interval(box.Z.T0, box.Z.T1 + extra);
+
+
+            Brep Boxa = Brep.CreateFromBox(box);
+
+
+
+            Brep TenonShape = BTLFunctions.GenerateTenonShape(TenonPlane, Height, BtmWidth, Topwidth, LengthInterval, Shapetype, ShapeRadius);
+
+            double tolerance = CommonProps.tolerances;
+            Rhino.Geometry.Brep[] breps = Rhino.Geometry.Brep.CreateBooleanDifference(Boxa, TenonShape, tolerance);
+
+
+            return new PerformedProcess(Tenon, breps[0]);
+
+        }
+        /*
         public PerformedProcess DelegateProcess(BTLPartGeometry _BTLPartGeometry, ManufactureMode _mode)
         {
             if (FlipDirection)
@@ -1402,7 +1596,7 @@ namespace PTK
             return new PerformedProcess(Tenon, breps[0] );
 
         }
-
+        */
         
 
 
@@ -1423,9 +1617,10 @@ namespace PTK
 
         public double ShapeRadius { get; private set; }
         public TenonShapeType Shapetype { get; private set; }
+        public Plane RefPlane { get; private set; }
 
 
-        public BTLMortise(Plane _workPlane, double _width, double _length, double _depth, BooleanType _lengthLimitedTop, BooleanType _lengthLimitedBottom, int _shapetype, double _radius, bool _flipDirection)
+        public BTLMortise(Plane _workPlane, double _width, double _length, double _depth, BooleanType _lengthLimitedTop, BooleanType _lengthLimitedBottom, int _shapetype, double _radius)
         {
             WorkPlane = _workPlane;
 
@@ -1437,7 +1632,7 @@ namespace PTK
             LengthLimitedTop = _lengthLimitedTop;
             LengthLimitedBottom = _lengthLimitedBottom;
             ShapeRadius = _radius;
-            FlipDirection = _flipDirection;
+            
 
             TenonMode = TenonMode.PlaneMode;
             if (_shapetype < 0 || _shapetype > 4)
@@ -1467,9 +1662,9 @@ namespace PTK
 
 
             BTLFunctions.GeneratePlaneAnglesParallell(_BTLPartGeometry, Length, WorkPlane, FlipDirection, out Angle, out Inclination, out Slope, out LocalStartPoint, out Refside, out UpdatedWorkPlane);
-            
 
 
+            RefPlane = Refside.RefPlane;
 
             MortiseType Mortise = new MortiseType();
             Mortise.Name = "Mortise";

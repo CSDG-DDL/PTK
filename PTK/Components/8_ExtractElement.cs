@@ -38,6 +38,7 @@ namespace PTK
             pManager.AddGenericParameter( "Subelements", "S", "Deconstructs the composite into subelements", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Intersect Other", "I", "Is Intersect With Other", GH_ParamAccess.item);
             pManager.AddGenericParameter("StructuralData", "Sd", "returns structural data, forces and results", GH_ParamAccess.list);
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -62,8 +63,10 @@ namespace PTK
             CompositeNew Composite = elem.Composite;
             bool intersect = elem.IsIntersectWithOther;
 
+
             StructuralData sData= elem.StructuralData;
             GH_StructuralData gsData = new GH_StructuralData(sData);
+
 
             // --- output ---
             DA.SetData(0, tag);
@@ -76,6 +79,7 @@ namespace PTK
             DA.SetDataList(7, SubElements);
             DA.SetData(8, intersect);
             DA.SetData(9, gsData );
+
         }
 
 

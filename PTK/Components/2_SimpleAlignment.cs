@@ -31,13 +31,12 @@ namespace PTK
             pManager.AddNumberParameter("Offset Y", "Y", "Offset length local y", GH_ParamAccess.item, 0.0);
             pManager.AddNumberParameter("Offset Z", "Z", "Offset length local z", GH_ParamAccess.item, 0.0);
             pManager.AddNumberParameter("Rotation Angle", "R", "Rotational angle in degree", GH_ParamAccess.item, 0.0);
-            pManager.AddVectorParameter("Along Vector", "V", "Rotate the Z direction of the section plane along the direction of this vector", GH_ParamAccess.item, new Vector3d());
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
-            pManager[4].Optional = true;
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -59,7 +58,7 @@ namespace PTK
             if (!DA.GetData(1, ref offsetY)) { return; }
             if (!DA.GetData(2, ref offsetZ)) { return; }
             if (!DA.GetData(3, ref rotationAngle)) { return; }
-            if (!DA.GetData(4, ref alongVector)) { return; }
+
 
             // --- solve ---
             GH_Alignment ali = new GH_Alignment(new Alignment(name, offsetY, offsetZ, rotationAngle, alongVector));

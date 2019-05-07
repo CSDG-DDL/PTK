@@ -33,8 +33,8 @@ namespace PTK.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
 
-            pManager.AddIntegerParameter("Minimum Angle", "Min", "The minimum angle between two elements", GH_ParamAccess.item, 0);
-            pManager.AddIntegerParameter("Maximum Angle", "Max", "The maximum angle allowed between two elements",GH_ParamAccess.item, 360);
+            pManager.AddNumberParameter("Minimum Angle", "Min", "The minimum angle between two elements", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Maximum Angle", "Max", "The maximum angle allowed between two elements",GH_ParamAccess.item, Math.PI*2);
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace PTK.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             //Variables
-            int minimumAngle = 0;
-            int maximumAngle = 360;
+            double minimumAngle = 0;
+            double maximumAngle = Math.PI*2;
             //plane plane = Plane.WorldXY;
 
 
