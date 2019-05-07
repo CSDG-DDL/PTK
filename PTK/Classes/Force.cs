@@ -89,7 +89,7 @@ namespace PTK
             info = "<Force>\n" +
                 " FX:" + FX.ToString() +
                 " FY:" + FY.ToString() +
-                " MZ:" + FZ.ToString() +
+                " FZ:" + FZ.ToString() +
                 " MX:" + MX.ToString() +
                 " MY:" + MY.ToString() +
                 " MZ:" + MZ.ToString();
@@ -171,6 +171,21 @@ namespace PTK
              _position)
         {
         }
+        public MaxCompression(Force _force)
+        {
+            FX = _force.FX;
+            FY = _force.FY;
+            FZ = _force.FZ;
+            MX = _force.MX;
+            MY = _force.MY;
+            MZ = _force.MZ;
+
+            positionPoint = _force.positionPoint;
+            position = _force.position;
+            karambaElementID = _force.karambaElementID;
+            loadcase = _force.loadcase;
+
+        }
 
     }
 
@@ -201,7 +216,21 @@ namespace PTK
              _position)
         {
         }
+        public MaxTension(Force _force)
+        {
+            FX = _force.FX;
+            FY = _force.FY;
+            FZ = _force.FZ;
+            MX = _force.MX;
+            MY = _force.MY;
+            MZ = _force.MZ;
 
+            positionPoint = _force.positionPoint;
+            position = _force.position;
+            karambaElementID = _force.karambaElementID;
+            loadcase = _force.loadcase;
+
+        }
     }
 
     public class MaxShearDir1 : Force
@@ -231,7 +260,21 @@ namespace PTK
              _position)
         {
         }
+        public MaxShearDir1(Force _force)
+        {
+            FX = _force.FX;
+            FY = _force.FY;
+            FZ = _force.FZ;
+            MX = _force.MX;
+            MY = _force.MY;
+            MZ = _force.MZ;
 
+            positionPoint = _force.positionPoint;
+            position = _force.position;
+            karambaElementID = _force.karambaElementID;
+            loadcase = _force.loadcase;
+
+        }
     }
 
     public class MaxShearDir2 : Force
@@ -261,7 +304,21 @@ namespace PTK
              _position)
         {
         }
+        public MaxShearDir2(Force _force)
+        {
+            FX = _force.FX;
+            FY = _force.FY;
+            FZ = _force.FZ;
+            MX = _force.MX;
+            MY = _force.MY;
+            MZ = _force.MZ;
 
+            positionPoint = _force.positionPoint;
+            position = _force.position;
+            karambaElementID = _force.karambaElementID;
+            loadcase = _force.loadcase;
+
+        }
     }
 
     public class MaxBendingDir1 : Force
@@ -291,7 +348,21 @@ namespace PTK
              _position)
         {
         }
+        public MaxBendingDir1(Force _force)
+        {
+            FX = _force.FX;
+            FY = _force.FY;
+            FZ = _force.FZ;
+            MX = _force.MX;
+            MY = _force.MY;
+            MZ = _force.MZ;
 
+            positionPoint = _force.positionPoint;
+            position = _force.position;
+            karambaElementID = _force.karambaElementID;
+            loadcase = _force.loadcase;
+
+        }
     }
 
     public class MaxBendingDir2 : Force
@@ -321,7 +392,21 @@ namespace PTK
              _position)
         {
         }
+        public MaxBendingDir2(Force _force)
+        {
+            FX = _force.FX;
+            FY = _force.FY;
+            FZ = _force.FZ;
+            MX = _force.MX;
+            MY = _force.MY;
+            MZ = _force.MZ;
 
+            positionPoint = _force.positionPoint;
+            position = _force.position;
+            karambaElementID = _force.karambaElementID;
+            loadcase = _force.loadcase;
+
+        }
     }
     public class MaxTorsion : Force
     {
@@ -350,6 +435,20 @@ namespace PTK
              _position)
         {
         }
+        public MaxTorsion(Force _force)
+        {
+            FX = _force.FX;
+            FY = _force.FY;
+            FZ = _force.FZ;
+            MX = _force.MX;
+            MY = _force.MY;
+            MZ = _force.MZ;
 
+            positionPoint = _force.positionPoint;
+            position = _force.position;
+            karambaElementID = _force.karambaElementID;
+            loadcase = _force.loadcase;
+
+        }
     }
 }
