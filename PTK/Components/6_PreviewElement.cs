@@ -110,7 +110,7 @@ namespace PTK.Components
             foreach(var m in PrevElements)
             {
                 //args.Display.DrawObject(m.Key, new Rhino.Display.DisplayMaterial(m.Value, 0.5));
-                args.Display.DrawBrepShaded(m, new Rhino.Display.DisplayMaterial(Color.SaddleBrown));
+                args.Display.DrawBrepShaded(m, new Rhino.Display.DisplayMaterial(Color.SaddleBrown,0.5));
             }
             //base.DrawViewportMeshes(args);
         }

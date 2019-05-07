@@ -19,19 +19,22 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\..\Program Files\Rhinoceros 5 %2864-bit%29\Plug-ins\</OutputPath>
+
+    <OutputPath>..\..\..\..\..\..\..\</OutputPath>
+
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <Optimize>false</Optimize>
+    <OutputPath>.\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
@@ -53,9 +56,8 @@
       <HintPath>C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\karamba.gha</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\IIS\Microsoft Web Deploy V3\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RhinoCommon, Version=5.1.30000.17, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -66,9 +68,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\portable-net45+win8+wp8+wpa81\System.Numerics.Vectors.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\portable-net45+win8+wp8+wpa81\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -101,7 +102,6 @@
     <Compile Include="Classes\Node.cs" />
     <Compile Include="Classes\CommonProps.cs" />
     <Compile Include="Classes\DetailingGroupPlaneRules.cs" />
-    <Compile Include="Classes\ParetoSolution.cs" />
     <Compile Include="Classes\StructuralReport.cs" />
     <Compile Include="Classes\StructuralResult.cs" />
     <Compile Include="Components\10_Rule_ElementForce.cs" />
@@ -114,10 +114,13 @@
     <Compile Include="Components\11_BTL_DoveTailMortise.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
     <Compile Include="Components\11_BTL_Pocket.cs" />
+    <Compile Include="Components\11_BTL_PocketFromElement.cs" />
     <Compile Include="Components\11_BTL_Tenon.cs" />
     <Compile Include="Components\11_CustomBoolean.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVector.cs" />
     <Compile Include="Components\12_DGPlaneRule_NormalVectorFromElementName.cs" />
+    <Compile Include="Components\12_DGPlaneRule_MeshNormal.cs" />
+    <Compile Include="Components\12_DGPlaneRule_ElementAverage.cs" />
     <Compile Include="Components\12_DGPlaneRule_SurfaceNormal.cs" />
     <Compile Include="Components\13_GlobalAlign_FromPlane.cs" />
     <Compile Include="Components\13_GlobalAlign_FromPoints.cs" />
@@ -143,10 +146,12 @@
     <Compile Include="Components\7_BuildModel.cs" />
     <Compile Include="Components\8_ExtractDetail.cs" />
     <Compile Include="Components\8_ExtractForce.cs" />
+
     <Compile Include="Components\8_ExtractStructuralForces.cs" />
     <Compile Include="Components\8_ExtractStructuralResults.cs" />
     <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
     <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
+
     <Compile Include="Components\11_BTL_Mortise.cs" />
     <Compile Include="Components\10_Rule_ElementAngle.cs" />
     <Compile Include="Components\8_ExtractCrossSection.cs" />
@@ -159,20 +164,6 @@
       <DependentUpon>F01_Supports.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\2_RectangularCrossection.cs" />
-    <Compile Include="Forms\F02_GAForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\F02_GAForm.Designer.cs">
-      <DependentUpon>F02_GAForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ParaCoorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ParaCoorForm.Designer.cs" />
-    <Compile Include="Forms\PSOForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PSOForm.Designer.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -200,19 +191,12 @@
     <Compile Include="Components\8_ExtractNode.cs" />
     <Compile Include="Classes\Support.cs" />
     <Compile Include="Components\8_ExtractAssembly.cs" />
-    <Compile Include="Components\9_GeneticAlgorithm.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\F01_Supports.resx">
       <DependentUpon>F01_Supports.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\F02_GAForm.resx">
-      <DependentUpon>F02_GAForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ParaCoorForm.resx" />
-    <EmbeddedResource Include="Forms\PSOForm.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -222,9 +206,6 @@
     <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="ParaCoorFormItem\d3\LICENSE">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -326,50 +307,50 @@
     <None Include="Resources\ico_geom .png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ParaCoorFormItem\d3.parcoords.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ParaCoorFormItem\d3.parcoords.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ParaCoorFormItem\d3\d3.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ParaCoorFormItem\d3\d3.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ParaCoorFormItem\divgrid.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ParaCoorFormItem\Viewer.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ParaCoorFormItem\Viewer.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="Resources\DPNSrf.png" />
+    <None Include="Resources\DPNMesh.png" />
+    <None Include="Resources\DPNEleAve.png" />
+    <None Include="Resources\DPNAlongEle.png" />
+    <None Include="Resources\DPNNormal.png" />
+    <None Include="Resources\DNPNormal.png" />
+    <None Include="Resources\StrAssemble.png" />
+    <None Include="Resources\Karamba.png" />
+    <None Include="Resources\Drill.png" />
+    <None Include="Resources\Subtraction.png" />
+    <None Include="Resources\Mortise.png" />
+    <None Include="Resources\Tenon.png" />
+    <None Include="Resources\Support.png" />
+    <None Include="Resources\Joint.png" />
+    <None Include="Resources\Force.png" />
+    <None Include="Resources\Alignment.png" />
+    <None Include="Resources\PreElementStr.png" />
+    <None Include="Resources\LocalAnalysisCheck.png" />
+    <None Include="Resources\LocalAnalysis.png" />
+    <None Include="Resources\Composite.png" />
+    <None Include="Resources\ParaCrossSection.png" />
+    <None Include="Resources\StructuralMaterial.png" />
+    <None Include="Resources\ParaSMP.png" />
+    <None Include="Resources\ParaForce.png" />
+    <None Include="Resources\ReindeerAssemble.png" />
+    <None Include="Resources\ReindeerAssemble.bmp" />
+    <None Include="Resources\RectangleCS1.png" />
+    <None Include="Resources\Alignment1.png" />
     <None Include="Resources\RectangleCS.png" />
     <None Include="Resources\CircularCS.png" />
-    <None Include="Resources\Joint.png" />
     <None Include="Resources\GravityLoad.png" />
     <None Include="Resources\GA.png" />
-    <None Include="Resources\Force.png" />
     <None Include="Resources\ExtPareto.png" />
     <None Include="Resources\ExtNode.png" />
     <None Include="Resources\ExtElement.png" />
     <None Include="Resources\ExtDetail.png" />
     <None Include="Resources\ExtAssemble.png" />
     <None Include="Resources\Element.png" />
-    <None Include="Resources\Drill.png" />
     <None Include="Resources\Detail.png" />
     <None Include="Resources\Cut.png" />
     <None Include="Resources\CrossSection.png" />
-    <None Include="Resources\Composite.png" />
     <None Include="Resources\BTL.png" />
     <None Include="Resources\Assemble.png" />
-    <None Include="Resources\Alignment.png" />
     <None Include="Resources\UniformLoad.png" />
-    <None Include="Resources\Support.png" />
-    <None Include="Resources\StrAssemble.png" />
     <None Include="Resources\SearchDetail.png" />
     <None Include="Resources\PSO.png" />
     <None Include="Resources\PreElement.png" />
@@ -385,17 +366,14 @@
     <None Include="Resources\ParaJoint.png" />
     <None Include="Resources\ParaElement.png" />
     <None Include="Resources\ParaDetail.png" />
-    <None Include="Resources\ParaCrossSection.png" />
     <None Include="Resources\ParaCoor.png" />
     <None Include="Resources\ParaComposite.png" />
     <None Include="Resources\ParaAssemble.png" />
     <None Include="Resources\ParaAlignment.png" />
     <None Include="Resources\Node.png" />
     <None Include="Resources\Material.png" />
-    <None Include="Resources\LocalAnalysis.png" />
     <None Include="Resources\LoadMaterial.png" />
     <None Include="Resources\Load.png" />
-    <None Include="Resources\Karamba.png" />
     <None Include="Resources\ExtMaterial.png" />
     <None Include="Resources\Disassemble.png" />
     <None Include="Resources\Assembly.png" />

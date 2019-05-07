@@ -287,10 +287,10 @@ namespace PTK.Rules
     {
         // --- field ---
         private List<string> tagsAre = new List<string>();
-        private int mode = 0;
+        private int mode;
 
         // --- constructors --- 
-        public ElementTag(List<string> _tagsAre, int _mode = 0)
+        public ElementTag(List<string> _tagsAre, int _mode)
         {
             tagsAre = _tagsAre;
             mode = _mode;
@@ -309,8 +309,11 @@ namespace PTK.Rules
 
             bool valid = false;
            
-            if (mode >= 4) //mode verifier
+            if (mode >= 4)
+            {
                 mode = 0;
+            }
+                
 
             if (mode == 0)  // Mode 0 - One of - The detail must contain one of the inputted tags
             {
@@ -329,26 +332,25 @@ namespace PTK.Rules
 
             if (mode == 1) // Mode 1 - At least -  The detail must contain all the inputted tags, but can also contain other tags
             {
+                List<string> ElementTags = new List<string>();
+
                 for (int j = 0; j < _elements.Count; j++)
                 {
-                    foreach (Element element in _elements)
-                    {
-                        detailTags.Add(element.Tag);
-                    }
-
-                    if (tagsAre.Count == 1)
-                    {
-                        if (detailTags.Contains(tagsAre[0]))
-                            valid = true;
-                    }
-                    else
-                    {
-                        List<string> detailTagsDistinct = detailTags.Distinct().ToList();
-
-                        if (detailTagsDistinct.Except(tagsAreDistinct).Count() == 0 && tagsAreDistinct.Except(detailTagsDistinct).Count() == 0)
-                            valid = true;
-                    }
+                    ElementTags.Add(_elements[j].Tag);
                 }
+                
+
+                for (int j = 0; j < tagsAre.Count; j++)
+                {
+                    if (!ElementTags.Contains(tagsAre[j]))
+                    {
+                        return false;
+                    }
+
+                }
+                return true;
+
+
             }
 
 
@@ -521,12 +523,12 @@ namespace PTK.Rules
     {
         
         // --- field ---
-        private int minimumAngle = 0;
-        private int maximumAngle = 360;
+        private double minimumAngle = 0;
+        private double maximumAngle = Math.PI*2;
 
         // --- constructors ---
 
-        public ElementAngle(int _minimumAngle = 0, int _maximumAngle = 360)
+        public ElementAngle(double _minimumAngle, double _maximumAngle)
         {
             minimumAngle = _minimumAngle;
             maximumAngle = _maximumAngle;
@@ -567,20 +569,7 @@ namespace PTK.Rules
             Plane.FitPlaneToPoints(pointsOnElement,out nodePlane);
             nodePlane.Origin = _node.Point;
 
-            //for (int i = 0; i < _elems.Count; i++)
-            //{
-            ////Creates a unitized vector of each element, starting in the node, projected on the nodePlane
-            //    Point3d pointOnElement = _elems[i].BaseCurve.PointAt(0.5);
-            //    Point3d _pointOnElement = new Point3d(pointOnElement.X,pointOnElement.Y,nodePlane.OriginZ);
-            //    Line elementLine = new Line(_node.Point, _pointOnElement);
-            //    Vector3d _elementVector1 = elementLine.UnitTangent;
-            //    elementVectors2D.Add(_elementVector1);
-            //}
-            
-            //Deconstructs nodePlane to find the vectors on the plane 
-            //Vector3d nX = nodePlane.XAxis;
-            //Vector3d nY = nodePlane.YAxis;
-            //Vector3d nZ = nodePlane.ZAxis;
+    
 
             double angleToNodeVector;
 
@@ -606,45 +595,28 @@ namespace PTK.Rules
             sortVectors.Add(circleDictionoary[ts[i]]);
             }
             
-            ////Finds angles between each element and the x-axis on the nodeplane. Adds to a dictionary and sorts according to the angle.
 
-            //for (int i = 0; i < elementVectors.Count; i++)
-            //{
-            //    angleToNodeVector = (Vector3d.VectorAngle(nX, elementVectors[i], nodePlane) * 180 / Math.PI);
-            //    angles.Add(angleToNodeVector);
-            //}
-
-            //var dictionary = new Dictionary<double, Vector3d>();
-            //for (int i = 0; i < count; i++) dictionary.Add(angles[i], elementVectors[i]);
-
-            //angles.Sort();
-
-            //List<Vector3d> sortedVectors = new List<Vector3d>();
-            //for (int i = 0; i < count; i++)
-            //{
-            //    sortedVectors.Add(dictionary[angles[i]]);
-            //}
             
             //Adding the angles between each element to a list
             List<double> anglesBetween = new List<double>();
 
             if (count == 2)
             {
-                double angleFirst = Vector3d.VectorAngle(sortVectors[1], sortVectors[0],nodePlane) * 180 / Math.PI;
+                double angleFirst = Vector3d.VectorAngle(sortVectors[1], sortVectors[0],nodePlane);
                 anglesBetween.Add(angleFirst);
-                double angleSecond = Vector3d.VectorAngle(sortVectors[0], sortVectors[1],nodePlane) * 180 / Math.PI;
+                double angleSecond = Vector3d.VectorAngle(sortVectors[0], sortVectors[1],nodePlane);
                 anglesBetween.Add(angleSecond);
             }
             else
             {
             //Add the angle between last(count-1) and first(0) index manually
-                double angleFirst = Vector3d.VectorAngle(sortVectors[count - 1], sortVectors[0]) * 180 / Math.PI;
+                double angleFirst = Vector3d.VectorAngle(sortVectors[count - 1], sortVectors[0]);
                 anglesBetween.Add(angleFirst);
 
             //Adds the angle between the others in a loop
                 for (int i = 0; i < count - 1; i++)
                 {
-                    double angleBetweenNext = Vector3d.VectorAngle(sortVectors[i], sortVectors[i + 1]) * 180 / Math.PI;
+                    double angleBetweenNext = Vector3d.VectorAngle(sortVectors[i], sortVectors[i + 1]);
                     anglesBetween.Add(angleBetweenNext);
                 }
             }

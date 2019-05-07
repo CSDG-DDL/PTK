@@ -29,6 +29,7 @@ namespace PTK
         public Point3d PointAtStart { get; private set; } = new Point3d();
         public Point3d PointAtEnd { get; private set; } = new Point3d();
         public Plane CroSecLocalPlane { get; private set; }
+        public Plane CroSecLocalCornerPlane { get; private set; }
         public CrossSection CrossSection { get; private set; } = null;  //THIS IS GOING OUT!
         public CompositeNew Composite { get; private set; }
         public StructuralData StructuralData { get; private set; } = new StructuralData();
@@ -137,7 +138,9 @@ namespace PTK
                 
                 Point3d test = CroSecLocalPlane.PointAt(ElementOffsetY, ElementOffsetZ);
                 CroSecLocalPlane = new Plane(test, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
+
                 */
+
                 
 
             }
@@ -178,6 +181,68 @@ namespace PTK
             EdgeCurves.Add(edgeBL);
             EdgeCurves.Add(edgeTL);
         }
+
+
+        public List<Refside> GenerateRefsides()
+        {
+
+            Point3d corner = new Point3d(CroSecLocalPlane.PointAt(Composite.WidthInterval.T0, Composite.HeightInterval.T0));
+             
+
+
+            Plane CornerPlane = new Plane(corner, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
+            double Length = BaseCurve.GetLength();
+            double Width = Composite.WidthSimplified;
+            double Height = Composite.HeightSimplified;
+            Plane btlPlane = new Plane(CornerPlane.Origin, CornerPlane.ZAxis, CornerPlane.YAxis);
+            btlPlane.Translate(-btlPlane.ZAxis * Width);
+
+            Plane refPlane1 = new Plane(btlPlane.Origin, btlPlane.XAxis, btlPlane.ZAxis);
+
+            refPlane1.YAxis.Unitize();
+            refPlane1.XAxis.Unitize();
+            refPlane1.ZAxis.Unitize();
+
+            Plane refPlane2 = new Plane(refPlane1.Origin, refPlane1.XAxis, refPlane1.ZAxis);
+            Plane refPlane3 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.YAxis);
+            Plane refPlane4 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.ZAxis);
+
+
+
+            Vector3d WidthVector = new Vector3d(refPlane1.YAxis * Width);
+            Vector3d HeightVector = new Vector3d(-refPlane1.ZAxis * Height);
+
+            refPlane2.Translate(HeightVector);
+            refPlane3.Translate(WidthVector + HeightVector);
+            refPlane4.Translate(WidthVector);
+
+
+            List<Refside> refSides = new List<Refside>();
+
+
+            refSides.Add(new Refside(1, refPlane1, Length, Width, Height));
+            refSides.Add(new Refside(2, refPlane2, Length, Height, Width));
+            refSides.Add(new Refside(3, refPlane3, Length, Width, Height));
+            refSides.Add(new Refside(4, refPlane4, Length, Height, Width));
+
+            List<Point3d> startPoints = new List<Point3d>();
+            List<Point3d> endPoints = new List<Point3d>();
+            List<Point3d> cornerPoints = new List<Point3d>();
+
+
+            foreach (Refside side in refSides)
+            {
+                startPoints.Add(side.RefPoint);
+                Plane tempPlane = new Plane(side.RefPoint, CornerPlane.ZAxis);
+
+                tempPlane.Translate(tempPlane.ZAxis * Length);
+                endPoints.Add(tempPlane.Origin);
+            }
+
+            return refSides;
+        }
+
+
 
 
         public Brep GenerateSimplifiedGeometry()
@@ -286,12 +351,14 @@ namespace PTK
         public Plane CrosSecLocalCornerPlane { get; private set; }
         public double Width { get; private set; }
         public double Height { get; private set; }
+        public double Length { get; private set; }
         public NurbsCurve Shape2d { get; private set; }
         public List<Point3d> Shape2dCorners { get; private set; }
         public Alignment Alignment { get; private set; } = new Alignment("Alignment");
         public MaterialProperty Material { get; private set; }
-        public PartType BTLPart { get;  set; }
-
+        //public PartType BTLPart { get;  set; }
+        public ProcessedElement ProcessedElement { get; private set; }
+        
 
         // --- constructors --- 
 
@@ -299,13 +366,14 @@ namespace PTK
         public SubElement(Element1D MainElement, CrossSection CrossSection)
         {
             Name = CrossSection.Name;
-
+            BaseCurve = MainElement.BaseCurve.DuplicateCurve();
             Alignment = CrossSection.Alignment;
             Material = CrossSection.MaterialProperty;
             Width = CrossSection.GetWidth();
             Height = CrossSection.GetHeight();
+            Length = BaseCurve.GetLength();
 
-            BaseCurve = MainElement.BaseCurve.DuplicateCurve();
+            
 
             CroSecLocalCenterPlane = GenerateCrossSectionCenterPlanePlane(MainElement.CroSecLocalPlane);
             CrosSecLocalCornerPlane = GenerateCrossSectionCornerPlane(MainElement.CroSecLocalPlane);
@@ -321,6 +389,10 @@ namespace PTK
 
 
             Shape2d = shape.ToNurbsCurve();
+
+            
+
+            
 
         }
 
@@ -348,7 +420,56 @@ namespace PTK
 
         }
 
+        public List<Refside> GenerateRefsides()
+        {
+            Plane CornerPlane = this.CrosSecLocalCornerPlane;
+            Plane btlPlane = new Plane(CornerPlane.Origin, CornerPlane.ZAxis, CornerPlane.YAxis);
+            btlPlane.Translate(-btlPlane.ZAxis * Width);
 
+            Plane refPlane1 = new Plane(btlPlane.Origin, btlPlane.XAxis, btlPlane.ZAxis);
+
+            refPlane1.YAxis.Unitize();
+            refPlane1.XAxis.Unitize();
+            refPlane1.ZAxis.Unitize();
+
+            Plane refPlane2 = new Plane(refPlane1.Origin, refPlane1.XAxis, refPlane1.ZAxis);
+            Plane refPlane3 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.YAxis);
+            Plane refPlane4 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.ZAxis);
+
+
+
+            Vector3d WidthVector = new Vector3d(refPlane1.YAxis * Width);
+            Vector3d HeightVector = new Vector3d(-refPlane1.ZAxis * Height);
+
+            refPlane2.Translate(HeightVector);
+            refPlane3.Translate(WidthVector + HeightVector);
+            refPlane4.Translate(WidthVector);
+
+
+            List<Refside> refSides = new List<Refside>();
+
+
+            refSides.Add(new Refside(1, refPlane1, Length, Width, Height));
+            refSides.Add(new Refside(2, refPlane2, Length, Height, Width));
+            refSides.Add(new Refside(3, refPlane3, Length, Width, Height));
+            refSides.Add(new Refside(4, refPlane4, Length, Height, Width));
+
+            List<Point3d> startPoints = new List<Point3d>();
+            List<Point3d> endPoints = new List<Point3d>();
+            List<Point3d> cornerPoints = new List<Point3d>();
+
+
+            foreach (Refside side in refSides)
+            {
+                startPoints.Add(side.RefPoint);
+                Plane tempPlane = new Plane(side.RefPoint, CornerPlane.ZAxis);
+
+                tempPlane.Translate(tempPlane.ZAxis * Length);
+                endPoints.Add(tempPlane.Origin);
+            }
+
+            return refSides;
+        }
 
 
         public Brep GenerateElementGeometry()

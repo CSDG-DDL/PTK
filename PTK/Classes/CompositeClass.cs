@@ -101,56 +101,40 @@ namespace PTK
                 Subelements.Add(new SubElement(MainElement, CS));
             }
 
-            if (_crossections.Count == 1)
+            //THis is a simplified version of finding genereating widths and heights
+            List<Point3d> Points = new List<Point3d>();
+
+            foreach (SubElement s in Subelements)
             {
-                WidthSimplified = _crossections[0].GetWidth();
-                HeightSimplified = _crossections[0].GetHeight();
-                HeightInterval = new Interval(-HeightSimplified / 2, HeightSimplified / 2);
-                WidthInterval = new Interval(-WidthSimplified / 2, WidthSimplified / 2);
-
-
-            }
-            else
-            {
-                //THis is a simplified version of finding genereating widths and heights
-                List<Point3d> Points = new List<Point3d>();
-
-                foreach (SubElement s in Subelements)
-                {
-                    Points.AddRange(s.Shape2dCorners);
-
-
-                }
-
-                Plane csplane = MainElement.CroSecLocalPlane;
-                List<double> Widths = new List<double>();
-                List<double> Heights = new List<double>();
-                 
-
-                foreach(Point3d p in Points)
-                {
-                    Point3d pt;
-                    csplane.RemapToPlaneSpace(p, out pt);
-
-                    Widths.Add(pt.X);
-                    Heights.Add(pt.Y);                    
-
-                }
-
-                Widths.Sort();
-                Heights.Sort();
-
-                WidthSimplified = Widths.Last() - Widths.First();
-                HeightSimplified = Heights.Last() - Heights.First();
-
-
-                WidthInterval = new Interval(Widths.First(), Widths.Last());
-                HeightInterval = new Interval(Heights.First(), Heights.Last());
-
+                Points.AddRange(s.Shape2dCorners);
 
 
             }
 
+            Plane csplane = MainElement.CroSecLocalPlane;
+            List<double> Widths = new List<double>();
+            List<double> Heights = new List<double>();
+
+
+            foreach (Point3d p in Points)
+            {
+                Point3d pt;
+                csplane.RemapToPlaneSpace(p, out pt);
+
+                Widths.Add(pt.X);
+                Heights.Add(pt.Y);
+
+            }
+
+            Widths.Sort();
+            Heights.Sort();
+
+            WidthSimplified = Widths.Last() - Widths.First();
+            HeightSimplified = Heights.Last() - Heights.First();
+
+
+            WidthInterval = new Interval(Widths.First(), Widths.Last());
+            HeightInterval = new Interval(Heights.First(), Heights.Last());
 
         }
 

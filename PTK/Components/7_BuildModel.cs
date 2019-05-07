@@ -34,13 +34,15 @@ namespace PTK.Components
         {
             pManager.AddGenericParameter("Assembly", "A", "", GH_ParamAccess.item);
             pManager.AddGenericParameter("Timber Processes", "P", "", GH_ParamAccess.list);
-            pManager.AddBooleanParameter("Run?", "->", "Run processing? Might take minutes if complicated geometry", GH_ParamAccess.item, true);
+            pManager.AddBooleanParameter("Run BTLX?", "->", "Run BTLX processing? ", GH_ParamAccess.item, true);
+            pManager.AddBooleanParameter("Run NURBS?", "->", "Run NURBS processing? Might take minutes if complicated geometry. BOOLEAN ERRORS MAY OCCUR", GH_ParamAccess.item, true);
             pManager.AddGenericParameter("BTLX-setting", "x", "Use the BTLXSetting component to specify project/folder details", GH_ParamAccess.item);
             
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
+            pManager[4].Optional = true;
 
             pManager[1].DataMapping = GH_DataMapping.Flatten;
 
@@ -72,11 +74,21 @@ namespace PTK.Components
             DataTree<Brep> ProcessingSurfaces = new DataTree<Brep>();
 
 
-            bool run = true;
+            bool BTLXrun = true;
+            bool NURBSrun = true;
 
-            DA.GetData(2, ref run);
+            DA.GetData(2, ref BTLXrun);
+            DA.GetData(3, ref NURBSrun);
 
-            if (run)
+            ManufactureMode mode = ManufactureMode.NONE;
+
+
+            if (BTLXrun) { mode = ManufactureMode.BTL; }
+            if (NURBSrun) { mode = ManufactureMode.NURBS; }
+            if (NURBSrun && BTLXrun) { mode = ManufactureMode.BOTH; }
+
+
+            if (BTLXrun | NURBSrun)
             {
                 // --- variables ---
                 Assembly assembly = new Assembly();
@@ -92,11 +104,11 @@ namespace PTK.Components
                 // --- input --- 
                 DA.GetData(0, ref ghAssembly);
                 DA.GetDataList(1, Orders);
-                if (!DA.GetData(3, ref btlxInput))
+                if (!DA.GetData(4, ref btlxInput))
                 {
                     btlxInput.Architect = "CSDG-NikkenDDL";
                     btlxInput.Comment = @"C:\Users\Lokaladm\Desktop\PROJECTFOLDER";
-                    btlxInput.Name = "ILoveCSDG";
+                    btlxInput.Name = "NoNamedProject";
                     
 
                 }
@@ -105,7 +117,7 @@ namespace PTK.Components
                 // --- solve ---
                 BuildingProject GrasshopperProject = new BuildingProject(new ProjectType());
                 GrasshopperProject.PrepairElements(ghAssembly.Value.Elements, Orders);
-                GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
+                GrasshopperProject.ManufactureProject(mode);
 
 
 

@@ -38,6 +38,7 @@ namespace PTK
             pManager.AddGenericParameter("BTL-Cut", "B", "", GH_ParamAccess.list);
             pManager[0].Optional = true;
             pManager[0].DataMapping = GH_DataMapping.Flatten;
+            
 
         }
 
