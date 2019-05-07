@@ -43,5 +43,36 @@ namespace PTK
             return Rhino.RhinoMath.UnitScale(fromUnitSystem, _toUnitSystem);
         }
 
+
+        public static string units = Rhino.RhinoDoc.ActiveDoc.GetUnitSystemName(true, false, false, false);
+        
+
+        public static double ToMM(double number)
+        {
+            if (units == "mm")
+            {
+                return number;
+            }
+            if (units == "cm")
+            {
+                return number * 10;
+            }
+            if (units == "dm")
+            {
+                return number * 10;
+            }
+
+
+            if (units == "m")
+            {
+                return number * 1000;
+            }
+        
+
+            return 1;
+
+
+        }
+
     }
 }

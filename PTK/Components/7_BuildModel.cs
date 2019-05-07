@@ -109,6 +109,8 @@ namespace PTK.Components
                     btlxInput.Architect = "CSDG-NikkenDDL";
                     btlxInput.Comment = @"C:\Users\Lokaladm\Desktop\PROJECTFOLDER";
                     btlxInput.Name = "NoNamedProject";
+
+                    
                     
 
                 }
@@ -139,6 +141,7 @@ namespace PTK.Components
                 Project.Customer = btlxInput.Customer;
                 Project.Comment = "BetaTest. THIS FILE MAY LACK PROCESSINGS OR CONTAIN ERRORS! ";
 
+                
 
 
 
@@ -150,7 +153,7 @@ namespace PTK.Components
 
                 BTLx.Project = Project;
 
-
+                
 
 
                 // Create a new XmlSerializer instance with the type of the test class
