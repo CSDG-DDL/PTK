@@ -303,7 +303,7 @@ namespace PTK
                 double maxForce = 0;
                 foreach (var eachForce in forcesInTheElement)
                 {
-                    if (eachForce.FX > maxForce)
+                    if (eachForce.FX > maxForce) //compression in minus
                     {
                         searchedForce = eachForce;
                     }
