@@ -114,12 +114,10 @@ namespace PTK.Components
 
 
             #region creating report of calculation
-            // Create
-
-            List<double> maxUtilList = new List<double>();
+            // Creat
             List<double> tmpUtilList = new List<double>();
             List<Brep> brepList = new List<Brep>();
-            PTK_StructuralAnalysis tmpReport = new PTK_StructuralAnalysis();
+
             Dictionary<Element1D, double> utiliziationDictionary = new Dictionary<Element1D, double>();
             Dictionary<double, double> utilizationColor = new Dictionary<double, double>();
 
@@ -135,27 +133,22 @@ namespace PTK.Components
                     c1++;
                 }
                 int i1 = 0;
+
                 foreach (var e1 in structuralAssembly.Elements)
                 {
-                    tmpReport = structuralAssembly.ElementReport[e1];
                     tmpUtilList = new List<double>() {
-                        tmpReport.elementTensionUtilization,
-                        tmpReport.elementCompressionUtilization,
-                        tmpReport.elementCombinedBendingAndAxial,
-                        tmpReport.elementCompressionUtilizationAngle,
-                        tmpReport.elementBendingUtilization
-
-                            };
-                    maxUtilList.Add(tmpUtilList.Max());
+                        e1.StructuralData.StructuralResults.CompressionUtilization,
+                        e1.StructuralData.StructuralResults.TensionUtilization,
+                        e1.StructuralData.StructuralResults.CompressionUtilizationAngle,
+                        e1.StructuralData.StructuralResults.CombinedBendingAndAxial,
+                        e1.StructuralData.StructuralResults.BendingUtilization
+                        };
+                   
                     utiliziationDictionary.Add(e1, tmpUtilList.Max());
                     infolist.Add("for element=" + i1 + " maximum utilization is=" + tmpUtilList.Max());
                     i1++;
-
-
+                    
                 }
-
-
-
             }
 
             #endregion
@@ -188,82 +181,7 @@ namespace PTK.Components
                 };
 
                 Colors.Add(tmpColor);
-                /*
-                List<Tuple<CrossSection, Alignment>> subSections = new List<Tuple<CrossSection, Alignment>>();
-                if (element.CrossSection is Composite comp)
-                {
-                    subSections.AddRange(comp.RecursionCrossSectionSearch());
-                }
-                else
-                {
-                    subSections.Add(new Tuple<CrossSection, Alignment>(element.CrossSection, element.Alignment));
-                }
-
-                foreach (Tuple<CrossSection, Alignment> subElement in subSections)
-                {
-                    Vector3d localY = element.CroSecLocalPlane.XAxis;
-                    Vector3d localZ = element.CroSecLocalPlane.YAxis;
-
-                    Point3d originElement = element.CroSecLocalPlane.Origin;
-                    Point3d originSubElement = originElement + subElement.Item2.OffsetY * localY + subElement.Item2.OffsetZ * localZ;
-
-                    Plane localPlaneSubElement = new Plane(
-                        originSubElement,
-                        element.CroSecLocalPlane.XAxis,
-                        element.CroSecLocalPlane.YAxis);
-
-                    Color tmpColor = Color.White;
-                    double tmpUtil = utiliziationDictionary[element];
-
-                    if (tmpUtil > utilList[utilList.Count-1] )
-                    {
-                        tmpColor = cList[utilList.Count - 1];
-                    }
-                    else
-                    {
-                        tmpColor = Color.White;
-                        for (int i1 = 0; i1 < utilList.Count - 1; i1++)
-                        {
-                            if (tmpUtil >= utilList[i1] && tmpUtil < utilList[i1 + 1])
-                            {
-                            tmpColor = cList[i1];
-                            }  
-                        }
-                    };
-                    
-                    sectionCurves[new Rectangle3d(
-                                localPlaneSubElement,
-                                new Interval(-subElement.Item1.GetWidth() / 2, subElement.Item1.GetWidth() / 2),
-                                new Interval(-subElement.Item1.GetHeight() / 2, subElement.Item1.GetHeight() / 2)).ToNurbsCurve()]
-                                = tmpColor;
-                }
-
-
-
-
-                foreach (Curve s in sectionCurves.Keys)
-                {
-
-
-                    Curve c = element.BaseCurve;
-                    if (c.IsLinear())
-                    {
-                        Line l = new Line(c.PointAtStart, c.PointAtEnd);
-                        Brep brep = Extrusion.CreateExtrusion(s, l.Direction).ToBrep();
-                        tmpModels[brep] = sectionCurves[s];
-                    }
-                    else
-                    {
-                        Brep[] breps = Brep.CreateFromSweep(c, s, true, CommonProps.tolerances);
-                        foreach (var brep in breps)
-                        {
-                            tmpModels[brep] = sectionCurves[s];
-                        }
-                    }
-                    
-                }
-                sectionCurves.Clear();
-                */
+                
 
             }
             #endregion 
