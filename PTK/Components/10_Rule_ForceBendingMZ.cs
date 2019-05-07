@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
-/*
+
 namespace PTK.Components
 {
-    public class _10_Rule_ElementForceCompression : GH_Component
+    public class _10_Rule_ForceBendingMZ : GH_Component
     {
         /// <summary>
-        /// Initializes a new instance of the _10_RuleElementCompressionForce class.
+        /// Initializes a new instance of the _10_Rule_ForceBendingMZ class.
         /// </summary>
-        public _10_Rule_ElementForceCompression()
-          : base("ElementCompressionRule", "cF",
-              "Grouping detail based on compression force",
+        public _10_Rule_ForceBendingMZ()
+          : base("ElementForceBending MZ", "MZ",
+              "Detail search based on bending moment (MZ) in the element's detail",
               CommonProps.category, CommonProps.subcate10)
         {
         }
@@ -23,7 +23,7 @@ namespace PTK.Components
         public override GH_Exposure Exposure
         {
             get
-            { return GH_Exposure.hidden; }
+            { return GH_Exposure.quarternary; }
         }
 
         /// <summary>
@@ -31,7 +31,9 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntervalParameter("Min/max comp force", "CF", "Compression force to be searched", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Min BendingMZ", "<", "Minimum BendingMZ moment in element", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Max BendingMZ", ">", "Maximum BendingMZ moment in element", GH_ParamAccess.item, 10000000);
+            pManager.AddBooleanParameter("All Elements", "A", "True: All elements must be within the domain. False: Only one element must be inside the domain", GH_ParamAccess.item, true);
         }
 
         /// <summary>
@@ -48,17 +50,30 @@ namespace PTK.Components
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            //Variables
-            Interval forceinterval = new Interval();      
 
-            //Input
-            DA.GetData(0, ref forceinterval);
+            //Variables 
+            double minAmount = 0;
+            double maxAmount = 10000000;
+            bool all = false;
 
-            //Solve
-            //Rules.ElementForce Rule = new Rules.ElementForce(forceinterval); 
+
+            //Input 
+            DA.GetData(0, ref minAmount);
+            DA.GetData(1, ref maxAmount);
+            DA.GetData(2, ref all);
+
+            //CHANGE
+            Rules.ForceMode Mode = Rules.ForceMode.BendingDir2;
+            //CHANGE
+
+            //Solve 
+
+            Rules.ElementForce Rule = new Rules.ElementForce(Mode, minAmount, maxAmount, all);
+
 
             //Output
-            DA.SetData(0, new Rules.Rule(new CheckGroupDelegate(Rule.check)));
+            DA.SetData(0, new Rules.Rule(new CheckGroupDelegate(Rule.check)));   //Sending a new checkgroupDelegate through a new rule object
+
         }
 
         /// <summary>
@@ -70,7 +85,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return Properties.Resources.SearchDetail;
             }
         }
 
@@ -79,9 +94,7 @@ namespace PTK.Components
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("f099152b-1291-4d2f-a950-ad522fe027c2"); }
+            get { return new Guid("340447d8-160f-49b8-976e-51f18a721f6f"); }
         }
     }
 }
-
-    */

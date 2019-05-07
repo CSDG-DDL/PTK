@@ -102,12 +102,16 @@
     <Compile Include="Classes\DetailingGroupPlaneRules.cs" />
     <Compile Include="Classes\StructuralReport.cs" />
     <Compile Include="Classes\StructuralResult.cs" />
-    <Compile Include="Components\10_Rule_ElementForce.cs" />
-    <Compile Include="Components\10_Rule_ElementForceTension.cs" />
-    <Compile Include="Components\10_Rule_ElementForceCompression.cs" />
+    <Compile Include="Components\10_Rule_ForceCompressionFX.cs" />
     <Compile Include="Components\10_Rule_ElementDomain.cs" />
     <Compile Include="Components\10_Rule_ElementTag.cs" />
+    <Compile Include="Components\10_Rule_ForceBendingMY.cs" />
+    <Compile Include="Components\10_Rule_ForceBendingMZ.cs" />
+    <Compile Include="Components\10_Rule_ForceShearFY.cs" />
+    <Compile Include="Components\10_Rule_ForceShearFZ.cs" />
+    <Compile Include="Components\10_Rule_ForceTorzon.cs" />
     <Compile Include="Components\10_Rule_NodeInRegion.cs" />
+    <Compile Include="Components\10_Rule_ForceTensionFX.cs" />
     <Compile Include="Components\11_BTL_Cut.cs" />
     <Compile Include="Components\11_BTL_DoveTailMortise.cs" />
     <Compile Include="Components\11_BTL_Drill.cs" />
@@ -144,12 +148,8 @@
     <Compile Include="Components\7_BuildModel.cs" />
     <Compile Include="Components\8_ExtractDetail.cs" />
     <Compile Include="Components\8_ExtractForce.cs" />
-
     <Compile Include="Components\8_ExtractStructuralForces.cs" />
     <Compile Include="Components\8_ExtractStructuralResults.cs" />
-    <Compile Include="Components\9_ParallelCoordinatesViewer.cs" />
-    <Compile Include="Components\9_ParticleSwarmOptimization.cs" />
-
     <Compile Include="Components\11_BTL_Mortise.cs" />
     <Compile Include="Components\10_Rule_ElementAngle.cs" />
     <Compile Include="Components\8_ExtractCrossSection.cs" />

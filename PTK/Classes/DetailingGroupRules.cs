@@ -108,122 +108,142 @@ namespace PTK.Rules
         }
     }
 
-    /*
+    public enum ForceMode
+    {
+        Compression, Tension, BendingDir1, BendingDir2, ShearDir1, ShearDir2, MaxTorsion
+    }
+
     public class ElementForce
     {
         // --- field ---
-        private Interval allowedForce;
-        private int forceType;
+        private ForceMode forceMode;
+        private double minimum;
+        private double maximum;
+        private bool allElements;
 
         // --- constructors --- 
-        public ElementForce(Interval _allowedForce)
+        public ElementForce(ForceMode _forceMode, double _minimum, double _maximum, bool _allElements)
         {
-            allowedForce = _allowedForce;
-        }
-        public ElementForce(Interval _allowedForce, int _forceType)
-        {
-            allowedForce = _allowedForce;
-            forceType = _forceType;
+            forceMode = _forceMode;
+            minimum = _minimum;
+            maximum = _maximum;
+            allElements = _allElements;
         }
 
         // --- methods ---
-        public bool checkCompression(Detail _detail)
-        {
-            // checking the compression
-            Detail detail = _detail;
-            Node node = detail.Node;
-            
-            if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxCompressionForce.FX))
-            {
-                return true;
-            }
-            else
-            {
-                return false; 
-            }
-            
-        }
-
-        public bool checkTension(Detail _detail)
-        {
-            // checking the tension
-            Detail detail = _detail;
-            Node node = detail.Node;
-
-            if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxTensionForce.FX ))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }
-
         public bool check(Detail _detail)
         {
-            // checking the tension
             Detail detail = _detail;
-            Node node = detail.Node;
             
-            if (forceType == 0)
+            List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
+
+            List<double> ForceValue = new List<double>();
+
+
+
+            //Records the data dependent on the mode chosen
+            if (forceMode == ForceMode.BendingDir1)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxCompressionForce.FX))
-                { return true; }
-                else
-                { return false; }
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxBendingDir1.MY);
+                }
             }
-            else if (forceType == 1)
+
+            if (forceMode == ForceMode.BendingDir2)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxTensionForce.FX))
-                { return true; }
-                else
-                { return false; }
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxBendingDir2.MZ);
+                }
             }
-            else if (forceType == 2)
+
+            if (forceMode == ForceMode.Compression)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxShearDir1.FY))
-                { return true; }
-                else
-                { return false; }
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxCompressionForce.FX);
+                }
             }
-            else if (forceType == 3)
+
+            if (forceMode == ForceMode.MaxTorsion)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxShearDir2.FZ))
-                { return true; }
-                else
-                { return false; }
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxTorsion.MX);
+                }
             }
-            else if (forceType == 4)
+
+            if (forceMode == ForceMode.ShearDir1)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxTorsion.MX))
-                { return true; }
-                else
-                { return false; }
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxShearDir1.FY);
+                }
             }
-            else if (forceType == 5)
+            if (forceMode == ForceMode.ShearDir2)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxBendingDir1.MY))
-                { return true; }
-                else
-                { return false; }
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxShearDir2.FZ);
+                }
             }
-            else if (forceType == 6)
+
+            if (forceMode == ForceMode.Tension)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxBendingDir2.MZ))
-                { return true; }
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxTensionForce.FX);
+                }
+            }
+
+            //Creates a min/max domain
+            Interval domain = new Interval(minimum, maximum);
+            int valid = 0;
+
+            //Run through all forcevalues an check if they are in the domain
+            foreach (double value in ForceValue)
+            {
+                if (domain.IncludesParameter(value))
+                {
+                    valid++;
+                }
+            }
+
+
+            //First it checks if all elements should be within the domain. Then it checks if valid equals to element count.
+            //The second check, not all elements checks if there are more than 0 valid values
+            if (allElements)
+            {
+                if (valid == elements.Count)
+                {
+                    return true;
+                }
                 else
-                { return false; }
+                {
+                    return false; 
+                }
             }
             else
-                return false;
+            {
+                if (valid > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
+
+
+
+
+
+            
         }
-
     }
-
-    */
 
 
     public class NodeHitRegion 
