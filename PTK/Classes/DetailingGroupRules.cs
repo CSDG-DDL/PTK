@@ -108,6 +108,7 @@ namespace PTK.Rules
         }
     }
 
+    /*
     public class ElementForce
     {
         // --- field ---
@@ -131,8 +132,8 @@ namespace PTK.Rules
             // checking the compression
             Detail detail = _detail;
             Node node = detail.Node;
-
-            if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fx_compression))
+            
+            if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxCompressionForce.FX))
             {
                 return true;
             }
@@ -140,6 +141,7 @@ namespace PTK.Rules
             {
                 return false; 
             }
+            
         }
 
         public bool checkTension(Detail _detail)
@@ -148,7 +150,7 @@ namespace PTK.Rules
             Detail detail = _detail;
             Node node = detail.Node;
 
-            if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fx_tension))
+            if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxTensionForce.FX ))
             {
                 return true;
             }
@@ -167,49 +169,49 @@ namespace PTK.Rules
             
             if (forceType == 0)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fx_compression))
+                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxCompressionForce.FX))
                 { return true; }
                 else
                 { return false; }
             }
             else if (forceType == 1)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fx_tension))
+                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxTensionForce.FX))
                 { return true; }
                 else
                 { return false; }
             }
             else if (forceType == 2)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fy_shear))
+                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxShearDir1.FY))
                 { return true; }
                 else
                 { return false; }
             }
             else if (forceType == 3)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Fz_shear))
+                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxShearDir2.FZ))
                 { return true; }
                 else
                 { return false; }
             }
             else if (forceType == 4)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Mx_torsion))
+                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxTorsion.MX))
                 { return true; }
                 else
                 { return false; }
             }
             else if (forceType == 5)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_My_bending))
+                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxBendingDir1.MY))
                 { return true; }
                 else
                 { return false; }
             }
             else if (forceType == 6)
             {
-                if (allowedForce.IncludesParameter(detail.Elements[0].Forces.Max_Mz_bending))
+                if (allowedForce.IncludesParameter(detail.Elements[0].structuralData.maxBendingDir2.MZ))
                 { return true; }
                 else
                 { return false; }
@@ -220,6 +222,8 @@ namespace PTK.Rules
         }
 
     }
+
+    */
 
 
     public class NodeHitRegion 

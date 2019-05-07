@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
-
+/*
 namespace PTK.Components
 {
     public class _10_Rule_ElementForceTension : GH_Component
@@ -65,7 +65,7 @@ namespace PTK.Components
 
 
             //Solve
-            Rules.ElementForce Rule = new Rules.ElementForce(forceinterval); 
+            //Rules.ElementForce Rule = new Rules.ElementForce(forceinterval); 
                 
          
 
@@ -100,3 +100,5 @@ namespace PTK.Components
         }
     }
 }
+
+    */

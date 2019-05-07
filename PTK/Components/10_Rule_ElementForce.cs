@@ -78,7 +78,7 @@ namespace PTK.Components
             //Solve
             List<Rules.Rule> listRules = new List<Rules.Rule>();
             
-
+            /*
             if (!forceinterval0.IsSingleton)
             {
                 Rules.ElementForce Rule0 = new Rules.ElementForce(forceinterval0, 0);
@@ -120,7 +120,7 @@ namespace PTK.Components
                 Rules.ElementForce Rule6 = new Rules.ElementForce(forceinterval6, 6);
                 listRules.Add(new Rules.Rule(new CheckGroupDelegate(Rule6.check)));
             }
-
+            */
 
 
             //Output
