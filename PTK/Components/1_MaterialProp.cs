@@ -153,7 +153,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.Material;
+                return PTK.Properties.Resources.StructuralMaterial;
             }
         }
 

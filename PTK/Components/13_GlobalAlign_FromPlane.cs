@@ -65,8 +65,12 @@ namespace PTK.Components
             GlobalAlignmentRules.AlignmentFromPlane VectorAlign = new GlobalAlignmentRules.AlignmentFromPlane(plane);
 
 
+            
 
-            GH_Alignment Alignment = new GH_Alignment(new Alignment("", OffsetY, offsetZ, VectorAlign.GenerateVector));
+            ElementAlign Alignment = new ElementAlign(VectorAlign.GenerateVector, OffsetY, offsetZ);
+
+            
+
 
             DA.SetData(0, Alignment);
 
@@ -82,8 +86,7 @@ namespace PTK.Components
             get
             {
                 //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
-                return null;
+                return PTK.Properties.Resources.Alignment;
             }
         }
 

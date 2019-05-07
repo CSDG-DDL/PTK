@@ -8,8 +8,10 @@ namespace PTK.Components
 {
     public class _11_BTL_Drill : GH_Component
     {
-        Line PublicLine = new Line();
-        double PublicRadius = 0;
+        List<Line> PublicLine = new List<Line>();
+        List<double> PublicRadius = new List<double>();
+        
+        
         /// <summary>
         /// Initializes a new instance of the _11_BTL_Drill class.
         /// </summary>
@@ -50,9 +52,8 @@ namespace PTK.Components
             // --- solve ---
             BTLDrill drill = new BTLDrill(Line, Radius);
 
-            PublicLine = Line;
-            PublicRadius = Radius;
-
+            PublicLine.Add(Line);
+            PublicRadius.Add(Radius);
             // Making Object with delegate and ID
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(drill.DelegateProcess));
             
@@ -69,7 +70,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return Properties.Resources.Drill;
             }
         }
 
@@ -83,7 +84,8 @@ namespace PTK.Components
 
         public override void ExpireSolution(bool recompute)
         {
-
+            PublicLine.Clear();
+            PublicRadius.Clear();
             base.ExpireSolution(recompute);
         }
 
@@ -91,16 +93,19 @@ namespace PTK.Components
         public override void DrawViewportMeshes(IGH_PreviewArgs args)
         {
 
-            if (PublicLine.IsValid)
+            if (PublicLine.Count > 0)
             {
 
+                for(int i = 0; i < PublicLine.Count; i++)
+                {
+                    Plane tempPlane = new Plane(PublicLine[i].From, PublicLine[i].Direction);
+                    Circle tempCircle = new Circle(tempPlane, PublicRadius[i]);
+                    Cylinder tempCylinder = new Cylinder(tempCircle, PublicLine[i].Length);
 
-                Plane tempPlane = new Plane(PublicLine.From, PublicLine.Direction);
-                Circle tempCircle = new Circle(tempPlane, PublicRadius);
-                Cylinder tempCylinder = new Cylinder(tempCircle, PublicLine.Length);
-
-                args.Display.DepthMode = Rhino.Display.DepthMode.AlwaysInFront;
-                args.Display.DrawBrepShaded(tempCylinder.ToBrep(false,false), new Rhino.Display.DisplayMaterial(System.Drawing.Color.Red));
+                    args.Display.DepthMode = Rhino.Display.DepthMode.AlwaysInFront;
+                    args.Display.DrawBrepShaded(tempCylinder.ToBrep(false, false), new Rhino.Display.DisplayMaterial(System.Drawing.Color.Red));
+                }
+                
 
 
             }

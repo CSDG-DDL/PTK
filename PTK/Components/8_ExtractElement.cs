@@ -37,6 +37,7 @@ namespace PTK
             pManager.AddNumberParameter("Simplified Width", "W", "Simplified width of composite", GH_ParamAccess.item);
             pManager.AddGenericParameter( "Subelements", "S", "Deconstructs the composite into subelements", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Intersect Other", "I", "Is Intersect With Other", GH_ParamAccess.item);
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -60,8 +61,7 @@ namespace PTK
             List<SubElement> SubElements = elem.Composite.Subelements;
             CompositeNew Composite = elem.Composite;
             bool intersect = elem.IsIntersectWithOther;
-            
-            
+
 
             // --- output ---
             DA.SetData(0, tag);
@@ -73,7 +73,7 @@ namespace PTK
             DA.SetData(6, width);
             DA.SetDataList(7, SubElements);
             DA.SetData(8, intersect);
-            //DA.SetData(9, sData );
+
         }
 
 

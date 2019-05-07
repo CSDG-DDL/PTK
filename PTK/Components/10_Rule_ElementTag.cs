@@ -36,7 +36,7 @@ namespace PTK.Components
             pManager.AddIntegerParameter("Mode", "M", "Mode 0 - One of - The detail must contain one of the inputted tags. " +
                                                          "Mode 1 - At least -  The detail must contain all the inputted tags, but can also contain other tags. " +
                                                          "Mode 2 - Distinct - The detail must contain all the inputted tags and no other tags. " +
-                                                         "Mode 3 - Strict - The detai must contain all the inputted tags and the exact amount. ", GH_ParamAccess.item, 0);
+                                                         "Mode 3 - Strict - The detai must contain all the inputted tags and the exact amount. ", GH_ParamAccess.item,0);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace PTK.Components
 
             //Variables
             List<string> tagsAre = new List<string>();
-            int strict = 0;
+            int strict = 4;
 
             //Input
             DA.GetDataList(0, tagsAre);
