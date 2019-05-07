@@ -78,7 +78,8 @@ namespace PTK
             PointAtEnd = _elem.PointAtEnd;
             Composite = _elem.Composite;
             StructuralData = _StructuralData;
-            Joints = _elem.Joints;
+            Elementalignment = _elem.Elementalignment;
+             Joints = _elem.Joints;
             IsIntersectWithOther = _elem.IsIntersectWithOther;
             Priority = _elem.Priority;
             InitializeLocalPlane();
