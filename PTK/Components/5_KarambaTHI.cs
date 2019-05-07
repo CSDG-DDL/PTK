@@ -26,7 +26,9 @@ namespace PTK
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
-            pManager.AddTextParameter("Units", "SI", "The units of geometry either mm or m", GH_ParamAccess.item, "mm");
+            pManager.AddBooleanParameter("Utilization", "Util", "Calculate the utilization of the elements", GH_ParamAccess.item, false);
+            pManager.AddIntegerParameter("Precision", "Pr", "The number of points on the elements to retrieve the data", GH_ParamAccess.item, 6);
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -40,10 +42,10 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
-
+            
             // --- variables ---
-            string unitsInput = "mm";
+            string unitsInput = "m";
+            int precision = 6;
             string singular_system_msg = "singular stiffness matrix";
             GH_StructuralAssembly gStrAssembly = null;
             StructuralAssembly structuralAssembly = null;
@@ -51,21 +53,22 @@ namespace PTK
             List<double> gravityForces;
             List<double> elasticEnergy;
             string warning;
+            bool startUtilization = false;
 
             // --- input --- 
             if (!DA.GetData(0, ref gStrAssembly)) { return; }
             structuralAssembly = gStrAssembly.Value;
-            if (!DA.GetData(1, ref unitsInput)) { return; }
-
+            if (!DA.GetData(1, ref startUtilization)) { return; }
+            if (!DA.GetData(2, ref precision)) { return; }
             // --- solve ---
             var karambaModel = PTK.KarambaConversion.BuildModelMeters(structuralAssembly);
 
-            if (unitsInput == "m")
+            if (unitsInput=="mm")
             {
-                karambaModel = null;
-                // --- solve ---
-                //karambaModel = PTK.KarambaConversion.BuildModelMmeters(structuralAssembly);
+
+                karambaModel = PTK.KarambaConversion.BuildModelMilimeters(structuralAssembly);
             }
+
 
             Karamba.Models.Model analyzedModel;
 
@@ -112,7 +115,7 @@ namespace PTK
 
 
             double maximum_distance_bt_points = 1;
-            int maximum_num_points = 6;
+            int maximum_num_points = precision;
 
             List<List<List<List<Double>>>> results = new List<List<List<List<double>>>>();
             Karamba.Results.Component_BeamForces.solve(
@@ -213,7 +216,7 @@ namespace PTK
                 newStructuralData.StructuralForces.maxBendingDir2 = new MaxBendingDir2(GetMaximumForce(dictElements[iFK], "MZ"));
                 newStructuralData.StructuralForces.maxBendingDir2.positionPoint = e1.BaseCurve.PointAtNormalizedLength(newStructuralData.StructuralForces.maxBendingDir2.position);
 
-                //get effective length in both direction
+                //get structural properties of the element
                 newStructuralData.effectiveLength1 = EffectiveLength(0, e1.BaseCurve.GetLength());
                 newStructuralData.effectiveLength2 = EffectiveLength(1, e1.BaseCurve.GetLength());
 
@@ -231,8 +234,21 @@ namespace PTK
 
                 newStructuralData.BucklingStrength1 = BucklingStrength(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 0, e1.BaseCurve.GetLength());
                 newStructuralData.BucklingStrength2 = BucklingStrength(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
-                
-                
+                //calculate utilization
+                if (startUtilization)
+                {
+                    newStructuralData.StructuralResults = new StructuralResult( );
+
+                    newStructuralData.StructuralResults.CompressionUtilization = CompressionUtilization(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "FXC").FX, e1.BaseCurve.GetLength());
+                    newStructuralData.StructuralResults.TensionUtilization = TensionUtilization(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "FXT").FX);
+                    newStructuralData.StructuralResults.BendingUtilization = BendingUtilization(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "MY").MY, GetMaximumForce(dictElements[iFK], "MZ").MZ);
+                    double util1 = CombinedBendingAndAxial(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "FXC"), e1.BaseCurve.GetLength());
+                    double util2 = CombinedBendingAndAxial(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "MY"), e1.BaseCurve.GetLength());
+                    double util3 = CombinedBendingAndAxial(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "MZ"), e1.BaseCurve.GetLength());
+                    List<double> listUtilizationCombined =
+                        new List<double> { util1 , util2 , util3};
+                    newStructuralData.StructuralResults.CombinedBendingAndAxial = listUtilizationCombined.Max();
+                }
                 //create new assembly
                 assemblyNew.AddElement(new Element1D(e1, newStructuralData ));
             }
@@ -275,7 +291,7 @@ namespace PTK
                 foreach (var eachForce in forcesInTheElement)
                 {
 
-                    if (eachForce.FX > maxForce)
+                    if (eachForce.FX < maxForce)
                     {
                         searchedForce = eachForce;
                     }
@@ -287,7 +303,7 @@ namespace PTK
                 double maxForce = 0;
                 foreach (var eachForce in forcesInTheElement)
                 {
-                    if (eachForce.FX < maxForce)
+                    if (eachForce.FX > maxForce)
                     {
                         searchedForce = eachForce;
                     }
@@ -443,7 +459,287 @@ namespace PTK
             buckling_strength = md1.Fc0gk * InstabilityFactor(width, height, md1, direction, length);
             return buckling_strength;
         }
-        
+
+        private double CompressionUtilization(double width, double height, MaterialProperty md1, double force, double length)
+        {
+            double area = width * height;
+            double utilization = 0;
+            double utilization_dir1 = 0;
+            double utilization_dir2 = 0;
+            double stress = force / area;                        // design compressive stress
+            double strength = md1.Kmod * md1.Ksys * md1.Fc0gk / md1.GammaM;          // design compressive strength parallel to the grain
+
+            double relative_slenderness_dir1 = SlendernessRelative(width, height, md1, 1, length);
+            double relative_slenderness_dir2 = SlendernessRelative(width, height, md1, 2, length);
+
+            if (relative_slenderness_dir1 <= 0.3 && relative_slenderness_dir2 <= 0.3)
+            {
+                utilization = stress / strength;
+            }
+            if (relative_slenderness_dir1 > 0.3 && relative_slenderness_dir2 <= 0.3)
+            {
+                utilization_dir1 = stress / (relative_slenderness_dir1 * strength);
+                utilization_dir2 = stress / strength;
+
+                //choose the bigger utilization to be the element utilization
+                utilization = utilization_dir1;
+                if (utilization_dir1 < utilization_dir2)
+                {
+                    utilization = utilization_dir2;
+                }
+
+            }
+            if (relative_slenderness_dir1 <= 0.3 && relative_slenderness_dir2 > 0.3)
+            {
+                utilization_dir1 = stress / strength;
+                utilization_dir2 = stress / (relative_slenderness_dir2 * strength);
+
+
+                //choose the bigger utilization to be the element utilization
+                utilization = utilization_dir1;
+                if (utilization_dir1 < utilization_dir2)
+                {
+                    utilization = utilization_dir2;
+                }
+            }
+            if (relative_slenderness_dir1 > 0.3 && relative_slenderness_dir2 > 0.3)
+            {
+                utilization_dir1 = stress / (relative_slenderness_dir1 * strength);
+                utilization_dir2 = stress / (relative_slenderness_dir1 * strength);
+
+                //choose the bigger utilization to be the element utilization
+                utilization = utilization_dir1;
+                if (utilization_dir1 < utilization_dir2)
+                {
+                    utilization = utilization_dir2;
+                }
+            }
+            return utilization;
+
+        }
+
+        private double CompressionUtilizationAngle(double width, double height, MaterialProperty md1, Force force, double length)
+        {
+            double area = width * height;
+            double utilization = 0;
+            double utilization_dir1 = 0;
+            double utilization_dir2 = 0;
+            double k_c_90 = 1;                   // recommended value [1] page 172
+
+            double stress = force.FX * Math.Cos(md1.GrainAngle) / area;                        // design compressive stress
+            double stressangle = stress * Math.Sin(md1.GrainAngle);                                            // design compressive stress according to grain angle
+            double strength = md1.Kmod * md1.Ksys * md1.Fc0gk / md1.GammaM;         // design compressive strength parallel to the grain
+            // design compressive strength considering grain angle
+            double strengthangle = strength / (strength / (k_c_90 * md1.Fc90gk) * Math.Pow(Math.Sin(md1.GrainAngle), 2) + Math.Pow(Math.Cos(md1.GrainAngle), 2));
+            double relative_slenderness_dir1 = SlendernessRelative(width, height, md1, 1, length);
+            double relative_slenderness_dir2 = SlendernessRelative(width, height, md1, 2, length);
+
+            utilization = stressangle / strengthangle;
+
+            return utilization;
+        }
+
+        private double TensionUtilization(double width, double height, MaterialProperty md1, double force)
+        {
+            double utilization = 0;
+            double area = width * height;
+            #region kh coefficient
+            double var1;
+            double kh = 1.0;
+
+
+            double h = height;
+            if (height < width)
+            {
+                h = width;
+            }
+
+            if (md1.Name == "Timber")
+            {
+                var1 = Math.Pow(150 / h, 0.2);
+                kh = 1.3;
+                if (var1 < 1.3)
+                {
+                    kh = var1;
+                }
+            }
+            else if (md1.Name == "Glulam")
+            {
+                var1 = Math.Pow(600 / h, 0.1);
+                kh = 1.1;
+                if (var1 < 1.1)
+                {
+                    kh = var1;
+                }
+            }
+            #endregion
+
+            double stress = force / area;                                                                            // design tension stress
+            double strength = md1.Kmod * md1.Ksys * md1.Ft0gk * kh / md1.GammaM;
+            // design tension strength
+
+            utilization = stress / strength;
+
+            return utilization;
+        }
+
+        public double BendingUtilization(double width, double height, MaterialProperty md1, double moment1, double moment2)
+        {
+            double area = width * height;
+            double momentOfInertia0 = width * height * height * height / 12;
+            double radiusOfGyration0 = Math.Sqrt(momentOfInertia0 / area);
+
+            double momentOfInertia1 = width * width * width * height / 12;
+            double radiusOfGyration1 = Math.Sqrt(momentOfInertia1 / area);
+
+            double utilization = 0;
+            double utilization1 = 0;
+            double utilization2 = 0;
+
+            #region kh coefficient
+            double var1;
+            double kh = 1.0;
+
+
+            double h = height;
+            if (height < width)
+            {
+                h = width;
+            }
+
+            if (md1.Name == "Timber")
+            {
+                var1 = Math.Pow(150 / h, 0.2);
+                kh = 1.3;
+                if (var1 < 1.3)
+                {
+                    kh = var1;
+                }
+            }
+            else if (md1.Name == "Glulam")
+            {
+                var1 = Math.Pow(600 / h, 0.1);
+                kh = 1.1;
+                if (var1 < 1.1)
+                {
+                    kh = var1;
+                }
+            }
+            #endregion
+
+            double stress_1 = moment1 * (height / 2) / momentOfInertia0;
+            double stress_2 = moment2 * (width / 2) / momentOfInertia1;            // design bending stress
+
+            double strength1 = Math.Abs(md1.Kmod * md1.Ksys * md1.Fmgk * kh / md1.GammaM);                            // design tension strength
+            double strength2 = Math.Abs(md1.Kmod * md1.Ksys * md1.Fmgk * kh / md1.GammaM);                            // design tension strength
+
+            double km = 0.7; // for rectangular timber cross section
+
+            utilization1 = (stress_1 / strength1) + (km * stress_2 / strength2);
+            utilization2 = (km * stress_1 / strength1) + (stress_2 / strength2);
+
+            utilization = utilization1;
+            if (utilization2 > utilization1)
+            {
+                utilization = utilization2;
+            }
+
+            return utilization;
+        }
+
+        public double CombinedBendingAndAxial(double width, double height, MaterialProperty md1, Force force, double length)
+        {
+            double area = width * height;
+            double momentOfInertia0 = width * height * height * height / 12;
+            double radiusOfGyration0 = Math.Sqrt(momentOfInertia0 / area);
+
+            double momentOfInertia1 = width * width * width * height / 12;
+            double radiusOfGyration1 = Math.Sqrt(momentOfInertia1 / area);
+
+            double utilization = 0;
+            double utilization1 = 0;
+            double utilization2 = 0;
+            double km = 0.7; // for rectangular timber cross section
+
+            #region kh coefficient
+            double var1;
+            double kh = 1.0;
+
+
+            double h = height;
+            if (height < width)
+            {
+                h = width;
+            }
+
+            if (md1.Name == "Timber")
+            {
+                var1 = Math.Pow(150 / h, 0.2);
+                kh = 1.3;
+                if (var1 < 1.3)
+                {
+                    kh = var1;
+                }
+            }
+            else if (md1.Name == "Glulam")
+            {
+                var1 = Math.Pow(600 / h, 0.1);
+                kh = 1.1;
+                if (var1 < 1.1)
+                {
+                    kh = var1;
+                }
+            }
+            #endregion
+
+            double forceNx = force.FX;
+            if (force.FX < Math.Abs(force.FX))
+            {
+                forceNx = force.FX;
+            }
+
+            double stress_1 = force.MY * (height / 2) / momentOfInertia0;
+            double stress_2 = force.MZ * (width / 2) / momentOfInertia1;            // design bending stress
+
+            double strength1 = Math.Abs(md1.Kmod * md1.Ksys * md1.Fmgk * kh / md1.GammaM);                            // design tension strength
+            double strength2 = Math.Abs(md1.Kmod * md1.Ksys * md1.Fmgk * kh / md1.GammaM);                             // design tension strength
+
+            double stress = forceNx / area;                        // design compressive stress
+            double strength = md1.Kmod * md1.Ksys * md1.Fc0gk / md1.GammaM;          // design compressive strength parallel to the grain
+            if (forceNx >= 0)
+            {
+                stress = forceNx / area;                        // design compressive stress
+                strength = Math.Abs(md1.Kmod * md1.Ksys * md1.Ft0gk * kh / md1.GammaM);
+            }
+
+            double relative_slenderness_dir1 = SlendernessRelative(width, height, md1, 1, length);
+            double relative_slenderness_dir2 = SlendernessRelative(width, height, md1, 2, length);
+
+            utilization1 = stress / (strength * InstabilityFactor(width, height, md1, 1, length)) + stress_1 / strength1 + km * stress_2 / strength2;
+            utilization2 = stress / (strength * InstabilityFactor(width, height, md1, 2, length)) + km * stress_1 / strength1 + stress_2 / strength2;
+
+            utilization = utilization1;
+            if (utilization2 > utilization1)
+            {
+                utilization = utilization2;
+            }
+
+            if (relative_slenderness_dir1 <= 0.3 && relative_slenderness_dir2 <= 0.3)
+            {
+                utilization1 = Math.Pow(stress / strength, 2) + stress_1 / strength1 + km * stress_2 / strength2;
+                utilization2 = Math.Pow(stress / strength, 2) + km * stress_1 / strength1 + stress_2 / strength2;
+
+                utilization = utilization1;
+                if (utilization2 > utilization1)
+                {
+                    utilization = utilization2;
+                }
+
+            }
+
+            return utilization;
+        }
+
         protected override System.Drawing.Bitmap Icon
         {
             get

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace PTK.Classes
+namespace PTK
 {
     public class Result
     {
