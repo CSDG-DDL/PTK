@@ -30,12 +30,8 @@ namespace PTK.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("BTL-Drill", "D", "", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("", "", "", GH_ParamAccess.item);
-            pManager.AddLineParameter("X", "", "", GH_ParamAccess.item);
-            pManager.AddLineParameter("Y", "", "", GH_ParamAccess.item);
-            pManager.AddPointParameter("PT", "", "", GH_ParamAccess.item);
-            pManager.AddPlaneParameter("PL", "", "", GH_ParamAccess.item);
+            pManager.AddGenericParameter("BTL-Pocket", "D", "", GH_ParamAccess.item);
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

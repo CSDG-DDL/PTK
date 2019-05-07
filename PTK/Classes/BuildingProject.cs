@@ -317,15 +317,17 @@ namespace PTK
             CoordinateSystem.ReferencePoint = new PointType();
 
 
+            double ToMM = CommonFunctions.ConvertToMM();
+
             CoordinateSystem.XVector.X = btlPlane.XAxis.X;
             CoordinateSystem.XVector.Y = btlPlane.XAxis.Y;
             CoordinateSystem.XVector.Z = btlPlane.XAxis.Z;
             CoordinateSystem.YVector.X = btlPlane.YAxis.X;
             CoordinateSystem.YVector.Y = btlPlane.YAxis.Y;
             CoordinateSystem.YVector.Z = btlPlane.YAxis.Z;
-            CoordinateSystem.ReferencePoint.X = btlPlane.OriginX;
-            CoordinateSystem.ReferencePoint.Y = btlPlane.OriginY;
-            CoordinateSystem.ReferencePoint.Z = btlPlane.OriginZ;
+            CoordinateSystem.ReferencePoint.X = btlPlane.OriginX * ToMM;
+            CoordinateSystem.ReferencePoint.Y = btlPlane.OriginY * ToMM;
+            CoordinateSystem.ReferencePoint.Z = btlPlane.OriginZ * ToMM;
 
             ReferenceType Reference = new ReferenceType();
             Reference.Position = CoordinateSystem;
@@ -347,11 +349,11 @@ namespace PTK
 
 
 
-            BTLPart.Width = width;
-            BTLPart.Length = length;
-            BTLPart.Height = height;
-            BTLPart.StartOffset = 0.3;
-            BTLPart.EndOffset = 0.3;
+            BTLPart.Width = width * ToMM;
+            BTLPart.Length = length * ToMM;
+            BTLPart.Height = height * ToMM;
+            BTLPart.StartOffset = 0;
+            BTLPart.EndOffset = 0;
 
 
             BTLPartGeometry = new BTLPartGeometry(refSides, cornerPoints, endPoints, startPoints);
@@ -396,7 +398,13 @@ namespace PTK
 
                         if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
                         {
-                            VoidProcess.Add(PerformedProcess.VoidProcess);
+                            if (PerformedProcess.VoidProcess!=null && PerformedProcess.VoidProcess.GetVolume() > 1)
+                            {
+                                VoidProcess.Add(PerformedProcess.VoidProcess);
+                            }
+
+
+                            
 
                         }
                     }
@@ -422,6 +430,10 @@ namespace PTK
                     Interval iy = new Interval(0, height);
                     Interval iz = new Interval(0, length);
 
+                    Point3d centerPt = CornerPlane.Origin;
+
+                    centerPt = centerPt + CornerPlane.XAxis * width / 2 + CornerPlane.YAxis * height / 2 + CornerPlane.ZAxis * length / 2;
+
                     Box boxstock = new Box(CornerPlane, ix, iy, iz);
                     Stock = Brep.CreateFromBox(boxstock);
                     List<Brep> boolBrep = new List<Brep>();
@@ -446,7 +458,7 @@ namespace PTK
                     boolBrep.Add(Stock);
 
 
-                    if (VoidProcess.Count > 0)
+                    if (VoidProcess.Count > 0 && VoidProcess[0]!=null)
                     {
                         if (true)
                         {
@@ -455,6 +467,9 @@ namespace PTK
                             
 
                             Rhino.Geometry.Brep[] breps = Rhino.Geometry.Brep.CreateBooleanDifference(boolBrep, VoidProcess, tolerance);
+
+                            
+                            
                             if (breps != null)
                             {
                                 ProcessedStock.AddRange(breps);
@@ -478,8 +493,32 @@ namespace PTK
                                         
                                 }
 
+                                
+
 
                             }
+                            if (false)
+                            {
+                                if (breps.Length == 0)
+                                {
+                                    bool valid = false;
+                                    foreach (Brep b in VoidProcess)
+                                    {
+                                        if (b.IsPointInside(centerPt, CommonProps.tolerances, true))
+                                        {
+                                            valid = true;
+                                        }
+                                    }
+                                    if (valid)
+                                    {
+                                        ProcessedStock.Add(Stock);
+                                    }
+
+                                }
+                            }
+                            
+
+                            
                                 
                                     
                                         
