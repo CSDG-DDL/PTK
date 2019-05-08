@@ -54,6 +54,7 @@ namespace PTK
             List<double> elasticEnergy;
             string warning;
             bool startUtilization = false;
+            double scale = 1000; //scale to change mm into m
 
             // --- input --- 
             if (!DA.GetData(0, ref gStrAssembly)) { return; }
@@ -65,7 +66,7 @@ namespace PTK
 
             if (unitsInput=="mm")
             {
-
+                scale = 1;
                 karambaModel = PTK.KarambaConversion.BuildModelMilimeters(structuralAssembly);
             }
 
@@ -217,37 +218,44 @@ namespace PTK
                 newStructuralData.StructuralForces.maxBendingDir2.positionPoint = e1.BaseCurve.PointAtNormalizedLength(newStructuralData.StructuralForces.maxBendingDir2.position);
 
                 //get structural properties of the element
-                newStructuralData.effectiveLength1 = EffectiveLength(0, e1.BaseCurve.GetLength());
-                newStructuralData.effectiveLength2 = EffectiveLength(1, e1.BaseCurve.GetLength());
+                newStructuralData.effectiveLength1 = EffectiveLength(1, e1.BaseCurve.GetLength()*scale);
+                newStructuralData.effectiveLength2 = EffectiveLength(2, e1.BaseCurve.GetLength()*scale);
 
-                newStructuralData.slendernessRatio1 = SlendernessRatio(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, 0, e1.BaseCurve.GetLength());
-                newStructuralData.slendernessRatio2 = SlendernessRatio(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, 1, e1.BaseCurve.GetLength());
+                newStructuralData.slendernessRatio1 = SlendernessRatio(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, 1, e1.BaseCurve.GetLength() * scale);
+                newStructuralData.slendernessRatio2 = SlendernessRatio(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, 2, e1.BaseCurve.GetLength() * scale);
 
-                newStructuralData.eulerForce1 = EulerForce(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 0, e1.BaseCurve.GetLength());
-                newStructuralData.eulerForce2 = EulerForce(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                newStructuralData.eulerForce1 = EulerForce(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength() * scale);
+                newStructuralData.eulerForce2 = EulerForce(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength() * scale);
 
-                newStructuralData.slendernessRelative1 = SlendernessRelative(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 0, e1.BaseCurve.GetLength());
-                newStructuralData.slendernessRelative2 = SlendernessRelative(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                newStructuralData.slendernessRelative1 = SlendernessRelative(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength() * scale);
+                newStructuralData.slendernessRelative2 = SlendernessRelative(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength() * scale);
 
-                newStructuralData.instabilityFactor1 = InstabilityFactor(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 0, e1.BaseCurve.GetLength());
-                newStructuralData.instabilityFactor2 = InstabilityFactor(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                newStructuralData.instabilityFactor1 = InstabilityFactor(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength() * scale);
+                newStructuralData.instabilityFactor2 = InstabilityFactor(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength() * scale);
 
-                newStructuralData.BucklingStrength1 = BucklingStrength(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 0, e1.BaseCurve.GetLength());
-                newStructuralData.BucklingStrength2 = BucklingStrength(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength());
+                newStructuralData.BucklingStrength1 = BucklingStrength(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 1, e1.BaseCurve.GetLength() * scale);
+                newStructuralData.BucklingStrength2 = BucklingStrength(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, 2, e1.BaseCurve.GetLength() * scale);
                 //calculate utilization
                 if (startUtilization)
                 {
                     newStructuralData.StructuralResults = new StructuralResult( );
-
-                    newStructuralData.StructuralResults.CompressionUtilization = CompressionUtilization(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "FXC").FX, e1.BaseCurve.GetLength());
-                    newStructuralData.StructuralResults.TensionUtilization = TensionUtilization(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "FXT").FX);
-                    newStructuralData.StructuralResults.BendingUtilization = BendingUtilization(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "MY").MY, GetMaximumForce(dictElements[iFK], "MZ").MZ);
-                    double util1 = CombinedBendingAndAxial(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "FXC"), e1.BaseCurve.GetLength());
-                    double util2 = CombinedBendingAndAxial(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "MY"), e1.BaseCurve.GetLength());
-                    double util3 = CombinedBendingAndAxial(e1.Composite.WidthSimplified, e1.Composite.HeightSimplified, e1.Composite.MaterialProperty, GetMaximumForce(dictElements[iFK], "MZ"), e1.BaseCurve.GetLength());
-                    List<double> listUtilizationCombined =
-                        new List<double> { util1 , util2 , util3};
-                    newStructuralData.StructuralResults.CombinedBendingAndAxial = listUtilizationCombined.Max();
+                    //calculate all the utilization in the result points
+                    double util1 = 0;
+                    double util2 = 0;
+                    double util3 = 0;
+                    double util4 = 0;
+                    CalculateTheUtilization(dictElements[iFK], e1, scale, out newStructuralData.StructuralResults.results,out util1,out util2,out util3,out util4);
+                    
+                    //axial forces utilization
+                    newStructuralData.StructuralResults.CompressionUtilization = util1;
+                    newStructuralData.StructuralResults.TensionUtilization = util2;
+                    //bending moments utilization
+                    newStructuralData.StructuralResults.BendingUtilization = util3;
+                    //combined utilization
+                    newStructuralData.StructuralResults.CombinedBendingAndAxial = util4;
+                    //Maximum of all
+                    newStructuralData.StructuralResults.MaximumUtilization = 
+                        new List<double>() { util1, util2, util3, util4 }.Max();
                 }
                 //create new assembly
                 assemblyNew.AddElement(new Element1D(e1, newStructuralData ));
@@ -460,13 +468,14 @@ namespace PTK
             return buckling_strength;
         }
 
-        private double CompressionUtilization(double width, double height, MaterialProperty md1, double force, double length)
+        private double CompressionUtilization(double width, double height, MaterialProperty md1, Force force, double length)
         {
+            double compression = force.FX*1000; //change from kN to N 
             double area = width * height;
             double utilization = 0;
             double utilization_dir1 = 0;
             double utilization_dir2 = 0;
-            double stress = force / area;                        // design compressive stress
+            double stress = compression / area;                        // design compressive stress
             double strength = md1.Kmod * md1.Ksys * md1.Fc0gk / md1.GammaM;          // design compressive strength parallel to the grain
 
             double relative_slenderness_dir1 = SlendernessRelative(width, height, md1, 1, length);
@@ -520,13 +529,14 @@ namespace PTK
 
         private double CompressionUtilizationAngle(double width, double height, MaterialProperty md1, Force force, double length)
         {
+            double compression = force.FX * 1000; //change from kN to N
             double area = width * height;
             double utilization = 0;
             double utilization_dir1 = 0;
             double utilization_dir2 = 0;
             double k_c_90 = 1;                   // recommended value [1] page 172
 
-            double stress = force.FX * Math.Cos(md1.GrainAngle) / area;                        // design compressive stress
+            double stress = compression * Math.Cos(md1.GrainAngle) / area;                        // design compressive stress
             double stressangle = stress * Math.Sin(md1.GrainAngle);                                            // design compressive stress according to grain angle
             double strength = md1.Kmod * md1.Ksys * md1.Fc0gk / md1.GammaM;         // design compressive strength parallel to the grain
             // design compressive strength considering grain angle
@@ -539,8 +549,9 @@ namespace PTK
             return utilization;
         }
 
-        private double TensionUtilization(double width, double height, MaterialProperty md1, double force)
+        private double TensionUtilization(double width, double height, MaterialProperty md1, Force force)
         {
+            double tension = force.FX*1000; // change from kN to N
             double utilization = 0;
             double area = width * height;
             #region kh coefficient
@@ -574,7 +585,7 @@ namespace PTK
             }
             #endregion
 
-            double stress = force / area;                                                                            // design tension stress
+            double stress = tension / area;                                                                            // design tension stress
             double strength = md1.Kmod * md1.Ksys * md1.Ft0gk * kh / md1.GammaM;
             // design tension strength
 
@@ -583,8 +594,11 @@ namespace PTK
             return utilization;
         }
 
-        public double BendingUtilization(double width, double height, MaterialProperty md1, double moment1, double moment2)
+        public double BendingUtilization(double width, double height, MaterialProperty md1, Force force)
         {
+            double moment1 = force.MY*1000*1000; //change from kNm to Nmm 
+            double moment2 = force.MZ*1000*1000;
+
             double area = width * height;
             double momentOfInertia0 = width * height * height * height / 12;
             double radiusOfGyration0 = Math.Sqrt(momentOfInertia0 / area);
@@ -692,14 +706,17 @@ namespace PTK
             }
             #endregion
 
-            double forceNx = force.FX;
+            double forceNx = force.FX*1000; //change from kN to N
+            double momentMY = force.MY*1000*1000; // change from kNm to Nmm
+            double momentMZ = force.MZ*1000*1000; // change from kNm to Nmm
+
             if (force.FX < Math.Abs(force.FX))
             {
-                forceNx = force.FX;
+                forceNx = force.FX * 1000;
             }
 
-            double stress_1 = force.MY * (height / 2) / momentOfInertia0;
-            double stress_2 = force.MZ * (width / 2) / momentOfInertia1;            // design bending stress
+            double stress_1 = momentMY * (height / 2) / momentOfInertia0;
+            double stress_2 = momentMZ * (width / 2) / momentOfInertia1;            // design bending stress
 
             double strength1 = Math.Abs(md1.Kmod * md1.Ksys * md1.Fmgk * kh / md1.GammaM);                            // design tension strength
             double strength2 = Math.Abs(md1.Kmod * md1.Ksys * md1.Fmgk * kh / md1.GammaM);                             // design tension strength
@@ -736,6 +753,85 @@ namespace PTK
                 }
 
             }
+
+            return utilization;
+        }
+
+        public void CalculateTheUtilization( List<Force> forces, Element1D el,double scale, 
+            out List<Result> utilizations, out double maxCompressUtil, out double maxTensionUtil, out double maxBendingUtil , out double maxCombinedUtil)
+        {
+            utilizations = new List<Result>();
+            maxCompressUtil = 0;
+            maxTensionUtil = 0;
+            maxBendingUtil = 0;
+            maxCombinedUtil = 0;
+
+            List<double> compList = new List<double>();
+            List<double> tensList = new List<double>();
+            List<double> bendList = new List<double>();
+            List<double> combinedList = new List<double>();
+
+            foreach (var f in forces)
+            {
+                Result tmpResult = new Result();
+                tmpResult.karambaElementID = f.karambaElementID;
+                tmpResult.loadcase = f.loadcase;
+                tmpResult.position = f.position;
+                tmpResult.positionPoint = f.positionPoint;
+
+                
+                
+                //calculate utilizations
+                double util1 = CompressionUtilization(
+                    el.Composite.WidthSimplified,
+                    el.Composite.HeightSimplified,
+                    el.Composite.MaterialProperty,
+                    f,
+                    el.BaseCurve.GetLength()*scale);
+                double util2 = TensionUtilization(
+                    el.Composite.WidthSimplified,
+                    el.Composite.HeightSimplified,
+                    el.Composite.MaterialProperty,
+                    f);
+                double util3 = BendingUtilization(
+                    el.Composite.WidthSimplified,
+                    el.Composite.HeightSimplified,
+                    el.Composite.MaterialProperty,
+                    f);
+                double util4 = CombinedBendingAndAxial(
+                    el.Composite.WidthSimplified,
+                    el.Composite.HeightSimplified,
+                    el.Composite.MaterialProperty,
+                    f,
+                    el.BaseCurve.GetLength() * scale
+                    );
+                
+                //add to the lists
+                compList.Add(util1);
+                tensList.Add(util2);
+                bendList.Add(util3);
+                combinedList.Add(util4);
+
+                tmpResult.utilBending = util1;
+                tmpResult.utilCompression = util2;
+                tmpResult.utilTension = util3;
+                tmpResult.utilCombinedAxialBending = util4;
+                
+                utilizations.Add(tmpResult);
+             }
+
+            maxCompressUtil = compList.Max();
+            maxTensionUtil = tensList.Max();
+            maxBendingUtil = bendList.Max();
+            maxCombinedUtil = combinedList.Max();
+
+        }
+
+        public double GetMaximumUtilization(List<Result> allUtilizations)
+        {
+            double utilization = 0;
+
+
 
             return utilization;
         }

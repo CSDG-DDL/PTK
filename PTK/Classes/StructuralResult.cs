@@ -15,6 +15,7 @@ namespace PTK
         public double TensionUtilization;
         public double BendingUtilization;
         public double CombinedBendingAndAxial;
+        public double MaximumUtilization;
 
         public StructuralResult()
         {

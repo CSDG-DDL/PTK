@@ -87,13 +87,10 @@ namespace PTK
                 infolist.Add("indexreport=" + indexReport);
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("report for element number=" + indexReport),new Grasshopper.Kernel.Data.GH_Path(indexReport));
 
-                element_report.elementLength = e1.BaseCurve.GetLength();
-                double w;
-                double h;
-                h = e1.Composite.HeightSimplified;
-                w = e1.Composite.WidthSimplified;
-                element_report.elementWidth = w;
-                element_report.elementHeight = h;
+                element_report.elementLength = e1.BaseCurve.GetLength() * 1000;
+                
+                element_report.elementWidth = e1.Composite.WidthSimplified;
+                element_report.elementHeight = e1.Composite.HeightSimplified;
 
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("Length [mm]=" + element_report.elementLength));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("Width [mm]=" + element_report.elementWidth));
@@ -135,13 +132,13 @@ namespace PTK
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("BucklingStrengthDir1=" + element_report.elementBucklingStrengthDir1));
                 infoTree.Append(new Grasshopper.Kernel.Types.GH_String("BucklingStrengthDir2=" + element_report.elementBucklingStrengthDir2));
 
-                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The compression [N]=" + e1.StructuralData.StructuralForces.maxCompressionForce.FX));
-                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The tension [N]=" + e1.StructuralData.StructuralForces.maxTensionForce.FX));
-                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The shear dir1 [N]=" + e1.StructuralData.StructuralForces.maxShearDir1.FY));
-                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The shear dir2 [N]=" + e1.StructuralData.StructuralForces.maxShearDir2.FZ));
-                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The torsion [Nmm]=" + e1.StructuralData.StructuralForces.maxTorsion.MX));
-                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending dir1 [Nmm]=" + e1.StructuralData.StructuralForces.maxBendingDir1.MY));
-                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending dir2 [Nmm]=" + e1.StructuralData.StructuralForces.maxBendingDir2.MZ));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The compression [kN]=" + e1.StructuralData.StructuralForces.maxCompressionForce.FX));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The tension [kN]=" + e1.StructuralData.StructuralForces.maxTensionForce.FX));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The shear dir1 [kN]=" + e1.StructuralData.StructuralForces.maxShearDir1.FY));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The shear dir2 [kN]=" + e1.StructuralData.StructuralForces.maxShearDir2.FZ));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The torsion [kNm]=" + e1.StructuralData.StructuralForces.maxTorsion.MX));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending dir1 [kNm]=" + e1.StructuralData.StructuralForces.maxBendingDir1.MY));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("The bending dir2 [kNm]=" + e1.StructuralData.StructuralForces.maxBendingDir2.MZ));
 
                 element_report.elementCompressionUtilization = e1.StructuralData.StructuralResults.CompressionUtilization;
                 element_report.elementCompressionUtilizationAngle = e1.StructuralData.StructuralResults.CompressionUtilizationAngle;
