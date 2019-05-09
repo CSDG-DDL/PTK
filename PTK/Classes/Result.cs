@@ -21,7 +21,7 @@ namespace PTK
         public double utilShear { get; set; }
         public double utilBending { get; set; }
         public double utilTorsion { get; set; }
-
+        public double utilCombinedAxialBending { get; set; }
 
         // --- constructors --- 
 

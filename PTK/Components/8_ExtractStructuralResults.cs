@@ -32,6 +32,11 @@ namespace PTK
             pManager.AddNumberParameter("Utilization Tension", "UT", "Maximum tension utilization for the element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Utilization Bending", "UB", "Maximum bedning utilization for the element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Utilization Combined", "UCB", "Maximum combined compression/bending utilization for the element", GH_ParamAccess.item);
+
+            pManager.AddGenericParameter("Utilizations", "U", "Utilizations in all result points", GH_ParamAccess.list);
+
+            pManager.AddNumberParameter("Utilization", "MAXU", "Maximum utilization for the element", GH_ParamAccess.item);
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -52,6 +57,9 @@ namespace PTK
             DA.SetData(2, sd.StructuralResults.BendingUtilization);
             DA.SetData(3, sd.StructuralResults.CombinedBendingAndAxial);
 
+            DA.SetDataList(4, sd.StructuralResults.results);
+
+            DA.SetData(5, sd.StructuralResults.MaximumUtilization);
         }
 
         protected override System.Drawing.Bitmap Icon

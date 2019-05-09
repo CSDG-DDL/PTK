@@ -61,6 +61,11 @@ namespace PTK
                     var load = new Karamba.Loads.GravityLoad(gl.GravityVector, gl.LoadCase);
                     loads.Add(load);
                 }
+                if (l is KarambaLoad kl1)
+                {
+                    
+                    loads.Add(kl1.karambaLoad.Value);
+                }
             }
 
             foreach(Element1D e in _strAssembly.Elements)
@@ -99,6 +104,8 @@ namespace PTK
 
             return model;
         }
+
+
         public static Karamba.Models.Model BuildModelMilimeters(StructuralAssembly _strAssembly)
         {
             var points = new List<Point3d>();

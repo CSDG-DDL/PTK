@@ -11,9 +11,10 @@ namespace PTK
         // --- field ---
         public string Tag { get; private set; } = "N/A";
         public int LoadCase { get; private set; } = 0;
+        public Karamba.Loads.GH_Load karambaLoad{ get; set; }
 
-        // --- constructors --- 
-        public Load() { }
+    // --- constructors --- 
+    public Load() { }
         public Load(string _tag)
         {
             Tag = _tag;
@@ -103,6 +104,34 @@ namespace PTK
         }
     }
 
+    public class KarambaLoad : Load
+    {
+        // --- field ---
+        public Karamba.Loads.GH_Load karambaLoad { get; set; }
+
+        // --- constructors --- 
+        public KarambaLoad() : base() { }
+        public KarambaLoad(string _tag) : base(_tag) { }
+        public KarambaLoad(string _tag, int _loadCase, Karamba.Loads.GH_Load _karambaLoad) : base(_tag, _loadCase)
+        {
+            karambaLoad = _karambaLoad;
+        }
+
+        // --- methods ---
+        public override Load DeepCopy()
+        {
+            return (Load)MemberwiseClone();
+        }
+        public override string ToString()
+        {
+            string info;
+            info = "<KarambaLoad>\n" +
+                " Tag:" + Tag + "\n" +
+                " LoadCase:" + LoadCase.ToString() + "\n" +
+                " KarambaLoad:" + karambaLoad.ToString();
+            return info;
+        }
+    }
 
     public class GH_Load : GH_Goo<Load>
     {
