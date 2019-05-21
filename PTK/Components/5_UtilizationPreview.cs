@@ -46,7 +46,6 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-
             pManager.AddParameter(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Show the legend", "R (PTK)", "Highlight the utilization level", GH_ParamAccess.item, false);
             pManager.AddNumberParameter("Range of utilization", "R (PTK)", "Range of utilization", GH_ParamAccess.list, new List<double>() {0,0.5,1 });
@@ -58,17 +57,10 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-
             pManager.AddTextParameter("OUT information", "info", "temporary information from analysis", GH_ParamAccess.list);
             pManager.AddGenericParameter("Model", "M", "3d model", GH_ParamAccess.list);
         }
-
-
-
-
-
-
-
+        
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
@@ -102,17 +94,14 @@ namespace PTK.Components
             structuralAssembly = gStrAssembly.Value ;
 
             List<Element1D> elements = structuralAssembly.Elements ;
-
             List<Color> cList = new List<Color>();
+
             foreach (var c1 in colorList)
             {
                 cList.Add(Color.FromName(c1));
             }
             #endregion
-
-
-
-
+            
             #region creating report of calculation
             // Creat
             List<double> tmpUtilList = new List<double>();
@@ -179,26 +168,14 @@ namespace PTK.Components
                         }
                     }
                 };
-
                 Colors.Add(tmpColor);
                 
-
             }
             #endregion 
 
             infolist.Add("The preview of the structural analysis version 0.5");
-
-
-
-            /*
-            // --- output ---
-            foreach (var m in tmpModels)
-            {
-                models[m.Key] = m.Value;
-            }
-            */
+            
             DA.SetDataList(1, BrepElements);
-
             DA.SetDataList(0, infolist);
 
             PublicColors = Colors;
