@@ -65,8 +65,14 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
             if (!DA.GetData(1, ref curve)) { return; }
+            if (!curve.IsLinear())
+            {
+                throw new ArgumentException("Sorry! This version of Reindeer does not allow non-linear curves");
 
+            }
             
+
+
 
 
             if (!DA.GetData(2, ref Composite))
