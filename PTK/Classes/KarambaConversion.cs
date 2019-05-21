@@ -32,6 +32,7 @@ namespace PTK
                 if (!materialMap.ContainsKey(elem.Composite.MaterialProperty))
                 {
                     materialMap.Add(elem.Composite.MaterialProperty, MakeFemMaterial(elem.Composite.MaterialProperty));
+                    
                 }
                 crosecMap.Add(elem.Composite , MakeCrossSection(elem.Composite, materialMap[elem.Composite.MaterialProperty]));
 
