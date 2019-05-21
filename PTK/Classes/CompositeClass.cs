@@ -137,17 +137,7 @@ namespace PTK
             HeightInterval = new Interval(Heights.First(), Heights.Last());
 
         }
-
-
-
-
-
-
-
-
-
-
-
+        
     }
 
 

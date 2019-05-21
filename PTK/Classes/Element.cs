@@ -12,7 +12,6 @@ namespace PTK
     {
         // --- field ---
         public string Tag { get; private set; } = "N/A";
-
         // --- constructors --- 
         public Element() { }
         public Element(string _tag)
@@ -20,7 +19,7 @@ namespace PTK
             Tag = _tag;
         }
     }
-    
+
     public class Element1D : Element
     {
         // --- field ---
@@ -37,7 +36,6 @@ namespace PTK
         public bool IsIntersectWithOther { get; private set; } = true;
         public int Priority { get; private set; } = 0;
         public ElementAlign Elementalignment { get; private set; }
-
         public List<Curve> EdgeCurves { get; private set; } = new List<Curve>();
 
         // --- constructors --- 
@@ -61,17 +59,12 @@ namespace PTK
             IsIntersectWithOther = _intersect;
             Priority = _priority;
             InitializeLocalPlane();
-
             Composite = new CompositeNew(_compositeInput, this);
             GenerateCornerLines();
-
             //CrossSection = new RectangleCroSec("", Composite.MaterialProperty, Composite.HeightSimplified, Composite.WidthSimplified, new Alignment());
-
-            
         }
 
-        
-        public Element1D( Element1D _elem, StructuralData _StructuralData) : base()
+        public Element1D(Element1D _elem, StructuralData _StructuralData) : base()
         {
             BaseCurve = _elem.baseCurve;
             PointAtStart = _elem.PointAtStart;
@@ -79,14 +72,11 @@ namespace PTK
             Composite = _elem.Composite;
             StructuralData = _StructuralData;
             Elementalignment = _elem.Elementalignment;
-             Joints = _elem.Joints;
+            Joints = _elem.Joints;
             IsIntersectWithOther = _elem.IsIntersectWithOther;
             Priority = _elem.Priority;
             InitializeLocalPlane();
         }
-
-
-
 
         // --- methods ---
         public Curve BaseCurve
@@ -95,17 +85,10 @@ namespace PTK
             set { baseCurve = value; }
         }
 
-
-
-
-        
-
-
         private void InitializeLocalPlane()
         {
             if (BaseCurve != null)
             {
-                
                 Vector3d localX = BaseCurve.TangentAtStart;
                 Vector3d globalZ = Vector3d.ZAxis;
 
@@ -115,34 +98,22 @@ namespace PTK
                 // case B: other than case A. (such as beams or inclined columns)
                 // localY direction is obtained by the cross product of globalZ and localX.
 
-
-                
-
                 Plane InitialPlane = new Plane(BaseCurve.PointAtStart, BaseCurve.TangentAtStart);
-
                 Vector3d Alignmentvector = Elementalignment.ElementAlignmentRule(BaseCurve);
                 Vector3d InitialXvector = InitialPlane.YAxis;
 
                 double angle = Vector3d.VectorAngle(InitialXvector, Alignmentvector, InitialPlane);
 
                 Plane BaseCurveYZPlane = new Plane(InitialPlane);
-
                 BaseCurveYZPlane.Rotate(angle, BaseCurveYZPlane.ZAxis, BaseCurveYZPlane.Origin);
-
-
 
                 double ElementOffsetY = Elementalignment.OffsetY;
                 double ElementOffsetZ = Elementalignment.OffsetZ;
 
                 CroSecLocalPlane = new Plane(BaseCurveYZPlane);
 
-                
                 Point3d test = CroSecLocalPlane.PointAt(ElementOffsetY, ElementOffsetZ);
                 CroSecLocalPlane = new Plane(test, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
-
-                
-
-                
 
             }
             else
@@ -150,6 +121,7 @@ namespace PTK
                 CroSecLocalPlane = new Plane();
             }
         }
+
 
         public void GenerateCornerLines()
         {
@@ -183,13 +155,10 @@ namespace PTK
             EdgeCurves.Add(edgeTL);
         }
 
-
         public List<Refside> GenerateRefsides()
         {
 
             Point3d corner = new Point3d(CroSecLocalPlane.PointAt(Composite.WidthInterval.T0, Composite.HeightInterval.T0));
-             
-
 
             Plane CornerPlane = new Plane(corner, CroSecLocalPlane.XAxis, CroSecLocalPlane.YAxis);
             double Length = BaseCurve.GetLength();
@@ -208,8 +177,6 @@ namespace PTK
             Plane refPlane3 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.YAxis);
             Plane refPlane4 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.ZAxis);
 
-
-
             Vector3d WidthVector = new Vector3d(refPlane1.YAxis * Width);
             Vector3d HeightVector = new Vector3d(-refPlane1.ZAxis * Height);
 
@@ -217,9 +184,7 @@ namespace PTK
             refPlane3.Translate(WidthVector + HeightVector);
             refPlane4.Translate(WidthVector);
 
-
             List<Refside> refSides = new List<Refside>();
-
 
             refSides.Add(new Refside(1, refPlane1, Length, Width, Height));
             refSides.Add(new Refside(2, refPlane2, Length, Height, Width));
@@ -230,7 +195,6 @@ namespace PTK
             List<Point3d> endPoints = new List<Point3d>();
             List<Point3d> cornerPoints = new List<Point3d>();
 
-
             foreach (Refside side in refSides)
             {
                 startPoints.Add(side.RefPoint);
@@ -239,22 +203,13 @@ namespace PTK
                 tempPlane.Translate(tempPlane.ZAxis * Length);
                 endPoints.Add(tempPlane.Origin);
             }
-
             return refSides;
         }
 
 
-
-
         public Brep GenerateSimplifiedGeometry()
         {
-            
-
             Plane WorkPlane = CroSecLocalPlane;
-
-
-
-
             Rectangle3d shape = new Rectangle3d(WorkPlane, Composite.WidthInterval, Composite.HeightInterval);
 
             if (BaseCurve.IsLinear())
@@ -275,10 +230,7 @@ namespace PTK
                 {
                     return new Brep();
                 }
-
             }
-
-
         }
 
 
@@ -300,8 +252,6 @@ namespace PTK
             return Tag != "N/A";
         }
     }
-
-
 
     public class GH_Element1D : GH_Goo<Element1D>
     {
@@ -340,6 +290,9 @@ namespace PTK
         }
     }
 
+
+
+
     public class SubElement
     {
         // --- field ---
@@ -359,11 +312,8 @@ namespace PTK
         public MaterialProperty Material { get; private set; }
         //public PartType BTLPart { get;  set; }
         public ProcessedElement ProcessedElement { get; private set; }
-        
 
         // --- constructors --- 
-
-
         public SubElement(Element1D MainElement, CrossSection CrossSection)
         {
             Name = CrossSection.Name;
@@ -374,27 +324,18 @@ namespace PTK
             Height = CrossSection.GetHeight();
             Length = BaseCurve.GetLength();
 
-            
-
             CroSecLocalCenterPlane = GenerateCrossSectionCenterPlanePlane(MainElement.CroSecLocalPlane);
             CrosSecLocalCornerPlane = GenerateCrossSectionCornerPlane(MainElement.CroSecLocalPlane);
 
             Rectangle3d shape = new Rectangle3d(CrosSecLocalCornerPlane, Width, Height);
             Shape2dCorners = new List<Point3d>();
 
-
             Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(0, 0));
             Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(0, Height));
-            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(Width,0));
+            Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(Width, 0));
             Shape2dCorners.Add(CrosSecLocalCornerPlane.PointAt(Width, Height));
 
-
             Shape2d = shape.ToNurbsCurve();
-
-            
-
-            
-
         }
 
         public Plane GenerateCrossSectionCenterPlanePlane(Plane CroSecLocalPlane)
@@ -409,7 +350,6 @@ namespace PTK
             BaseCurve.Translate(plane.XAxis * offsety + plane.YAxis * offsetz);
 
             return plane;
-
         }
 
         public Plane GenerateCrossSectionCornerPlane(Plane _croSecLocalPlane)
@@ -437,8 +377,6 @@ namespace PTK
             Plane refPlane3 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.YAxis);
             Plane refPlane4 = new Plane(refPlane1.Origin, refPlane1.XAxis, -refPlane1.ZAxis);
 
-
-
             Vector3d WidthVector = new Vector3d(refPlane1.YAxis * Width);
             Vector3d HeightVector = new Vector3d(-refPlane1.ZAxis * Height);
 
@@ -446,9 +384,7 @@ namespace PTK
             refPlane3.Translate(WidthVector + HeightVector);
             refPlane4.Translate(WidthVector);
 
-
             List<Refside> refSides = new List<Refside>();
-
 
             refSides.Add(new Refside(1, refPlane1, Length, Width, Height));
             refSides.Add(new Refside(2, refPlane2, Length, Height, Width));
@@ -472,7 +408,6 @@ namespace PTK
             return refSides;
         }
 
-
         public Brep GenerateElementGeometry()
         {
 
@@ -495,15 +430,56 @@ namespace PTK
                     return new Brep();
                 }
             }
+        }
 
+    }
+
+    #region structural element
+    /// <summary>
+    /// structural element class
+    /// </summary>
+    public class StructuralElement1D : Element
+    {
+        // --- field ---
+        private Line BaseLine { get; set; } = new Line();
+        //public Curve BaseCurve { get; private set; } = null;
+        public Point3d PointAtStart { get; private set; } = new Point3d();
+        public Point3d PointAtEnd { get; private set; } = new Point3d();
+        public Plane CroSecLocalPlane { get; private set; }
+        public Plane CroSecLocalCornerPlane { get; private set; }
+        public CrossSection CrossSection { get; private set; } = null;  //THIS IS GOING OUT!
+        public CompositeNew Composite { get; private set; }
+        public StructuralData StructuralData { get; private set; } = new StructuralData();
+        public List<Joint> Joints { get; private set; } = new List<Joint>();
+        public bool IsIntersectWithOther { get; private set; } = true;
+        public int Priority { get; private set; } = 0;
+        public ElementAlign Elementalignment { get; private set; }
+        public List<Curve> EdgeCurves { get; private set; } = new List<Curve>();
+
+        // --- constructors --- 
+        public StructuralElement1D() : base()
+        {
+            //empty
         }
 
 
 
+        public StructuralElement1D(Element1D _elem, StructuralData _StructuralData) : base()
+        {
+            BaseLine = new Line(_elem.PointAtEnd, _elem.PointAtStart);
+            PointAtStart = _elem.PointAtStart;
+            PointAtEnd = _elem.PointAtEnd;
+            Composite = _elem.Composite;
+            StructuralData = _StructuralData;
+            Elementalignment = _elem.Elementalignment;
+            Joints = _elem.Joints;
+            IsIntersectWithOther = _elem.IsIntersectWithOther;
+            Priority = _elem.Priority;
+        }
+
+        // --- methods ---
+
+        #endregion
 
     }
-
-
-
 }
-
