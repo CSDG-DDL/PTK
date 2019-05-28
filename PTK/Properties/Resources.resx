@@ -313,4 +313,22 @@
   <data name="DPNSrf" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DPNSrf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ExtCompsite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtCompsite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtForce" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtForce.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PlaneAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PlaneAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PointAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PointAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SrfAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SrfAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VecAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\VecAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

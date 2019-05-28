@@ -223,6 +223,16 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap ExtCompsite {
+            get {
+                object obj = ResourceManager.GetObject("ExtCompsite", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap ExtDetail {
             get {
                 object obj = ResourceManager.GetObject("ExtDetail", resourceCulture);
@@ -236,6 +246,16 @@ namespace PTK.Properties {
         internal static System.Drawing.Bitmap ExtElement {
             get {
                 object obj = ResourceManager.GetObject("ExtElement", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap ExtForce {
+            get {
+                object obj = ResourceManager.GetObject("ExtForce", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -573,6 +593,26 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap PlaneAlignment {
+            get {
+                object obj = ResourceManager.GetObject("PlaneAlignment", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap PointAlignment {
+            get {
+                object obj = ResourceManager.GetObject("PointAlignment", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap PointLoad {
             get {
                 object obj = ResourceManager.GetObject("PointLoad", resourceCulture);
@@ -653,6 +693,16 @@ namespace PTK.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap SrfAlignment {
+            get {
+                object obj = ResourceManager.GetObject("SrfAlignment", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap StrAssemble {
             get {
                 object obj = ResourceManager.GetObject("StrAssemble", resourceCulture);
@@ -706,6 +756,16 @@ namespace PTK.Properties {
         internal static System.Drawing.Bitmap UniformLoad {
             get {
                 object obj = ResourceManager.GetObject("UniformLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap VecAlignment {
+            get {
+                object obj = ResourceManager.GetObject("VecAlignment", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

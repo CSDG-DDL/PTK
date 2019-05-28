@@ -70,7 +70,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.Force;
+                return PTK.Properties.Resources.ExtForce;
             }
         }
 
