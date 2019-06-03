@@ -8,6 +8,9 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization;
 
+
+
+/*
 namespace PTK
 {
     public class PTK_BtlExport : GH_Component
@@ -138,7 +141,7 @@ namespace PTK
                 
             
             }
-            */
+            
         }
 
         protected override System.Drawing.Bitmap Icon
@@ -156,3 +159,4 @@ namespace PTK
         }
     }
 }
+*/

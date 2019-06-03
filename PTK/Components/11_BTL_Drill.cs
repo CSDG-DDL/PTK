@@ -8,6 +8,10 @@ namespace PTK.Components
 {
     public class _11_BTL_Drill : GH_Component
     {
+        List<Line> PublicLine = new List<Line>();
+        List<double> PublicRadius = new List<double>();
+        
+        
         /// <summary>
         /// Initializes a new instance of the _11_BTL_Drill class.
         /// </summary>
@@ -48,10 +52,11 @@ namespace PTK.Components
             // --- solve ---
             BTLDrill drill = new BTLDrill(Line, Radius);
 
-
+            PublicLine.Add(Line);
+            PublicRadius.Add(Radius);
             // Making Object with delegate and ID
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(drill.DelegateProcess));
-
+            
             // --- output ---
             DA.SetData(0, Order);
         }
@@ -65,7 +70,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return Properties.Resources.Drill;
             }
         }
 
@@ -76,5 +81,37 @@ namespace PTK.Components
         {
             get { return new Guid("02f5f402-a02c-4b74-89e8-d59b0323a12f"); }
         }
+
+        public override void ExpireSolution(bool recompute)
+        {
+            PublicLine.Clear();
+            PublicRadius.Clear();
+            base.ExpireSolution(recompute);
+        }
+
+
+        public override void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+
+            if (PublicLine.Count > 0)
+            {
+
+                for(int i = 0; i < PublicLine.Count; i++)
+                {
+                    Plane tempPlane = new Plane(PublicLine[i].From, PublicLine[i].Direction);
+                    Circle tempCircle = new Circle(tempPlane, PublicRadius[i]);
+                    Cylinder tempCylinder = new Cylinder(tempCircle, PublicLine[i].Length);
+
+                    args.Display.DepthMode = Rhino.Display.DepthMode.AlwaysInFront;
+                    args.Display.DrawBrepShaded(tempCylinder.ToBrep(false, false), new Rhino.Display.DisplayMaterial(System.Drawing.Color.Red));
+                }
+                
+
+
+            }
+
+
+        }
+
     }
 }

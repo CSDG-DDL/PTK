@@ -34,6 +34,16 @@ namespace PTK
         }
 
         // --- methods ---
+        public void AddElement(Element1D _element)
+        {
+            Elements.Add(_element);
+        }
+
+        
+
+
+
+
         public bool SetElements(List<Element1D> _elements, List<string> _priority)
         {
             List<Element1D> crossElements = _elements.FindAll(e => !IsNodeEndPointAtElement(e));
@@ -137,6 +147,7 @@ namespace PTK
                 case 2:     //Sorts by length
                     Elements = Elements.OrderBy(e => e.BaseCurve.GetLength()).ToList();
                     break;
+
                 default:
                     Elements = Elements;
                     break;

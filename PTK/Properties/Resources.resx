@@ -271,4 +271,103 @@
   <data name="CircularCS" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CircularCS.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ReindeerAssemble" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ReindeerAssemble.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LocalAnalysisCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LocalAnalysisCheck.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mortise" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mortise.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaForce" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaForce.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParaSMP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ParaSMP.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PreElementStr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PreElementStr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StructuralMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\StructuralMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Subtraction" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Subtraction.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tenon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tenon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNAlongEle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNAlongEle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNEleAve" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNEleAve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNMesh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNMesh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNNormal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNNormal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DPNSrf" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DPNSrf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtCompsite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtCompsite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtForce" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtForce.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PlaneAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PlaneAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PointAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PointAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SrfAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SrfAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VecAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\VecAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AmountRule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AmountRule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AngleRule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AngleRule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BTLSetting" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BTLSetting.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtResult" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtResult.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtSD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtSD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExtSR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExtSR.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="KarambaLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\KarambaLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LengthRule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LengthRule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RegionRule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RegionRule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SF" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SF.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TagRule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TagRule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TypologyRule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TypologyRule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

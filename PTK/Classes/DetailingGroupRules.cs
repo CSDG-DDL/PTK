@@ -42,9 +42,15 @@ namespace PTK.Rules
         // --- methods ---
         public bool check(Detail _detail)  //Checking element length
         {
+
+
+
             Detail detail = _detail;
             Node node = detail.Node;
             List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
+
+            
+
 
             bool valid = false;
             foreach (Element1D element in elements)
@@ -101,6 +107,144 @@ namespace PTK.Rules
             return valid;
         }
     }
+
+    public enum ForceMode
+    {
+        Compression, Tension, BendingDir1, BendingDir2, ShearDir1, ShearDir2, MaxTorsion
+    }
+
+    public class ElementForce
+    {
+        // --- field ---
+        private ForceMode forceMode;
+        private double minimum;
+        private double maximum;
+        private bool allElements;
+
+        // --- constructors --- 
+        public ElementForce(ForceMode _forceMode, double _minimum, double _maximum, bool _allElements)
+        {
+            forceMode = _forceMode;
+            minimum = _minimum;
+            maximum = _maximum;
+            allElements = _allElements;
+        }
+
+        // --- methods ---
+        public bool check(Detail _detail)
+        {
+            Detail detail = _detail;
+            
+            List<Element1D> elements = detail.Elements;// ElementsPriorityMap.Keys.ToList();
+
+            List<double> ForceValue = new List<double>();
+
+
+
+            //Records the data dependent on the mode chosen
+            if (forceMode == ForceMode.BendingDir1)
+            {
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxBendingDir1.MY);
+                }
+            }
+
+            if (forceMode == ForceMode.BendingDir2)
+            {
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxBendingDir2.MZ);
+                }
+            }
+
+            if (forceMode == ForceMode.Compression)
+            {
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxCompressionForce.FX);
+                }
+            }
+
+            if (forceMode == ForceMode.MaxTorsion)
+            {
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxTorsion.MX);
+                }
+            }
+
+            if (forceMode == ForceMode.ShearDir1)
+            {
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxShearDir1.FY);
+                }
+            }
+            if (forceMode == ForceMode.ShearDir2)
+            {
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxShearDir2.FZ);
+                }
+            }
+
+            if (forceMode == ForceMode.Tension)
+            {
+                foreach (Element1D elem in elements)
+                {
+                    ForceValue.Add(elem.StructuralData.StructuralForces.maxTensionForce.FX);
+                }
+            }
+
+            //Creates a min/max domain
+            Interval domain = new Interval(minimum, maximum);
+            int valid = 0;
+
+            //Run through all forcevalues an check if they are in the domain
+            foreach (double value in ForceValue)
+            {
+                if (domain.IncludesParameter(value))
+                {
+                    valid++;
+                }
+            }
+
+
+            //First it checks if all elements should be within the domain. Then it checks if valid equals to element count.
+            //The second check, not all elements checks if there are more than 0 valid values
+            if (allElements)
+            {
+                if (valid == elements.Count)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false; 
+                }
+            }
+            else
+            {
+                if (valid > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+
+
+
+
+
+            
+        }
+    }
+
 
     public class NodeHitRegion 
     {
@@ -163,10 +307,10 @@ namespace PTK.Rules
     {
         // --- field ---
         private List<string> tagsAre = new List<string>();
-        private int mode = 0;
+        private int mode;
 
         // --- constructors --- 
-        public ElementTag(List<string> _tagsAre, int _mode = 0)
+        public ElementTag(List<string> _tagsAre, int _mode)
         {
             tagsAre = _tagsAre;
             mode = _mode;
@@ -185,8 +329,11 @@ namespace PTK.Rules
 
             bool valid = false;
            
-            if (mode >= 4) //mode verifier
+            if (mode >= 4)
+            {
                 mode = 0;
+            }
+                
 
             if (mode == 0)  // Mode 0 - One of - The detail must contain one of the inputted tags
             {
@@ -205,26 +352,25 @@ namespace PTK.Rules
 
             if (mode == 1) // Mode 1 - At least -  The detail must contain all the inputted tags, but can also contain other tags
             {
+                List<string> ElementTags = new List<string>();
+
                 for (int j = 0; j < _elements.Count; j++)
                 {
-                    foreach (Element element in _elements)
-                    {
-                        detailTags.Add(element.Tag);
-                    }
-
-                    if (tagsAre.Count == 1)
-                    {
-                        if (detailTags.Contains(tagsAre[0]))
-                            valid = true;
-                    }
-                    else
-                    {
-                        List<string> detailTagsDistinct = detailTags.Distinct().ToList();
-
-                        if (detailTagsDistinct.Except(tagsAreDistinct).Count() == 0 && tagsAreDistinct.Except(detailTagsDistinct).Count() == 0)
-                            valid = true;
-                    }
+                    ElementTags.Add(_elements[j].Tag);
                 }
+                
+
+                for (int j = 0; j < tagsAre.Count; j++)
+                {
+                    if (!ElementTags.Contains(tagsAre[j]))
+                    {
+                        return false;
+                    }
+
+                }
+                return true;
+
+
             }
 
 
@@ -269,17 +415,140 @@ namespace PTK.Rules
 
     }
 
+    public class ElementOnNodeDomains
+    {
+        // --- field ---
+        private int mode;
+
+        // --- constructors --- 
+        public ElementOnNodeDomains(int _mode)
+        {
+            mode = _mode;
+        }
+
+        // --- methods ---
+        public bool check(Detail _detail)
+        {
+            List<Element1D> elements = _detail.Elements;
+            Node node = _detail.Node;
+
+            double tolerance = .000000001;
+
+            Interval IntervalNotOnEnd = new Interval(0 + tolerance, 1 - tolerance);
+
+            int AmountOnends = 0;
+            int ElemCount = elements.Count;
+            List<Point3d> centerPts = new List<Point3d>();
+
+            foreach (Element1D elem in elements)
+            {
+                double t;
+                Curve TempCurve = elem.BaseCurve;
+                TempCurve.Domain = new Interval(0, 1);
+                TempCurve.ClosestPoint(node.Point, out t);
+
+       
+                centerPts.Add(TempCurve.PointAt(0.5));
+                
+                if (!IntervalNotOnEnd.IncludesParameter(t))
+                {
+                    AmountOnends += 1;
+                }
+            }
+
+
+                
+
+            if (mode == 0 )  //L-Node
+            {
+                if (AmountOnends == 2 && ElemCount==2){return true; } else { return false; }
+            }
+
+            if (mode == 1) //T-node
+            {
+                if (AmountOnends == 1 && ElemCount == 2) { return true; } else { return false; }
+            }
+
+            if (mode == 2) //X-node
+            {
+                if (AmountOnends == 0 && ElemCount == 2) { return true; } else { return false; }
+            }
+
+            if (mode ==3) //EndNode
+            {
+                if (ElemCount==1) { return true; } else { return false; }
+            }
+
+            if (mode == 4) //StarNode
+            {
+                if (ElemCount > 2 && ElemCount == AmountOnends) { return true; } else { return false; }
+            }
+
+            if (mode ==5) //Planar
+            {
+                Plane PtPlane = new Plane();
+                double deviation;
+                List<Point3d> checkPoints = centerPts;
+                checkPoints.Add(node.Point);
+
+                Plane.FitPlaneToPoints(checkPoints, out PtPlane, out deviation);
+                if (deviation<CommonProps.tolerances) { return true; } else { return false; }
+            }
+
+            if (mode == 6) //Orthogonal
+            {
+                for (int i = 0; i < centerPts.Count; i++)
+                {
+                    Vector3d FirstVector = new Line(node.Point, centerPts[i]).Direction;
+
+                    for (int j = 0; j < centerPts.Count; j++)
+                    {
+                        if (j != i)
+                        {
+                            Vector3d SecondVector = new Line(node.Point, centerPts[j]).Direction;
+                            double angle = Vector3d.VectorAngle(elements[j].BaseCurve.TangentAtStart, elements[i].BaseCurve.TangentAtStart);
+
+                            angle = angle - Math.PI / 2;
+                            double rest = angle % (Math.PI / 2);
+                            rest = Math.Abs(rest);
+                            if (rest < Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians) { return true; }
+
+
+
+                            else { return false; }
+                        }
+                    }
+
+                }
+            }
+            return false;
+
+
+
+
+
+
+
+
+
+
+            
+            
+        }
+
+    }
+
 
     public class ElementAngle
     {
         
         // --- field ---
-        private int minimumAngle = 0;
-        private int maximumAngle = 360;
+        private double minimumAngle = 0;
+        private double maximumAngle = Math.PI*2;
 
         // --- constructors ---
 
-        public ElementAngle(int _minimumAngle = 0, int _maximumAngle = 360)
+        public ElementAngle(double _minimumAngle, double _maximumAngle)
         {
             minimumAngle = _minimumAngle;
             maximumAngle = _maximumAngle;
@@ -320,20 +589,7 @@ namespace PTK.Rules
             Plane.FitPlaneToPoints(pointsOnElement,out nodePlane);
             nodePlane.Origin = _node.Point;
 
-            //for (int i = 0; i < _elems.Count; i++)
-            //{
-            ////Creates a unitized vector of each element, starting in the node, projected on the nodePlane
-            //    Point3d pointOnElement = _elems[i].BaseCurve.PointAt(0.5);
-            //    Point3d _pointOnElement = new Point3d(pointOnElement.X,pointOnElement.Y,nodePlane.OriginZ);
-            //    Line elementLine = new Line(_node.Point, _pointOnElement);
-            //    Vector3d _elementVector1 = elementLine.UnitTangent;
-            //    elementVectors2D.Add(_elementVector1);
-            //}
-            
-            //Deconstructs nodePlane to find the vectors on the plane 
-            //Vector3d nX = nodePlane.XAxis;
-            //Vector3d nY = nodePlane.YAxis;
-            //Vector3d nZ = nodePlane.ZAxis;
+    
 
             double angleToNodeVector;
 
@@ -359,45 +615,28 @@ namespace PTK.Rules
             sortVectors.Add(circleDictionoary[ts[i]]);
             }
             
-            ////Finds angles between each element and the x-axis on the nodeplane. Adds to a dictionary and sorts according to the angle.
 
-            //for (int i = 0; i < elementVectors.Count; i++)
-            //{
-            //    angleToNodeVector = (Vector3d.VectorAngle(nX, elementVectors[i], nodePlane) * 180 / Math.PI);
-            //    angles.Add(angleToNodeVector);
-            //}
-
-            //var dictionary = new Dictionary<double, Vector3d>();
-            //for (int i = 0; i < count; i++) dictionary.Add(angles[i], elementVectors[i]);
-
-            //angles.Sort();
-
-            //List<Vector3d> sortedVectors = new List<Vector3d>();
-            //for (int i = 0; i < count; i++)
-            //{
-            //    sortedVectors.Add(dictionary[angles[i]]);
-            //}
             
             //Adding the angles between each element to a list
             List<double> anglesBetween = new List<double>();
 
             if (count == 2)
             {
-                double angleFirst = Vector3d.VectorAngle(sortVectors[1], sortVectors[0],nodePlane) * 180 / Math.PI;
+                double angleFirst = Vector3d.VectorAngle(sortVectors[1], sortVectors[0],nodePlane);
                 anglesBetween.Add(angleFirst);
-                double angleSecond = Vector3d.VectorAngle(sortVectors[0], sortVectors[1],nodePlane) * 180 / Math.PI;
+                double angleSecond = Vector3d.VectorAngle(sortVectors[0], sortVectors[1],nodePlane);
                 anglesBetween.Add(angleSecond);
             }
             else
             {
             //Add the angle between last(count-1) and first(0) index manually
-                double angleFirst = Vector3d.VectorAngle(sortVectors[count - 1], sortVectors[0]) * 180 / Math.PI;
+                double angleFirst = Vector3d.VectorAngle(sortVectors[count - 1], sortVectors[0]);
                 anglesBetween.Add(angleFirst);
 
             //Adds the angle between the others in a loop
                 for (int i = 0; i < count - 1; i++)
                 {
-                    double angleBetweenNext = Vector3d.VectorAngle(sortVectors[i], sortVectors[i + 1]) * 180 / Math.PI;
+                    double angleBetweenNext = Vector3d.VectorAngle(sortVectors[i], sortVectors[i + 1]);
                     anglesBetween.Add(angleBetweenNext);
                 }
             }

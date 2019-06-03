@@ -12,13 +12,14 @@ namespace PTK
     public class PTK_ExtractElement : GH_Component
     {
         public PTK_ExtractElement()
-          : base("Extract Element", "ExtractElement",
-              "Extract Element",
+          : base("Deconstruct Element", "DE",
+              "Deconstruct an element into its properties",
               CommonProps.category, CommonProps.subcate8)
         {
             Message = CommonProps.initialMessage;
         }
 
+        
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
@@ -32,10 +33,18 @@ namespace PTK
             pManager.AddPointParameter("Point At Start", "Ps", "Point At Start", GH_ParamAccess.item);
             pManager.AddPointParameter("Point At End", "Pe", "Point At End", GH_ParamAccess.item);
             pManager.AddPlaneParameter("CroSecLocalPlane", "Pl", "returns CroSec Local Plane", GH_ParamAccess.item);
-            pManager.RegisterParam(new Param_CroSec(), "CrossSections", "S", "CrossSections", GH_ParamAccess.item);
-            pManager.RegisterParam(new Param_Alignment(), "Alignment", "A", "Alignment", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Simplified Height", "H", "Simplified height of composite", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Simplified Width", "W", "Simplified width of composite", GH_ParamAccess.item);
+            pManager.AddGenericParameter( "Subelements", "S", "Deconstructs the composite into subelements", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Intersect Other", "I", "Is Intersect With Other", GH_ParamAccess.item);
+
+            pManager.AddGenericParameter("StructuralData", "Sd", "returns structural data, forces and results", GH_ParamAccess.list);
+            pManager.AddPlaneParameter("SidePlanes", "P", "0BtmSide,1Leftside,2Topside, 3Rightside", GH_ParamAccess.list);
+
         }
+
+
+
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
@@ -52,9 +61,28 @@ namespace PTK
             Point3d ps = elem.PointAtStart;
             Point3d pe = elem.PointAtEnd;
             Plane plane = elem.CroSecLocalPlane;
-            GH_CroSec sec = new GH_CroSec(elem.CrossSection);
-            GH_Alignment align = new GH_Alignment(elem.Alignment);
+            double height = elem.Composite.HeightSimplified;
+            double width = elem.Composite.WidthSimplified;
+
+            List<SubElement> SubElements = elem.Composite.Subelements;
+            CompositeNew Composite = elem.Composite;
             bool intersect = elem.IsIntersectWithOther;
+            
+
+            List<Refside> refsides = elem.GenerateRefsides();
+
+            List<Plane> refplanes = new List<Plane>();
+            refplanes.Add(refsides[0].RefPlane);
+            refplanes.Add(refsides[1].RefPlane);
+            refplanes.Add(refsides[2].RefPlane);
+            refplanes.Add(refsides[3].RefPlane);
+
+
+
+
+            StructuralData sData= elem.StructuralData;
+            GH_StructuralData gsData = new GH_StructuralData(sData);
+
 
             // --- output ---
             DA.SetData(0, tag);
@@ -62,9 +90,14 @@ namespace PTK
             DA.SetData(2, ps);
             DA.SetData(3, pe);
             DA.SetData(4, plane);
-            DA.SetData(5, sec);
-            DA.SetData(6, align);
-            DA.SetData(7, intersect);
+            DA.SetData(5, height);
+            DA.SetData(6, width);
+            DA.SetDataList(7, SubElements);
+            DA.SetData(8, intersect);
+
+            DA.SetData(9, gsData );
+            DA.SetDataList(10, refplanes);
+
         }
 
 

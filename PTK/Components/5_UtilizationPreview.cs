@@ -25,6 +25,10 @@ namespace PTK.Components
 {
     public class PTK_UtilizationPreview : GH_Component
     {
+
+        List<Brep> PublicElements = new List<Brep>();
+        List<Color> PublicColors = new List<Color>();
+
         Dictionary<Brep, Color> models = new Dictionary<Brep, Color>();
         /// <summary>
         /// Initializes a new instance of the _4_4_DimensioningMembers class.
@@ -42,7 +46,6 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-
             pManager.AddParameter(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Show the legend", "R (PTK)", "Highlight the utilization level", GH_ParamAccess.item, false);
             pManager.AddNumberParameter("Range of utilization", "R (PTK)", "Range of utilization", GH_ParamAccess.list, new List<double>() {0,0.5,1 });
@@ -54,17 +57,10 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-
             pManager.AddTextParameter("OUT information", "info", "temporary information from analysis", GH_ParamAccess.list);
             pManager.AddGenericParameter("Model", "M", "3d model", GH_ParamAccess.list);
         }
-
-
-
-
-
-
-
+        
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
@@ -97,25 +93,20 @@ namespace PTK.Components
 
             structuralAssembly = gStrAssembly.Value ;
 
-            List<Element1D> elements = structuralAssembly.Assembly.Elements ;
-
+            List<Element1D> elements = structuralAssembly.Elements ;
             List<Color> cList = new List<Color>();
+
             foreach (var c1 in colorList)
             {
                 cList.Add(Color.FromName(c1));
             }
             #endregion
-
-
-
-
+            
             #region creating report of calculation
-            // Create
-
-            List<double> maxUtilList = new List<double>();
+            // Creat
             List<double> tmpUtilList = new List<double>();
             List<Brep> brepList = new List<Brep>();
-            PTK_StructuralAnalysis tmpReport = new PTK_StructuralAnalysis();
+
             Dictionary<Element1D, double> utiliziationDictionary = new Dictionary<Element1D, double>();
             Dictionary<double, double> utilizationColor = new Dictionary<double, double>();
 
@@ -131,125 +122,65 @@ namespace PTK.Components
                     c1++;
                 }
                 int i1 = 0;
-                foreach (var e1 in structuralAssembly.Assembly.Elements)
-                {
-                    tmpReport = structuralAssembly.ElementReport[e1];
-                    tmpUtilList = new List<double>() {
-                        tmpReport.elementTensionUtilization,
-                        tmpReport.elementCompressionUtilization,
-                        tmpReport.elementCombinedBendingAndAxial,
-                        tmpReport.elementCompressionUtilizationAngle,
-                        tmpReport.elementBendingUtilization
 
-                            };
-                    maxUtilList.Add(tmpUtilList.Max());
+                foreach (var e1 in structuralAssembly.Elements)
+                {
+                    tmpUtilList = new List<double>() {
+                        e1.StructuralData.StructuralResults.CompressionUtilization,
+                        e1.StructuralData.StructuralResults.TensionUtilization,
+                        e1.StructuralData.StructuralResults.CompressionUtilizationAngle,
+                        e1.StructuralData.StructuralResults.CombinedBendingAndAxial,
+                        e1.StructuralData.StructuralResults.BendingUtilization
+                        };
+                   
                     utiliziationDictionary.Add(e1, tmpUtilList.Max());
                     infolist.Add("for element=" + i1 + " maximum utilization is=" + tmpUtilList.Max());
                     i1++;
-
-
+                    
                 }
-
-
-
             }
 
             #endregion
 
             #region creating breps
-            
+            List<Brep> BrepElements = new List<Brep>();
+            List<Color> Colors = new List<Color>();
+
             foreach (var element in elements)
             {
-                List<Tuple<CrossSection, Alignment>> subSections = new List<Tuple<CrossSection, Alignment>>();
-                if (element.CrossSection is Composite comp)
+                BrepElements.Add( element.GenerateSimplifiedGeometry());
+
+                Color tmpColor = Color.White;
+                double tmpUtil = utiliziationDictionary[element];
+
+                if (tmpUtil > utilList[utilList.Count - 1])
                 {
-                    subSections.AddRange(comp.RecursionCrossSectionSearch());
+                    tmpColor = cList[utilList.Count - 1];
                 }
                 else
                 {
-                    subSections.Add(new Tuple<CrossSection, Alignment>(element.CrossSection, element.Alignment));
-                }
-
-                foreach (Tuple<CrossSection, Alignment> subElement in subSections)
-                {
-                    Vector3d localY = element.CroSecLocalPlane.XAxis;
-                    Vector3d localZ = element.CroSecLocalPlane.YAxis;
-
-                    Point3d originElement = element.CroSecLocalPlane.Origin;
-                    Point3d originSubElement = originElement + subElement.Item2.OffsetY * localY + subElement.Item2.OffsetZ * localZ;
-
-                    Plane localPlaneSubElement = new Plane(originSubElement,
-                        element.CroSecLocalPlane.XAxis,
-                        element.CroSecLocalPlane.YAxis);
-
-                    Color tmpColor = Color.White;
-                    double tmpUtil = utiliziationDictionary[element];
-
-                    if (tmpUtil > utilList[utilList.Count-1] )
+                    tmpColor = Color.White;
+                    for (int i1 = 0; i1 < utilList.Count - 1; i1++)
                     {
-                        tmpColor = cList[utilList.Count - 1];
-                    }
-                    else
-                    {
-                        tmpColor = Color.White;
-                        for (int i1 = 0; i1 < utilList.Count - 1; i1++)
+                        if (tmpUtil >= utilList[i1] && tmpUtil < utilList[i1 + 1])
                         {
-                            if (tmpUtil >= utilList[i1] && tmpUtil < utilList[i1 + 1])
-                            {
                             tmpColor = cList[i1];
-                            }
-                                
-                        }
-
-                    };
-                    
-
-
-                    sectionCurves[new Rectangle3d(
-                                localPlaneSubElement,
-                                new Interval(-subElement.Item1.GetWidth() / 2, subElement.Item1.GetWidth() / 2),
-                                new Interval(-subElement.Item1.GetHeight() / 2, subElement.Item1.GetHeight() / 2)).ToNurbsCurve()]
-                                = tmpColor;
-                }
-
-                foreach (Curve s in sectionCurves.Keys)
-                {
-                    Curve c = element.BaseCurve;
-                    if (c.IsLinear())
-                    {
-                        Line l = new Line(c.PointAtStart, c.PointAtEnd);
-                        Brep brep = Extrusion.CreateExtrusion(s, l.Direction).ToBrep();
-                        //brep = brep.CapPlanarHoles(CommonProps.tolerances);
-                        tmpModels[brep] = sectionCurves[s];
-                    }
-                    else
-                    {
-                        Brep[] breps = Brep.CreateFromSweep(c, s, true, CommonProps.tolerances);
-                        foreach (var brep in breps)
-                        {
-                            tmpModels[brep] = sectionCurves[s];
                         }
                     }
-                }
-
-
-
+                };
+                Colors.Add(tmpColor);
+                
             }
             #endregion 
 
             infolist.Add("The preview of the structural analysis version 0.5");
-
-
-
-
-            // --- output ---
-            foreach (var m in tmpModels)
-            {
-                models[m.Key] = m.Value;
-            }
-            DA.SetDataList(1, tmpModels.Keys);
-
+            
+            DA.SetDataList(1, BrepElements);
             DA.SetDataList(0, infolist);
+
+            PublicColors = Colors;
+            PublicElements = BrepElements;
+
         }
 
         protected override System.Drawing.Bitmap Icon
@@ -258,7 +189,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return PTK.Properties.Resources.LocalAnalysis;
+                return PTK.Properties.Resources.LocalAnalysisCheck;
             }
         }
 
@@ -272,6 +203,8 @@ namespace PTK.Components
 
         public override void ExpireSolution(bool recompute)
         {
+            PublicElements.Clear();
+            PublicColors.Clear();
             models.Clear();
             base.ExpireSolution(recompute);
         }
@@ -279,16 +212,16 @@ namespace PTK.Components
         //public override BoundingBox ClippingBox => models.Keys.ToList()[0].GetBoundingBox(false);
         public override void DrawViewportMeshes(IGH_PreviewArgs args)
         {
-            foreach (var m in models)
+            for(int i =0;i<PublicColors.Count;i++)
             {
                 //args.Display.DrawObject(m.Key, new Rhino.Display.DisplayMaterial(m.Value, 0.5));
-                args.Display.DrawBrepShaded(m.Key, new Rhino.Display.DisplayMaterial(m.Value));
+                args.Display.DrawBrepShaded(PublicElements[i], new Rhino.Display.DisplayMaterial(PublicColors[i]));
             }
-            //base.DrawViewportMeshes(args);
+
         }
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
-            //base.DrawViewportWires(args);
+
         }
     }
 }

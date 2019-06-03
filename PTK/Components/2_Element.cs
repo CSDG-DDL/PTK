@@ -1,4 +1,4 @@
-﻿using Grasshopper.Kernel;
+﻿    using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using System;
@@ -23,9 +23,9 @@ namespace PTK
         {
             pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Not Named Element");
             pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_CroSec(), "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Alignment(), "Alignment", "A", "Global Alignment", GH_ParamAccess.item);
-            pManager.AddParameter(new Param_Force(), "Forces", "F", "Add forces", GH_ParamAccess.list);
+            pManager.AddGenericParameter( "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Alignment", "A", "Global Alignment", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_StructuralData(), "Forces", "F", "Add forces", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Joint(), "Joint", "J", "Add joint", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Structural Priority", "P", "Add integer value to set the priority of the member", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Intersection Nodes?", "I?", "Whether the element intersects other members at other than the end point", GH_ParamAccess.item, true);
@@ -47,15 +47,16 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            //test
+
             // --- variables ---
             string tag = null;
             Curve curve = null;
             GH_CroSec gCroSec = null;
-            CrossSection crossSection = null;
-            GH_Alignment gAlignment = null;
-            Alignment alignment = null;
-            List<GH_Force> gForces = new List<GH_Force>();
-            List<Force> forces = null;
+            ElementAlign ElementAlignment = null;
+            CompositeInput Composite = null;
+            //GH_StructuralData gStructuralData = null;
+            StructuralData structuralData = null;
             List<GH_Joint> gJoints = new List<GH_Joint>();
             List<Joint> joints = null;
             int priority = new int();
@@ -64,26 +65,48 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
             if (!DA.GetData(1, ref curve)) { return; }
-            if (!DA.GetData(2, ref gCroSec)) { return; }
-            crossSection = gCroSec.Value;
-            if (!DA.GetData(3, ref gAlignment)) {
-                alignment = new Alignment("Not Named Alignment");
-            }
-            else
+            if (!curve.IsLinear())
             {
-                alignment = gAlignment.Value;
-            }
-            //Generating Alignment
-            alignment.GenerateVectorFromDelegate(curve);
+                throw new ArgumentException("Sorry! This version of Reindeer does not allow non-linear curves");
 
-            if (!DA.GetDataList(4, gForces))
+            }
+            
+
+
+
+
+            if (!DA.GetData(2, ref Composite))
+
             {
-                forces = new List<Force>();
+                Composite = new CompositeInput();
+            }
+                
+            
+            
+            
+            if (!DA.GetData(3, ref ElementAlignment))
+            {
+                GlobalAlignmentRules.AlignmentFromVector VectorAlign = new GlobalAlignmentRules.AlignmentFromVector(new Vector3d(0,0,1));
+
+
+
+                ElementAlignment = new ElementAlign(VectorAlign.GenerateVector, 0, 0);
+
+            }
+            
+            //Generating Alignment
+            
+            /*
+            if (!DA.GetData(4, ref gStructuralData))
+            {
+                structuralData = new StructuralData();
             }
             else
             {
-                forces = gForces.ConvertAll(f => f.Value);
+                structuralData = gStructuralData.Value;
             }
+            */
+
             if (!DA.GetDataList(5, gJoints))
             {
                 joints = new List<Joint>();
@@ -103,7 +126,7 @@ namespace PTK
 
 
             // --- solve ---
-            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, crossSection, alignment, forces, joints, priority, intersect));
+            GH_Element1D elem = new GH_Element1D(new Element1D(tag, curve, Composite, ElementAlignment, structuralData, joints, priority, intersect));
 
             // --- output ---
             DA.SetData(0, elem);

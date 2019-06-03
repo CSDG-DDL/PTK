@@ -9,10 +9,18 @@ namespace PTK
     {
         public PTK_StructuralMaterialProp()
           : base("Material Structural Prop", "MatStrProp",
-              "creates material properties",
-              CommonProps.category, CommonProps.subcate1)
+              "Creates Structural Material Properties",
+              CommonProps.category, CommonProps.subcate2)
         {
             Message = CommonProps.initialMessage;
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.quarternary; }
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -145,7 +153,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.Material;
+                return PTK.Properties.Resources.StructuralMaterial;
             }
         }
 

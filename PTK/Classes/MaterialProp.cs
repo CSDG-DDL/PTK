@@ -41,6 +41,25 @@ namespace PTK
         public MaterialProperty(string _name)
         {
             Name = _name;
+            MaterialClass = "GL26";
+            Fmgk = 26;
+            Ft0gk = 19;
+            Ft90gk = 0.5;
+            Fc0gk = 23.5;
+            Fc90gk = 2.5;
+            Fvgk = 3.5;
+            Frgk = 1.2;
+            EE0gmean = 12000;
+            EE0g05 = 10000;
+            EE90gmean = 300;
+            EE90g05 = 250;
+            GGgmean = 650;
+            GGg05 = 542;
+            GGrgmean = 65;
+            GGrg05 =54;
+            Rhogk =385;      // density
+            Rhogmean = 420; 
+
         }
         public MaterialProperty(
             string _name,
@@ -144,7 +163,7 @@ namespace PTK
     {
         public Param_MaterialProperty() : base(new GH_InstanceDescription("MaterialProperty", "MatStruct", "Material properties for structural calculation", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaMaterial; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ParaSMP; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("248D46D3-6995-4CE8-AAD6-D30E99E6C493");
 

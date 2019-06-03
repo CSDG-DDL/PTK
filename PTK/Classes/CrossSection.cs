@@ -20,6 +20,9 @@ namespace PTK
         public CrossSection(string _name)
         {
             Name = _name;
+            //MaterialProperty = new MaterialProperty("Default");
+            //Alignment = new Alignment("Default)");
+
         }
         public CrossSection(string _name, MaterialProperty _material, Alignment _alignment)
         {
@@ -27,6 +30,13 @@ namespace PTK
             MaterialProperty = _material;
             Alignment = _alignment;
         }
+
+        
+
+        
+
+
+
 
         // --- methods ---
         public abstract double GetHeight();
@@ -59,7 +69,11 @@ namespace PTK
 
         // --- constructors --- 
         public RectangleCroSec() : base() { }
-        public RectangleCroSec(string _name) : base(_name) { }
+        public RectangleCroSec(string _name) : base(_name)
+        {
+            SetWidth(100);
+            SetHeight(100);
+        }
         public RectangleCroSec(string _name, MaterialProperty _material, double _height, double _width, Alignment _alignment) : base(_name, _material, _alignment)
         {
             SetHeight(_height);

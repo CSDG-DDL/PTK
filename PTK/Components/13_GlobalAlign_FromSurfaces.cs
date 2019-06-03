@@ -12,10 +12,18 @@ namespace PTK.Components
         /// Initializes a new instance of the _13_GlobalAlign_FromSurfaces class.
         /// </summary>
         public _13_GlobalAlign_FromSurfaces()
-          : base("AlignFromSurface", "S",
-              "Aligns Z-vector from surface",
-              CommonProps.category, CommonProps.subcate12)
+          : base("AlignToSurface", "S",
+              "Aligns the element Z-vector to a surface normal at closest point from middle of element",
+              CommonProps.category, CommonProps.subcate2)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
         }
 
         /// <summary>
@@ -35,7 +43,7 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("GlobalAlignmenrt", "A", "Add global alignment to element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Alignment", "A", "Add alignment to element", GH_ParamAccess.item);
         }
 
                
@@ -58,9 +66,8 @@ namespace PTK.Components
 
             GlobalAlignmentRules.AlignmentFromSurfaces SurfaceAlignment = new GlobalAlignmentRules.AlignmentFromSurfaces(AlignmentSurfaces, 100);
 
-            
+            ElementAlign Alignment = new ElementAlign(SurfaceAlignment.GenerateVector, OffsetY, offsetZ);
 
-            GH_Alignment Alignment = new GH_Alignment(new Alignment("", OffsetY, offsetZ, SurfaceAlignment.GenerateVector));
 
             DA.SetData(0, Alignment);
 
@@ -76,8 +83,8 @@ namespace PTK.Components
             get
             {
                 //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
-                return null;
+                return PTK.Properties.Resources.SrfAlignment;
+
             }
         }
 

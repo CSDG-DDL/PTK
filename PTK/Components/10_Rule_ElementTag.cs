@@ -14,9 +14,17 @@ namespace PTK.Components
         /// </summary>
         public _10_Rule_ElementTag()
           : base("ElementTagRule", "T",
-              "Checks the tag of the elements. Several tags can be inputted.",
+              "Detail search checking the tag of its elements. Several tags can be inputted for different modes.",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>
@@ -28,7 +36,7 @@ namespace PTK.Components
             pManager.AddIntegerParameter("Mode", "M", "Mode 0 - One of - The detail must contain one of the inputted tags. " +
                                                          "Mode 1 - At least -  The detail must contain all the inputted tags, but can also contain other tags. " +
                                                          "Mode 2 - Distinct - The detail must contain all the inputted tags and no other tags. " +
-                                                         "Mode 3 - Strict - The detai must contain all the inputted tags and the exact amount. ", GH_ParamAccess.item, 0);
+                                                         "Mode 3 - Strict - The detai must contain all the inputted tags and the exact amount. ", GH_ParamAccess.item,0);
         }
 
         /// <summary>
@@ -48,7 +56,7 @@ namespace PTK.Components
 
             //Variables
             List<string> tagsAre = new List<string>();
-            int strict = 0;
+            int strict = 4;
 
             //Input
             DA.GetDataList(0, tagsAre);
@@ -72,7 +80,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return Properties.Resources.SearchDetail;
+                return Properties.Resources.TagRule;
             }
         }
 

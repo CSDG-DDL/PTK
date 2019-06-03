@@ -13,9 +13,17 @@ namespace PTK.Components
         /// </summary>
         public PTK_Rule_ElementAmount()
           : base("ElementAmountRule", "A",
-              "Grouping details based on amount of elements",
+              "Detail search based on amount of elements at the detail",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>
@@ -32,7 +40,7 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Rule", "R", "DetailingGroupRule", GH_ParamAccess.item);
+            pManager.AddGenericParameter("SearchCriteria", "SC", "Search Criteria for DetailSearch", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -70,7 +78,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return Properties.Resources.SearchDetail;
+                return Properties.Resources.AmountRule;
             }
         }
 

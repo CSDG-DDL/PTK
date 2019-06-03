@@ -19,8 +19,8 @@ namespace PTK
     {
 
         public PTK_Assembly()
-          : base("Assembly", "Assembly",
-              "Assembly",
+          : base("Reindeer Assembly", "Assembly",
+              "Assemble all elements in this component.",
               CommonProps.category, CommonProps.subcate3)
         {
             Message = CommonProps.initialMessage;
@@ -29,17 +29,14 @@ namespace PTK
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Element1D(), "Elements", "E", "Add elements here", GH_ParamAccess.list);
-            pManager.AddGenericParameter("DetailingGroupDefinitions", "DG", "Add detailingroups here", GH_ParamAccess.list);
-            pManager[0].Optional = true;
-            pManager[1].Optional = true;
+            
+            pManager[0].DataMapping = GH_DataMapping.Flatten;
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.RegisterParam(new Param_Assembly(), "Assembly", "A", "Assembled project data", GH_ParamAccess.item);
-            //pManager.RegisterParam(new Param_Node(), "Nodes", "N", "Nodes included in the Assembly", GH_ParamAccess.list);
-            //pManager.AddTextParameter("Tags", "T", "Tag list held by Elements included in Assemble", GH_ParamAccess.list);
-            //pManager.RegisterParam(new Param_CroSec(), "CrossSection", "S", "CrossSection list held by Elements included in Assemble", GH_ParamAccess.list);
         }
 
 
@@ -48,49 +45,50 @@ namespace PTK
             // --- variables ---
             List<GH_Element1D> gElems = new List<GH_Element1D>();
             List<Element1D> elems = null;
-            List<DetailingGroupRulesDefinition> DetailinGroupDefinitions = new List<DetailingGroupRulesDefinition>();
 
+            
             // --- input --- 
             if (!DA.GetDataList(0, gElems))
             {
                 elems = new List<Element1D>();
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Add valid elements to generate an assembly");
+            }
+            if(gElems.Count == 0)
+            {
+                elems = new List<Element1D>();
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Add valid elements to generate an assembly");
+            }
+            if (gElems[0] != null)
+            {
+                elems = gElems.ConvertAll(e => e.Value);
+
+                // --- solve ---
+                Assembly assembly = new Assembly();
+
+                elems.ForEach(e => assembly.AddElement(e));
+
+
+
+                DA.SetData(0, new GH_Assembly(assembly));
+
+
             }
             else
             {
-                elems = gElems.ConvertAll(e => e.Value);
-            }
-            if (!DA.GetDataList(1, DetailinGroupDefinitions))
-            {
-                DetailinGroupDefinitions = new List<DetailingGroupRulesDefinition>();
-            }
-            
-
-            // --- solve ---
-            Assembly assembly = new Assembly();
-            elems.ForEach(e => assembly.AddElement(e));
-            assembly.GenerateDetails();
-            
-            foreach(DetailingGroupRulesDefinition DG in DetailinGroupDefinitions)
-            {
-                assembly.AddDetailingGroup(DG.GenerateDetailingGroup(assembly.Details)); 
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Add valid elements to generate an assembly");
+                
             }
 
-            // --- output ---
-            //List<GH_Node> nodes = assembly.Nodes.ConvertAll(n => new GH_Node(n));
-            //List<string> tags = assembly.Tags;
-            //List<GH_CroSec> sections = assembly.CrossSections.ConvertAll(s => new GH_CroSec(s));
+
             
-            DA.SetData(0, new GH_Assembly(assembly));
-            //DA.SetDataList(1, nodes);
-            //DA.SetDataList(2, tags);
-            //DA.SetDataList(3, sections);
+
         }
 
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                return PTK.Properties.Resources.Assemble;
+                return PTK.Properties.Resources.ReindeerAssemble;
             }
         }
 

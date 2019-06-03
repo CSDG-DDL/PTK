@@ -14,9 +14,17 @@ namespace PTK.Components
         /// </summary>
         public _10_Rule_ElementAngle()
           : base("Element Angle", "EA",
-              "Checks the angle of the all neighbouring elements. Returns details with elements inside the range",
+              "Detail search by checking the angle of all neighbouring elements. Returns details with elements inside the range",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.tertiary; }
         }
 
         /// <summary>
@@ -25,8 +33,8 @@ namespace PTK.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
 
-            pManager.AddIntegerParameter("Minimum Angle", "Min", "The minimum angle between two elements", GH_ParamAccess.item, 0);
-            pManager.AddIntegerParameter("Maximum Angle", "Max", "The maximum angle allowed between two elements",GH_ParamAccess.item, 360);
+            pManager.AddNumberParameter("Minimum Angle", "Min", "The minimum angle between two elements", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Maximum Angle", "Max", "The maximum angle allowed between two elements",GH_ParamAccess.item, Math.PI*2);
         }
 
         /// <summary>
@@ -34,7 +42,7 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("DetailDescription", "DD", "Outputed detailDescription", GH_ParamAccess.item);
+            pManager.AddGenericParameter("SearchCriteria", "SC", "Search Criteria for DetailSearch", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -44,8 +52,8 @@ namespace PTK.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             //Variables
-            int minimumAngle = 0;
-            int maximumAngle = 360;
+            double minimumAngle = 0;
+            double maximumAngle = Math.PI*2;
             //plane plane = Plane.WorldXY;
 
 
@@ -74,7 +82,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return Properties.Resources.SearchDetail;
+                return Properties.Resources.AngleRule;
             }
         }
 

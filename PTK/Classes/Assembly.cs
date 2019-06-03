@@ -17,17 +17,29 @@ namespace PTK
     {
         // --- field ---
         public List<Element1D> Elements { get; private set; } = new List<Element1D>();
+        public List<int> ElementID { get; private set; }=new List<int>();
+        public int ElementIDCounter { get; private set; }
         public List<Node> Nodes { get; private set; } = new List<Node>();
+        public List<int> NodeID { get; private set; } = new List<int>();
+        public int NodeIDCounter { get; private set; }
+
         public List<string> Tags { get; private set; } = new List<string>();
         public List<CrossSection> CrossSections { get; private set; } = new List<CrossSection>();
         public Dictionary<Element1D, List<int>> NodeMap { get; private set; } = new Dictionary<Element1D, List<int>>();
         public List<Detail> Details { get; private set; } = new List<Detail>();
         public List<DetailingGroup> DetailingGroups { get; private set; } = new List<DetailingGroup>();
-        
+        public List<DetailingGroupRulesDefinition> DetailingGroupDefinitions { get; set; } = new List<DetailingGroupRulesDefinition>();
+        public RTree ElementrTree { get; private set; } = new RTree();
+        public RTree NoderTree { get; private set; } = new RTree();
+        public double counter; 
+
+
         // --- constructors --- 
         public Assembly() { }
         public Assembly(Assembly _assembly)
         {
+            ElementIDCounter = 0;
+            NodeIDCounter = 0;
             Elements = _assembly.Elements;
             Nodes = _assembly.Nodes;
             Tags = _assembly.Tags;
@@ -35,6 +47,8 @@ namespace PTK
             NodeMap = _assembly.NodeMap;
             Details = _assembly.Details;
             DetailingGroups = _assembly.DetailingGroups;
+            DetailingGroupDefinitions = _assembly.DetailingGroupDefinitions;
+            
         }
 
         // --- methods ---
@@ -42,7 +56,22 @@ namespace PTK
         {
             if (!Elements.Contains(_element))
             {
+
+                //Adding the centerpoint of the element in an Rtree
+                
+
+
                 SearchNodes(_element);
+
+                ElementID.Add(ElementIDCounter);
+                List<Point3d> points = new List<Point3d>();
+                points.Add(_element.PointAtEnd);
+                points.Add(_element.PointAtStart);
+                Box bounding = new Box(_element.CroSecLocalPlane, points);
+
+                ElementrTree.Insert(bounding.BoundingBox, ElementIDCounter);
+                ElementIDCounter++;
+
                 Elements.Add(_element);
                 string tag = _element.Tag;
                 if (!Tags.Contains(tag))
@@ -50,31 +79,14 @@ namespace PTK
                     Tags.Add(tag);
                 }
 
-                if(_element.CrossSection is Composite comp)
-                {
-                    var secs = comp.RecursionCrossSectionSearch();
-                    foreach(var sec in secs.ConvertAll(s=>s.Item1))
-                    {
-                        if (!CrossSections.Contains(sec))
-                        {
-                            CrossSections.Add(sec);
-                        }
-                    }
-                }
-                else
-                {
-                    CrossSection sec = _element.CrossSection;
-                    if (!CrossSections.Contains(sec))
-                    {
-                        CrossSections.Add(sec);
-                    }
-                }
+                
             }
             return Elements.Count;
         }
 
         private void SearchNodes(Element1D _element)
         {
+            counter++;
             // Add a new Key if NodeMap doesn't contain "_element"
             if (!NodeMap.ContainsKey(_element))
             {
@@ -86,39 +98,105 @@ namespace PTK
             AddPointToNodeMap(_element, _element.PointAtEnd);
 
             //Register intersection with other elements as a node
-            foreach (Element1D otherElem in Elements.FindAll(e => e.IsIntersectWithOther == true))
-            {
-                var events = Intersection.CurveCurve(otherElem.BaseCurve, _element.BaseCurve, CommonProps.tolerances, CommonProps.tolerances);
-                if(events != null)
+
+            Curve tempcurve = _element.BaseCurve.DuplicateCurve();
+
+            tempcurve.Domain = new Interval(0, 1);
+
+
+            double Length = tempcurve.GetLength();
+
+            Point3d temppoint = tempcurve.PointAt(0.5);
+            Sphere TempSphere = new Sphere(tempcurve.PointAt(0.5),Length/1.9);
+
+            List<int> nIds = new List<int>();
+            bool nodeExists;
+
+            EventHandler<RTreeEventArgs> ElementClose =
+                (object sender, RTreeEventArgs args) =>
                 {
-                    foreach(IntersectionEvent e in events)
+                    nodeExists = true;
+                    nIds.Add(args.Id);
+                };
+
+
+            ElementrTree.Search(TempSphere, ElementClose);
+
+
+            for(int i = 0; i < nIds.Count; i++)
+            {
+                
+                 
+
+                Element1D otherElem = Elements[nIds[i]];
+                if (otherElem.IsIntersectWithOther)
+                {
+                    //Check if both curves are linear
+
+                    Curve OtherCurve = otherElem.BaseCurve;
+                    Curve ThisCurve = _element.BaseCurve;
+
+                    if (OtherCurve.IsLinear() && ThisCurve.IsLinear())
                     {
-                        if (!_element.IsIntersectWithOther) 
-                        //When it does not intersect with another member, only endpoint contact is detected
+                        Line OtherLine = new Line(OtherCurve.PointAtStart, OtherCurve.PointAtEnd);
+                        Line ThisLine = new Line(ThisCurve.PointAtStart, ThisCurve.PointAtEnd);
+
+
+                        
+                        double OtherParam;
+                        double ThisParam;
+
+                        var eventsLine = Intersection.LineLine(OtherLine, ThisLine, out OtherParam, out ThisParam, CommonProps.tolerances,true);
+                        
+                        
+
+                        if (eventsLine)
                         {
-                            if (e.PointA == _element.BaseCurve.PointAtStart || e.PointA == _element.BaseCurve.PointAtEnd)
+                            Point3d tempPoint = OtherLine.PointAt(OtherParam);
+                            AddPointToNodeMap(_element, tempPoint);
+                            AddPointToNodeMap(otherElem, tempPoint);
+                        }
+
+
+                    }
+
+                    else
+                    {
+                        var events = Intersection.CurveCurve(otherElem.BaseCurve, _element.BaseCurve, CommonProps.tolerances, CommonProps.tolerances);
+                        if (events != null)
+                        {
+                            foreach (IntersectionEvent e in events)
                             {
-                                AddPointToNodeMap(otherElem, e.PointA);
+                                if (!_element.IsIntersectWithOther)
+                                //When it does not intersect with another member, only endpoint contact is detected
+                                {
+                                    if (e.PointA == _element.BaseCurve.PointAtStart || e.PointA == _element.BaseCurve.PointAtEnd)
+                                    {
+                                        AddPointToNodeMap(otherElem, e.PointA);
+                                    }
+                                }
+                                else
+                                // intersection happens
+                                {
+                                    AddPointToNodeMap(_element, e.PointA);
+                                    AddPointToNodeMap(otherElem, e.PointA);
+                                    if (e.IsOverlap)    //When overlap is an interval
+                                    {
+                                        AddPointToNodeMap(_element, e.PointA2);
+                                        AddPointToNodeMap(otherElem, e.PointA2);
+                                    }
+                                }
                             }
                         }
                         else
-                        // intersection happens
                         {
-                            AddPointToNodeMap(_element, e.PointA);
-                            AddPointToNodeMap(otherElem, e.PointA);
-                            if (e.IsOverlap)    //When overlap is an interval
-                            {
-                                AddPointToNodeMap(_element, e.PointA2);
-                                AddPointToNodeMap(otherElem, e.PointA2);
-                            }
+                            continue;
                         }
                     }
                 }
-                else
-                {
-                    continue;
-                }
+
             }
+
 
         }
 
@@ -126,9 +204,23 @@ namespace PTK
         {
             // When there is no node found at the position
             if (!Nodes.Exists(n => n.Equals(_pt)))
+            
             {
-                Nodes.Add(new Node(_pt));
+                Node newNode = new Node(_pt);
+
+                Nodes.Add(newNode);
                 NodeMap[_element].Add(Nodes.Count-1);   //Attach a node to an element with a new ID
+                NoderTree.Insert(_pt, NodeIDCounter);
+                NodeID.Add(NodeIDCounter);
+                NodeIDCounter++;
+
+                Detail newDetail = new Detail(newNode);
+                newDetail.AddElement(_element);
+
+                Details.Add(newDetail);
+
+
+
             }
             //If there is already a node, map its index
             else
@@ -137,12 +229,15 @@ namespace PTK
                 if (!NodeMap[_element].Contains(ind))
                 {
                     NodeMap[_element].Add(ind);
+                    Details[ind].AddElement(_element);
                 }
             }
         }
 
         public void GenerateDetails()
         {
+
+
             foreach (Node node in Nodes)
             {
                 int ind = Nodes.IndexOf(node);

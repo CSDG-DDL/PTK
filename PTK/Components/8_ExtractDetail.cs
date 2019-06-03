@@ -13,8 +13,8 @@ namespace PTK
     public class PTK_ExtractDetail : GH_Component
     {
         public PTK_ExtractDetail()
-          : base("Extract Detail", "Extract Detail",
-              "Extract Detail",
+          : base("Deconstruct Detail", "DD",
+              "Deconstructs a detail into elements and nodes based on the data structure of the node",
               CommonProps.category, CommonProps.subcate8)
         {
             Message = CommonProps.initialMessage;

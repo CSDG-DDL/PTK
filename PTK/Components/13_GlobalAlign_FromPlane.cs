@@ -13,9 +13,17 @@ namespace PTK.Components
         /// </summary>
         public _13_GlobalAlign_FromPlane()
           : base("AlignFromPlane", "Pl",
-              "Aligns Z-vector to plane",
-              CommonProps.category, CommonProps.subcate12)
+              "Align element Z-vectors to plane",
+              CommonProps.category, CommonProps.subcate2)
+        {   
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
         {
+            get
+            {return GH_Exposure.secondary; }
         }
 
         /// <summary>
@@ -34,7 +42,7 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("GlobalAlignmenrt", "A", "Add global alignment to element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Alignment", "A", "Add alignment to element", GH_ParamAccess.item);
         }
 
 
@@ -57,8 +65,12 @@ namespace PTK.Components
             GlobalAlignmentRules.AlignmentFromPlane VectorAlign = new GlobalAlignmentRules.AlignmentFromPlane(plane);
 
 
+            
 
-            GH_Alignment Alignment = new GH_Alignment(new Alignment("", OffsetY, offsetZ, VectorAlign.GenerateVector));
+            ElementAlign Alignment = new ElementAlign(VectorAlign.GenerateVector, OffsetY, offsetZ);
+
+            
+
 
             DA.SetData(0, Alignment);
 
@@ -74,8 +86,7 @@ namespace PTK.Components
             get
             {
                 //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
-                return null;
+                return PTK.Properties.Resources.PlaneAlignment;
             }
         }
 

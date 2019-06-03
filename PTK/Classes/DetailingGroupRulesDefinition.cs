@@ -9,7 +9,7 @@ using Grasshopper.Kernel.Types;
 
 namespace PTK
 {
-    class DetailingGroupRulesDefinition
+    public class DetailingGroupRulesDefinition
     {
         // --- field ---
         public string Name { get; private set; }

@@ -17,12 +17,20 @@ namespace PTK.Components
               CommonProps.category, CommonProps.subcate8)
         {
         }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.hidden; }
+        }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Assembly(), "Assembly", "A", "Assembly", GH_ParamAccess.item);
             pManager.AddTextParameter("DetailingGroupName", "DN", "DetailingGroupName", GH_ParamAccess.item, "DetailingGroupName");  
-            pManager.AddIntegerParameter("Sorting rule", "SR", "0=Structural, 1=Alphabetical, 2=ElementLength", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Sorting rule", "SR", "0=Structural, 1=Alphabetical, 2=ElementLength, 3=Clockwice(Based on detailPlane)", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -66,18 +74,57 @@ namespace PTK.Components
 
                 for(int i =0; i<details.Count;i++)
                 {
-                    
-                    details[i].GenerateUnifiedElementVectors();
-                    details[i].SortElement(priorityKey);
-
                     Grasshopper.Kernel.Data.GH_Path Path = new Grasshopper.Kernel.Data.GH_Path(i);
+
+                    details[i].GenerateUnifiedElementVectors();
+
+                    if (priorityKey == 3)
+                    {
+                        List<double> Angles = new List<double>();
+
+                        foreach(Element1D elem in details[i].Elements)
+                        {
+                            Angles.Add(Vector3d.VectorAngle(Planes[i].XAxis, details[i].ElementsUnifiedVectorsMap[elem],Planes[i]));
+
+
+                        }
+
+                        Angles = Angles;
+
+                        var OrderedElems = details[i].Elements.Zip(Angles, (item1, item2) => new KeyValuePair<Element1D, double>(item1, item2)).OrderBy(pair => pair.Value);
+
+                        Angles = OrderedElems.Select(pair => pair.Value).ToList();
+
+                        List<Element1D> temp = OrderedElems.Select(pair => pair.Key).ToList();
+                        Elements.AddRange(temp.ConvertAll(e => new GH_Element1D(e)), Path);
+
+                        UnifiedVectors.AddRange(temp.ConvertAll(e => details[i].ElementsUnifiedVectorsMap[e]), Path);
+
+
+
+
+
+                    }
+
+                    else
+                    {
+                        details[i].SortElement(priorityKey);
+                        Elements.AddRange(details[i].Elements.ConvertAll(e => new GH_Element1D(e)), Path);
+
+                        UnifiedVectors.AddRange(details[i].Elements.ConvertAll(e => details[i].ElementsUnifiedVectorsMap[e]), Path);
+                    }
+
+                    
+                    
+
+                    
                     GH_Node tempNode = new GH_Node(details[i].Node);
 
                     Nodes.Add(tempNode, Path); //ADDED THIS + Changed datatreees to node
                     NodePlanes.Add(Planes[i], Path);
 
-                    Elements.AddRange(details[i].Elements.ConvertAll(e => new GH_Element1D(e)), Path); 
-                    UnifiedVectors.AddRange(details[i].Elements.ConvertAll(e => details[i].ElementsUnifiedVectorsMap[e]), Path);
+                    
+                    
                     
                 }
 

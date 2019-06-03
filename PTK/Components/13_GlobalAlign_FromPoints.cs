@@ -13,9 +13,17 @@ namespace PTK.Components
         /// </summary>
         public _13_GlobalAlign_FromPoints()
           : base("AlignFromPoints", "P",
-              "Aligns Z-vector from surface",
-              CommonProps.category, CommonProps.subcate12)
+              "Aligns element Z-vector from point(s). Closest point is used when several points are inserted.",
+              CommonProps.category, CommonProps.subcate2)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
         }
 
         /// <summary>
@@ -35,7 +43,7 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("GlobalAlignmenrt", "A", "Add global alignment to element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Alignment", "A", "Add alignment to element", GH_ParamAccess.item);
         }
 
 
@@ -58,9 +66,8 @@ namespace PTK.Components
 
             GlobalAlignmentRules.AlignmentFromPoints VectorAlign = new GlobalAlignmentRules.AlignmentFromPoints(atractorPoints, domain);
 
+            ElementAlign Alignment = new ElementAlign(VectorAlign.GenerateVector, OffsetY, offsetZ);
 
-
-            GH_Alignment Alignment = new GH_Alignment(new Alignment("", OffsetY, offsetZ, VectorAlign.GenerateVector));
 
             DA.SetData(0, Alignment);
 
@@ -76,8 +83,8 @@ namespace PTK.Components
             get
             {
                 //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
-                return null;
+                return PTK.Properties.Resources.PointAlignment;
+
             }
         }
 

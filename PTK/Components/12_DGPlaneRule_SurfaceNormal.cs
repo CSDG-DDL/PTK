@@ -12,10 +12,19 @@ namespace PTK.Components
         /// Initializes a new instance of the _12_DGPlaneRule_SurfaceNormal class.
         /// </summary>
         public _12_DGPlaneRule_SurfaceNormal()
-          : base("NormalVectorPlane", "Nickname",
-              "Description",
+          : base("DetailPlaneNormalFromSurface", "DetNorSrf",
+              "Sets the detail z-axis to surface normal at the closest point to the detail node. Optional Align X-axis along an element.",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
         }
 
         /// <summary>
@@ -23,8 +32,8 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddSurfaceParameter("SurfaceGuide", "N", "Input surfaceGuide", GH_ParamAccess.item);
-            pManager.AddTextParameter("Name of Alignmentelement", "A", "Optional. Add name of the element that aligns the plane", GH_ParamAccess.item);
+            pManager.AddSurfaceParameter("SurfaceGuide", "S", "Input Surface Guide", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name of AlignmentElement for x-axis", "X", "Optional. Name of an element to align the detail plane x-axis along", GH_ParamAccess.item);
             pManager[1].Optional = true;
         }
 
@@ -59,7 +68,6 @@ namespace PTK.Components
             PlaneRules.SurfaceNormalPlane PlaneRule = new PlaneRules.SurfaceNormalPlane(Surface, AlignmentElementName);
 
 
-
             //Output
             DA.SetData(0, new PlaneRules.PlaneRule(PlaneRule.GenerateDetailingGroupPlane));
 
@@ -75,7 +83,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return PTK.Properties.Resources.DPNSrf;
             }
         }
 

@@ -10,6 +10,23 @@ using Grasshopper.Kernel.Types;
 namespace PTK
 {
 
+    public class ElementAlign
+    {
+        public double OffsetY { get; private set; } = 0.0;
+        public double OffsetZ { get; private set; } = 0.0;
+        public ElementAlignment ElementAlignmentRule { get; private set; }
+
+        public ElementAlign(ElementAlignment _elementAlignmentRule, double _offsetY, double _offsetZ)
+        {
+            ElementAlignmentRule = _elementAlignmentRule;
+            OffsetY = _offsetY;
+            OffsetZ = _offsetZ;
+        }
+
+
+    }
+
+
     public class Alignment
     {
         // --- field ---
@@ -29,6 +46,7 @@ namespace PTK
         public Alignment(string _name)
         {
             Name = _name;
+            
         }
         public Alignment(string _name, double _offsetY, double _offsetZ, double _rotationAngle)
         {

@@ -12,10 +12,18 @@ namespace PTK.Components
         /// Initializes a new instance of the _12_DGPlaneRule_NormalVectorFromElementName class.
         /// </summary>
         public _12_DGPlaneRule_NormalVectorFromElementName()
-          : base("Normal from element", "NE",
-              "Gets the normal vector of the plane from the element name",
+          : base("DetailPlaneNormalAlongElement", "DetNorElm",
+              "Sets the Detail Plane Z-axis parallel to an element. Optional Align X-axis along an element. ",
               CommonProps.category, CommonProps.subcate10)
         {
+        }
+        /// <summary>
+        /// Overrides the exposure level in the components category 
+        /// </summary>
+        public override GH_Exposure Exposure
+        {
+            get
+            { return GH_Exposure.secondary; }
         }
 
         /// <summary>
@@ -23,8 +31,8 @@ namespace PTK.Components
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name of NormalAlignment", "N", "Name of element paralllelt to plane normal", GH_ParamAccess.item);
-            pManager.AddTextParameter("Name of Alignmentelement", "A", "Optional. Add name of the element that aligns the plane", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name of NormalElement Z-axis", "Z", "Name of element to adjust the detail plane z-axis along", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name of AlignmentElement for X-axis", "X", "Optional. Name of an element to align the detail plane x-axis along", GH_ParamAccess.item);
             pManager[1].Optional = true;
         }
 
@@ -75,7 +83,7 @@ namespace PTK.Components
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return PTK.Properties.Resources.DPNAlongEle;
             }
         }
 

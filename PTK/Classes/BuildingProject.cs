@@ -63,7 +63,7 @@ namespace PTK
         }
 
 
-        public DataTree<Brep> GetBreps()
+        public DataTree<Brep> GetProcessedStock()
         {
             DataTree<Brep> dataTree = new DataTree<Brep>();
             for(int i = 0; i < BuildingElements.Count; i++)
@@ -71,7 +71,7 @@ namespace PTK
                 BuildingElement BuildingElement = BuildingElements[i];
                 for (int j = 0; j < BuildingElement.Sub3DElements.Count; j++)
                 {
-                    Sub3DElement Sub3DElement = BuildingElement.Sub3DElements[j];
+                    ProcessedElement Sub3DElement = BuildingElement.Sub3DElements[j];
                     if (Sub3DElement.ProcessedStock != null)
                     {
                         dataTree.AddRange(Sub3DElement.ProcessedStock, new Grasshopper.Kernel.Data.GH_Path(i, j));
@@ -80,13 +80,73 @@ namespace PTK
             }
             return dataTree;
         }
+
+        public DataTree<Brep> GetVoids()
+        {
+            DataTree<Brep> dataTree = new DataTree<Brep>();
+            for (int i = 0; i < BuildingElements.Count; i++)
+            {
+                BuildingElement BuildingElement = BuildingElements[i];
+                for (int j = 0; j < BuildingElement.Sub3DElements.Count; j++)
+                {
+                    ProcessedElement Sub3DElement = BuildingElement.Sub3DElements[j];
+                    if (Sub3DElement.VoidProcess != null)
+                    {
+                        dataTree.AddRange(Sub3DElement.VoidProcess, new Grasshopper.Kernel.Data.GH_Path(i, j));
+                    }
+                }
+            }
+            return dataTree;
+        }
+
+        public DataTree<Brep> GetStock()
+        {
+            DataTree<Brep> dataTree = new DataTree<Brep>();
+            for (int i = 0; i < BuildingElements.Count; i++)
+            {
+                BuildingElement BuildingElement = BuildingElements[i];
+                for (int j = 0; j < BuildingElement.Sub3DElements.Count; j++)
+                {
+                    ProcessedElement Sub3DElement = BuildingElement.Sub3DElements[j];
+                    if (Sub3DElement.Stock != null)
+                    {
+                        dataTree.Add(Sub3DElement.Stock, new Grasshopper.Kernel.Data.GH_Path(i, j));
+                    }
+                }
+            }
+            return dataTree;
+        }
+
+        public DataTree<Brep> GetProcessSurfaces()
+        {
+            DataTree<Brep> dataTree = new DataTree<Brep>();
+            for (int i = 0; i < BuildingElements.Count; i++)
+            {
+                BuildingElement BuildingElement = BuildingElements[i];
+                for (int j = 0; j < BuildingElement.Sub3DElements.Count; j++)
+                {
+                    ProcessedElement Sub3DElement = BuildingElement.Sub3DElements[j];
+                    if (Sub3DElement.ProcessingSurfaces != null)
+                    {
+                        dataTree.AddRange(Sub3DElement.ProcessingSurfaces, new Grasshopper.Kernel.Data.GH_Path(i, j));
+                    }
+                }
+            }
+            return dataTree;
+        }
+
+
+
+
+
+
     }
 
     
     public class BuildingElement
     {
         public Element1D Element { get; private set; }
-        public List<Sub3DElement> Sub3DElements { get; private set; }
+        public List<ProcessedElement> Sub3DElements { get; private set; }
         public List<PartType> BTLParts;
         //public List<OrderedTimberProcess> OrderedTimberProcesseses { get; private set; }
         private bool ready = false;
@@ -94,19 +154,25 @@ namespace PTK
         public BuildingElement(Element1D _element, List<PerformTimberProcessDelegate> _processDelegate)      //PHASE1: PREPAIR
         {
             Element = _element;
-            Sub3DElements = new List<Sub3DElement>();
+            Sub3DElements = new List<ProcessedElement>();
             BTLParts = new List<PartType>();
             ready = true;
             
             //if Element has CompositCrossSection => Branch?
-            Sub3DElements.Add(new Sub3DElement(Element, _processDelegate));
+
+            foreach(SubElement S in _element.Composite.Subelements)
+            {
+                Sub3DElements.Add(new ProcessedElement(S, _processDelegate));
+            }
+
+            
         }
 
         public void ManufactureElement(ManufactureMode _mode)      //PHASE 2: Manufacture
         {
             if (ready)
             {
-                foreach(Sub3DElement subelem3D in Sub3DElements)
+                foreach(ProcessedElement subelem3D in Sub3DElements)
                 {
                     subelem3D.ManufactureSubElement(_mode);
 
@@ -121,13 +187,15 @@ namespace PTK
     }
 
 
-    public class Sub3DElement
+    public class ProcessedElement
     {
         public PartType BTLPart { get; private set; }                                           //Needed
         public Brep Stock { get; private set; }  
         public List<Brep> ProcessedStock { get; private set; }
         public List<Brep> VoidProcess { get; private set; }
+        public List<Brep> ProcessingSurfaces { get; private set; }
         public Plane CornerPlane { get; private set; }
+        public Plane btlPlane { get; private set; }
         public double height{ get; private set; }
         public double width { get; private set; }
         public double length { get; private set; }
@@ -137,20 +205,30 @@ namespace PTK
         private bool ready = false;
         
 
-        public Sub3DElement(Element1D _element, List<PerformTimberProcessDelegate> _processDelegate)     //PHASE1: PREPAIR
+        public ProcessedElement(SubElement _subElement, List<PerformTimberProcessDelegate> _processDelegate)     //PHASE1: PREPAIR
         {
+
+            
+
+            BTLPart = new PartType();
+
+
+
             ProcessedStock = new List<Brep>();
             VoidProcess = new List<Brep>();
+            ProcessingSurfaces = new List<Brep>();
 
-            height = _element.CrossSection.GetHeight();
-            width = _element.CrossSection.GetWidth();
-            length = _element.BaseCurve.GetLength();
+            height = _subElement.Height;
+            width = _subElement.Width;
+            length = _subElement.BaseCurve.GetLength();
 
             BTLPart = new PartType();
             BTLPart.Height = height;
             BTLPart.Width = width;
             BTLPart.Length = length;
+
             
+
 
 
 
@@ -165,31 +243,32 @@ namespace PTK
 
             //Making BTL PLANE
 
-            //Move half height, half width
-            List<Refside> refSides = new List<Refside>();
-            Plane ElementPlaneCentric = _element.CroSecLocalPlane;
+            ////Move half height, half width
+            //List<Refside> refSides = new List<Refside>();
+            //Plane ElementPlaneCentric = _element.CroSecLocalPlane;
 
-            // Making plane centric to Sub-element
-            Plane SubElemPlaneCentric = new Plane(ElementPlaneCentric);
-            SubElemPlaneCentric.Translate(SubElemPlaneCentric.XAxis * _element.Alignment.OffsetY + SubElemPlaneCentric.YAxis * _element.Alignment.OffsetZ);
+            //// Making plane centric to Sub-element
+            //Plane SubElemPlaneCentric = new Plane(ElementPlaneCentric);
+            //SubElemPlaneCentric.Translate(SubElemPlaneCentric.XAxis * _element.Alignment.OffsetY + SubElemPlaneCentric.YAxis * _element.Alignment.OffsetZ);
 
-            //Making CornerPlane, bottom left corner
-            Plane TempCorner1 = new Plane(SubElemPlaneCentric);
-            TempCorner1.Translate(SubElemPlaneCentric.XAxis * -width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
-            TempCorner1.Translate(SubElemPlaneCentric.XAxis * -_element.Alignment.OffsetY + (SubElemPlaneCentric.YAxis * -_element.Alignment.OffsetZ));
-            
+            ////Making CornerPlane, bottom left corner
+            //Plane TempCorner1 = new Plane(SubElemPlaneCentric);
+            //TempCorner1.Translate(SubElemPlaneCentric.XAxis * -width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
+            //TempCorner1.Translate(SubElemPlaneCentric.XAxis * -_element.Alignment.OffsetY + (SubElemPlaneCentric.YAxis * -_element.Alignment.OffsetZ));
+
 
 
             //TempCorner.Translate(TempCorner.XAxis * 100 + (TempCorner.YAxis * 100));
-            CornerPlane = TempCorner1;
-
-            Plane TempCorner2 = new Plane(SubElemPlaneCentric);
-            TempCorner2.Translate(SubElemPlaneCentric.XAxis * width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
-            TempCorner2.Translate(SubElemPlaneCentric.XAxis * -_element.Alignment.OffsetY + (SubElemPlaneCentric.YAxis * -_element.Alignment.OffsetZ));
 
 
+            //Plane TempCorner2 = new Plane(SubElemPlaneCentric);
+            //TempCorner2.Translate(SubElemPlaneCentric.XAxis * width / 2 + (SubElemPlaneCentric.YAxis * -height / 2));
+            //TempCorner2.Translate(SubElemPlaneCentric.XAxis * -_element.Alignment.OffsetY + (SubElemPlaneCentric.YAxis * -_element.Alignment.OffsetZ));
 
-            Plane btlPlane = new Plane(TempCorner2.Origin, TempCorner2.ZAxis, CornerPlane.YAxis);
+
+            CornerPlane = _subElement.CrosSecLocalCornerPlane;
+            Plane btlPlane = new Plane(CornerPlane.Origin, CornerPlane.ZAxis, CornerPlane.YAxis);
+            btlPlane.Translate(-btlPlane.ZAxis * width);
 
             Plane refPlane1 = new Plane(btlPlane.Origin, btlPlane.XAxis, btlPlane.ZAxis);
             
@@ -211,6 +290,7 @@ namespace PTK
             refPlane4.Translate(WidthVector);
 
 
+            List<Refside> refSides = new List<Refside>();
 
 
             refSides.Add(new Refside(1, refPlane1, length, width,height));
@@ -237,15 +317,17 @@ namespace PTK
             CoordinateSystem.ReferencePoint = new PointType();
 
 
+            double ToMM = CommonFunctions.ConvertToMM();
+
             CoordinateSystem.XVector.X = btlPlane.XAxis.X;
             CoordinateSystem.XVector.Y = btlPlane.XAxis.Y;
             CoordinateSystem.XVector.Z = btlPlane.XAxis.Z;
             CoordinateSystem.YVector.X = btlPlane.YAxis.X;
             CoordinateSystem.YVector.Y = btlPlane.YAxis.Y;
             CoordinateSystem.YVector.Z = btlPlane.YAxis.Z;
-            CoordinateSystem.ReferencePoint.X = btlPlane.OriginX;
-            CoordinateSystem.ReferencePoint.Y = btlPlane.OriginY;
-            CoordinateSystem.ReferencePoint.Z = btlPlane.OriginZ;
+            CoordinateSystem.ReferencePoint.X = btlPlane.OriginX * ToMM;
+            CoordinateSystem.ReferencePoint.Y = btlPlane.OriginY * ToMM;
+            CoordinateSystem.ReferencePoint.Z = btlPlane.OriginZ * ToMM;
 
             ReferenceType Reference = new ReferenceType();
             Reference.Position = CoordinateSystem;
@@ -267,11 +349,11 @@ namespace PTK
 
 
 
-            BTLPart.Width = width;
-            BTLPart.Length = length;
-            BTLPart.Height = height;
-            BTLPart.StartOffset = 0.3;
-            BTLPart.EndOffset = 0.3;
+            BTLPart.Width = width * ToMM;
+            BTLPart.Length = length * ToMM;
+            BTLPart.Height = height * ToMM;
+            BTLPart.StartOffset = 0;
+            BTLPart.EndOffset = 0;
 
 
             BTLPartGeometry = new BTLPartGeometry(refSides, cornerPoints, endPoints, startPoints);
@@ -304,14 +386,25 @@ namespace PTK
                     {
                         if (_mode == ManufactureMode.BTL || _mode == ManufactureMode.BOTH)
                         {
+                            if (PerformedProcess.BTLProcess.Name != "NotInUse")
+                            {
+                                AllProcessings.Add(PerformedProcess.BTLProcess);
+                            }
 
-                            AllProcessings.Add(PerformedProcess.BTLProcess);
+
+                            
 
                         }
 
                         if (_mode == ManufactureMode.NURBS || _mode == ManufactureMode.BOTH)
                         {
-                            VoidProcess.Add(PerformedProcess.VoidProcess);
+                            if (PerformedProcess.VoidProcess!=null && PerformedProcess.VoidProcess.GetVolume() > 1)
+                            {
+                                VoidProcess.Add(PerformedProcess.VoidProcess);
+                            }
+
+
+                            
 
                         }
                     }
@@ -337,24 +430,104 @@ namespace PTK
                     Interval iy = new Interval(0, height);
                     Interval iz = new Interval(0, length);
 
+                    Point3d centerPt = CornerPlane.Origin;
+
+                    centerPt = centerPt + CornerPlane.XAxis * width / 2 + CornerPlane.YAxis * height / 2 + CornerPlane.ZAxis * length / 2;
+
                     Box boxstock = new Box(CornerPlane, ix, iy, iz);
                     Stock = Brep.CreateFromBox(boxstock);
                     List<Brep> boolBrep = new List<Brep>();
+
+
+                    foreach(Surface s in Stock.Surfaces)
+                    {
+                        s.SetUserString("old", "yes");
+                    }
+
+                    foreach(BrepFace f in Stock.Faces)
+                    {
+                        f.SetUserString("old", "yes");
+                    }
+                    foreach(Surface f in Stock.Surfaces)
+                    {
+                        f.SetUserString("old", "yes");
+                    }
+
+
+
                     boolBrep.Add(Stock);
 
 
-                    if (VoidProcess.Count > 0)
+                    if (VoidProcess.Count > 0 && VoidProcess[0]!=null)
                     {
                         if (true)
                         {
                             double tolerance = CommonProps.tolerances;
+
+                            
+
                             Rhino.Geometry.Brep[] breps = Rhino.Geometry.Brep.CreateBooleanDifference(boolBrep, VoidProcess, tolerance);
+
+                            
+                            
                             if (breps != null)
-                                if (breps.Length != 0)
+                            {
+                                ProcessedStock.AddRange(breps);
+                                foreach (Brep brep in breps)
                                 {
-                                    ProcessedStock.AddRange(breps);
+                                    Brep temp = brep.DuplicateBrep();
+
+                                    for(int i = 0; i < brep.Faces.Count; i++)
+                                    {
+                                        //String value = brep.Faces[i].GetUserString("old");
+                                        String value = brep.Surfaces[brep.Faces[i].SurfaceIndex].GetUserString("old");
+
+
+
+                                        if (value != "yes")
+                                        {
+                                            ProcessingSurfaces.Add(temp.Faces.ExtractFace(i));
+                                        }
+                                    }
+                                        
+                                        
+                                }
+
+                                
+
+
+                            }
+                            if (false)
+                            {
+                                if (breps.Length == 0)
+                                {
+                                    bool valid = false;
+                                    foreach (Brep b in VoidProcess)
+                                    {
+                                        if (b.IsPointInside(centerPt, CommonProps.tolerances, true))
+                                        {
+                                            valid = true;
+                                        }
+                                    }
+                                    if (valid)
+                                    {
+                                        ProcessedStock.Add(Stock);
+                                    }
 
                                 }
+                            }
+                            
+
+                            
+                                
+                                    
+                                        
+                                        
+
+
+                                    
+
+                                
 
                         }
                     }
@@ -405,6 +578,11 @@ namespace PTK
         {
             BTLProcess = _BTLProcess;
             VoidProcess = _VoidProcess; 
+        }
+
+        public PerformedProcess()
+        {
+            
         }
 
     }
