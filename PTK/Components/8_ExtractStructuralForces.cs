@@ -78,7 +78,7 @@ namespace PTK
         {
             get
             {
-                return PTK.Properties.Resources.ExtNode;
+                return PTK.Properties.Resources.ExtSD;
             }
         }
 

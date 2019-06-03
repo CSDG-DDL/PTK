@@ -405,6 +405,45 @@
   <ItemGroup>
     <None Include="Resources\ExtCompsite.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtResult.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\KarambaLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BTLSetting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SF.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtSR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtSD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TypologyRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RegionRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LengthRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TagRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AmountRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AngleRule.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
