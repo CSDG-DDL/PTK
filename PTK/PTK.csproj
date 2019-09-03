@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\..\Program Files\Rhinoceros 5 %2864-bit%29\Plug-ins\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
@@ -51,7 +51,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="karamba">
-      <HintPath>C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\karamba.gha</HintPath>
+      <HintPath>..\..\Library\karamba.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -322,7 +322,6 @@
     <None Include="Resources\Support.png" />
     <None Include="Resources\Joint.png" />
     <None Include="Resources\Force.png" />
-    <None Include="Resources\Alignment.png" />
     <None Include="Resources\PreElementStr.png" />
     <None Include="Resources\LocalAnalysisCheck.png" />
     <None Include="Resources\LocalAnalysis.png" />
@@ -342,7 +341,6 @@
     <None Include="Resources\ExtPareto.png" />
     <None Include="Resources\ExtNode.png" />
     <None Include="Resources\ExtElement.png" />
-    <None Include="Resources\ExtDetail.png" />
     <None Include="Resources\ExtAssemble.png" />
     <None Include="Resources\Element.png" />
     <None Include="Resources\Detail.png" />
@@ -383,6 +381,69 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SrfAlignment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlaneAlignment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PointAlignment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VecAlignment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Alignment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtDetail.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtForce.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtCompsite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtResult.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\KarambaLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BTLSetting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SF.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtSR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtSD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TypologyRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RegionRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LengthRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TagRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AmountRule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AngleRule.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -392,8 +453,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "%25UserProfile%25\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
-Erase "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>Copy "$(TargetPath)" "C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\$(ProjectName).gha"
+Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <FallbackCulture>en-US</FallbackCulture>

@@ -68,7 +68,7 @@ namespace PTK
         {
             get
             {
-                return Properties.Resources.GravityLoad;
+                return Properties.Resources.KarambaLoad;
             }
         }
 

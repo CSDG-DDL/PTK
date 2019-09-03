@@ -80,7 +80,7 @@ namespace PTK
         {
             public Param_StructuralData() : base(new GH_InstanceDescription("StructuralData", "StructuralData", "StructuralData", CommonProps.category, CommonProps.subcate0)) { }
 
-            protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Force; } }  //Set icon image
+            protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.SD; } }  //Set icon image
 
             public override Guid ComponentGuid => new Guid("FB9C3025-220A-424E-AC7B-E515301D8A2F");
 

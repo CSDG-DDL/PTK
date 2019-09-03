@@ -97,7 +97,7 @@ namespace PTK.Components
         {
             get
             {
-                return Properties.Resources.BTL;
+                return Properties.Resources.BTLSetting;
             }
         }
 

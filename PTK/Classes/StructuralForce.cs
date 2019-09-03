@@ -79,7 +79,7 @@ namespace PTK
     {
         public Param_StructuralForce() : base(new GH_InstanceDescription("StructuralForce", "StructuralForce", "StructuralForce", CommonProps.category, CommonProps.subcate0)) { }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Force; } }  //Set icon image
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.SF; } }  //Set icon image
 
         public override Guid ComponentGuid => new Guid("FB9C3075-110A-424E-AC7B-E515303D8A2F");
 
