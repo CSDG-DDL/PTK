@@ -251,6 +251,15 @@ namespace PTK
             DetailingGroups.Add(_dg);
         }
 
+        public void GenerateUnifiedVectors()
+        {
+            foreach(Detail d in Details)
+            {
+                d.GenerateUnifiedElementVectors();
+            }
+        }
+
+
         public List<double> SearchNodeParamsAtElement(Element1D _element)
         {
             List<double> param = new List<double>();

@@ -95,7 +95,7 @@ namespace PTK
                 ElementsPriorityMap[e] = priorityIndex;
             }
 
-            GenerateUnifiedElementVectors();
+            
             return true;
         }
 

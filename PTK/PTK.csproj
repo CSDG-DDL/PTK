@@ -59,7 +59,7 @@
     </Reference>
     <Reference Include="RhinoCommon, Version=5.1.30000.17, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Library\RhinoCommon.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Rhino 6\System\RhinoCommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -392,7 +392,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "C:\Program Files\Rhinoceros 5 (64-bit)\Plug-ins\$(ProjectName).gha"
+    <PostBuildEvent>Copy "$(TargetPath)" "%25UserProfile%25\AppData\Roaming\Grasshopper\Libraries\$(ProjectName).gha"
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

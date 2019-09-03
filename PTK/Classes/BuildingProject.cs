@@ -497,24 +497,22 @@ namespace PTK
 
 
                             }
-                            if (false)
+                            if (breps == null || breps.Length==0)
                             {
-                                if (breps.Length == 0)
+                                bool valid = true;
+                                foreach (Brep b in VoidProcess)
                                 {
-                                    bool valid = false;
-                                    foreach (Brep b in VoidProcess)
+                                    if (b.IsPointInside(centerPt, CommonProps.tolerances, true))
                                     {
-                                        if (b.IsPointInside(centerPt, CommonProps.tolerances, true))
-                                        {
-                                            valid = true;
-                                        }
+                                        valid = false;
+                                        break;
                                     }
-                                    if (valid)
-                                    {
-                                        ProcessedStock.Add(Stock);
-                                    }
-
                                 }
+                                if (valid)
+                                {
+                                    ProcessedStock.Add(Stock);
+                                }
+                                
                             }
                             
 

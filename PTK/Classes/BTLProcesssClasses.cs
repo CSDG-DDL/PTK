@@ -972,6 +972,7 @@ namespace PTK
             Tilts.Add(Math.PI / 2);
             Tilts.Add(Math.PI / 2);
             Tilts.Add(Math.PI / 2);
+            Flip = true;
 
         }
 
@@ -1239,8 +1240,23 @@ namespace PTK
             Pocket.TiltStartSide = 180- Rhino.RhinoMath.ToDegrees(AdjustedTilts[3]);
             Pocket.MachiningLimits = type;
 
+            
             double vectorangle = Vector3d.VectorAngle(RefPlane.ZAxis, ShapePlane.ZAxis);
-            extrudeHeight = -localPt.Z /Math.Cos(vectorangle) * 2;
+            Point3d localpt = new Point3d();
+            ShapePlane.RemapToPlaneSpace(RefPlane.Origin, out localPt);
+
+            List<double> lengths = new List<double>();
+            lengths.Add(Refside.RefSideXLength);
+            lengths.Add(Refside.RefSideYLength);
+            lengths.Add(Refside.RefSideZLength);
+            lengths.Add(Math.Abs( localpt.Z));
+
+            lengths.Sort();
+
+
+            extrudeHeight = -lengths[3] * 1.1;
+
+
 
             Curve GetOffsetedPolygon(List<Line> _lines, List<double> Angles,double _height,Vector3d exrudeDir)
             {
