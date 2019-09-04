@@ -66,8 +66,7 @@ namespace PTK
                 Assembly assembly = new Assembly();
 
                 elems.ForEach(e => assembly.AddElement(e));
-
-
+                assembly.GenerateUnifiedVectors();
 
                 DA.SetData(0, new GH_Assembly(assembly));
 

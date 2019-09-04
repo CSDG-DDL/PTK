@@ -79,9 +79,16 @@ namespace PTK
 
 
 
+            if (elem.StructuralData != null)
+            {
+                StructuralData sData = elem.StructuralData;
+                GH_StructuralData gsData = new GH_StructuralData(sData);
+                DA.SetData(9, gsData);
+            }
+            
 
-            StructuralData sData= elem.StructuralData;
-            GH_StructuralData gsData = new GH_StructuralData(sData);
+
+            
 
 
             // --- output ---
@@ -95,7 +102,7 @@ namespace PTK
             DA.SetDataList(7, SubElements);
             DA.SetData(8, intersect);
 
-            DA.SetData(9, gsData );
+            
             DA.SetDataList(10, refplanes);
 
         }

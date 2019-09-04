@@ -276,48 +276,62 @@ namespace PTK.PlaneRules
         public Plane GenerateDetailingGroupPlane(Detail _detail)  //Checking element length
         {
             Detail detail = _detail;
+            Point3d origin =  detail.Node.Point;
 
 
-            Point3d NodePoint = detail.Node.Point;
+            
             List <Element1D> elements= detail.Elements;
-            List<Plane> planes = new List<Plane>();
-            double normalX = 0;
-            double normalY = 0;
-            double normalZ = 0;
+            List<Point3d> AveragePoints = new List<Point3d>();
+            bool parallell = true;
+            Plane NodeGroupPlane = new Plane();
 
 
-            for (int i=0; i<elements.Count; i++)
+            if (elements.Count > 1)
             {
-                //planes.Add(elm.CroSecLocalPlane);
-                normalX += elements[i].CroSecLocalPlane.YAxis.X;
-                normalY += elements[i].CroSecLocalPlane.YAxis.Y;
-                normalZ += elements[i].CroSecLocalPlane.YAxis.Z;
+                Vector3d refVector = detail.ElementsUnifiedVectorsMap[elements[0]];
+
+                foreach (Element1D elem in elements)
+                {
+                    
+
+                    Vector3d tempVector = detail.ElementsUnifiedVectorsMap[elem];
+                    Point3d temppoint = new Point3d(origin);
+                    AveragePoints.Add(origin + tempVector);
+
+                    if (refVector.IsParallelTo(tempVector) == 0)
+                    {
+                        parallell = false;
+                    }
+
+                }
+
+                
+
+
+                AveragePoints.Add(origin);
+                Plane.FitPlaneToPoints(AveragePoints, out NodeGroupPlane);
+                NodeGroupPlane.Origin = origin;
             }
 
-            Vector3d normal = new Vector3d(normalX, normalY, normalZ);
-           
-            Plane NodeGroupPlane = new Plane(NodePoint, normal);
-
-
-            List<Element1D> ValidElements = detail.Elements.Where(o => o.Tag == AlignmentElementName).ToList();
-            if (ValidElements.Count > 0)
+            if (parallell)
             {
-                Element1D AlignmentElement = ValidElements[0];
-
-                Vector3d AlignmentVector = new Vector3d();
-                if (NodePoint.DistanceTo(AlignmentElement.PointAtStart) < NodePoint.DistanceTo(AlignmentElement.PointAtEnd))
-                {
-                    AlignmentVector = AlignmentElement.BaseCurve.TangentAtStart;
-                }
-                else
-                {
-                    AlignmentVector = -AlignmentElement.BaseCurve.TangentAtEnd;
-                }
-                double Angle = Vector3d.VectorAngle(NodeGroupPlane.XAxis, AlignmentVector, NodeGroupPlane);
-                NodeGroupPlane.Rotate(Angle, NodeGroupPlane.ZAxis);
-
-
+                NodeGroupPlane = new Plane(origin, elements[0].CroSecLocalPlane.XAxis);
+                
             }
+
+
+            var check = elements.Find(e => e.Tag.Equals(AlignmentElementName, StringComparison.Ordinal));
+            
+            if(check != null)
+            {
+                Vector3d alignment = check.CroSecLocalPlane.ZAxis;
+                double angle = Vector3d.VectorAngle(NodeGroupPlane.XAxis, alignment, NodeGroupPlane);
+                NodeGroupPlane.Rotate(angle, NodeGroupPlane.ZAxis, NodeGroupPlane.Origin);
+            }
+
+            
+
+            
 
             return NodeGroupPlane;
         }

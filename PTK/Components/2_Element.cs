@@ -22,7 +22,7 @@ namespace PTK
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Not Named Element");
-            pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
+            pManager.AddCurveParameter("Base Curve", "CCCC", "Add curves that shall be materalized", GH_ParamAccess.item);
             pManager.AddGenericParameter( "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
             pManager.AddGenericParameter("Alignment", "A", "Global Alignment", GH_ParamAccess.item);
             pManager.AddParameter(new Param_StructuralData(), "Forces", "F", "Add forces", GH_ParamAccess.item);
@@ -51,6 +51,9 @@ namespace PTK
 
             // --- variables ---
             string tag = null;
+
+           
+
             Curve curve = null;
             GH_CroSec gCroSec = null;
             ElementAlign ElementAlignment = null;
@@ -65,9 +68,22 @@ namespace PTK
             // --- input --- 
             if (!DA.GetData(0, ref tag)) { return; }
             if (!DA.GetData(1, ref curve)) { return; }
+            int test = 0;
+
             if (!curve.IsLinear())
             {
-                throw new ArgumentException("Sorry! This version of Reindeer does not allow non-linear curves");
+                if (curve.IsPolyline())
+                {
+                    curve = new Line(curve.PointAtStart, curve.PointAtEnd).ToNurbsCurve();
+
+                }
+                else
+                {
+                    throw new ArgumentException("Sorry! This version of Reindeer does not allow non-linear curves");
+                }
+
+
+                
 
             }
             
