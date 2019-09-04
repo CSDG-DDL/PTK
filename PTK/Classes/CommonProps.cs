@@ -27,7 +27,7 @@ namespace PTK
         public static readonly string subcate10 = "DetailGroupRules";
         public static readonly string subcate11 = "TimberDetailing";
         public static readonly string subcate12 = "ElementGlobalAlignment"; //Is moved into Element, Exporsure 2
-        public static readonly string initialMessage = "PTK Ver.0.5";
+        public static readonly string initialMessage = "Reindeer Ver.0.5.00";
     }
 
     // ----------------
