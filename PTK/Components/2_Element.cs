@@ -22,7 +22,7 @@ namespace PTK
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Tag", "T", "Add a tag to the element here.", GH_ParamAccess.item, "Not Named Element");
-            pManager.AddCurveParameter("Base Curve", "CCCC", "Add curves that shall be materalized", GH_ParamAccess.item);
+            pManager.AddCurveParameter("Base Curve", "C", "Add curves that shall be materalized", GH_ParamAccess.item);
             pManager.AddGenericParameter( "CrossSection", "CS", "CrossSection", GH_ParamAccess.item);
             pManager.AddGenericParameter("Alignment", "A", "Global Alignment", GH_ParamAccess.item);
             pManager.AddParameter(new Param_StructuralData(), "Forces", "F", "Add forces", GH_ParamAccess.item);

@@ -936,6 +936,9 @@ namespace PTK
         public Point3d pt { get; private set; }
         public Plane refPlanepublic { get; private set; }
         public double extrudeHeight { get; private set; }
+        public Plane tempplane { get; private set; }
+        public Plane ShapePlaneX { get; private set; }
+        public double PocketDepth { get; private set; }
 
 
         // --- constructors --- 
@@ -951,11 +954,35 @@ namespace PTK
 
         }
 
-        public BTLPocket(Element1D _elemOther, double _tolerance)
+        public BTLPocket(Element1D _elemOther, Element1D _thiselement, double _tolerance)
         {
+
+            Curve basecurve = _thiselement.BaseCurve;
+
+            double startPointDistance;
+            double endPointDistance;
+            if(basecurve.ClosestPoint(_elemOther.BaseCurve.PointAtStart, out startPointDistance));
+
+            if (basecurve.ClosestPoint(_elemOther.BaseCurve.PointAtEnd, out endPointDistance)) ;
+
             Plane plane = _elemOther.CroSecLocalPlane;
+            if (startPointDistance < endPointDistance)
+            {
+                
+                ShapePlaneX = new Plane(plane.Origin, -plane.ZAxis);
+            }
+            else
+            {
+                plane.Origin = _elemOther.PointAtEnd;
+                ShapePlaneX = plane;
+            }
+
+
+            
+
             Interval Width = _elemOther.Composite.WidthInterval;
             Interval Height = _elemOther.Composite.HeightInterval;
+            PocketDepth = _elemOther.BaseCurve.GetLength();
 
             Width.MakeIncreasing();
             Width.T0 = Width.T0 - _tolerance;
@@ -1041,17 +1068,31 @@ namespace PTK
                 return new PerformedProcess();
             }
 
-            Plane ShapePlane = new Plane();
-            ParalellogramBtm.TryGetPlane(out ShapePlane);
 
+            //Constructs a shape-plane
+            if (!ShapePlaneX.IsValid)
+            {
+                Plane temp = new Plane();
+                
+                
+                ParalellogramBtm.TryGetPlane(out temp);
+                ShapePlaneX = temp;
+            }
+
+
+            Plane ShapePlane = ShapePlaneX;
+
+
+            //Flips the shape-plane if the user enabled this input
             if (Flip)
             {
                 ShapePlane = new Plane(ShapePlane.Origin, -ShapePlane.ZAxis);
             }
 
             Refside Refside = BTLFunctions.FindRefSideFromPlane(ShapePlane, Refsides);
-            Plane RefPlane = Refside.RefPlane; 
+            Plane RefPlane = Refside.RefPlane;
 
+            tempplane = RefPlane;
 
             //FINDING THE zeropoint
 
@@ -1245,16 +1286,27 @@ namespace PTK
             Point3d localpt = new Point3d();
             ShapePlane.RemapToPlaneSpace(RefPlane.Origin, out localPt);
 
-            List<double> lengths = new List<double>();
-            lengths.Add(Refside.RefSideXLength);
-            lengths.Add(Refside.RefSideYLength);
-            lengths.Add(Refside.RefSideZLength);
-            lengths.Add(Math.Abs( localpt.Z));
-
-            lengths.Sort();
+            
 
 
-            extrudeHeight = -lengths[3] * 1.1;
+            
+
+            if (PocketDepth == 0)
+            {
+                List<double> lengths = new List<double>();
+                lengths.Add(Refside.RefSideXLength);
+                lengths.Add(Refside.RefSideYLength);
+                lengths.Add(Refside.RefSideZLength);
+                lengths.Add(Math.Abs(localpt.Z));
+
+                lengths.Sort();
+                extrudeHeight = lengths[3] * 1.1;
+            }
+
+            else
+            {
+                extrudeHeight = PocketDepth;
+            }
 
 
 

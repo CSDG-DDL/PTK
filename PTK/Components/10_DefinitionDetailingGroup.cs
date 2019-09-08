@@ -33,8 +33,8 @@ namespace PTK.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("DetailingGroup Name", "N", "Add Detailing Group Name. Used as key to select detailing groups", GH_ParamAccess.item,"N/A");
-            pManager.AddGenericParameter("True Rules", "=", "Add rules that are true for the details in the detailing group", GH_ParamAccess.list);
-            pManager.AddGenericParameter("False Rules", "≠", "Add rules that are false for the details in the detailing group", GH_ParamAccess.list);
+            pManager.AddGenericParameter("True SearchCriteria ", "=", "Add SearchCriteria that are true for the details in the detailing group", GH_ParamAccess.list);
+            pManager.AddGenericParameter("False SearchCriteria", "≠", "Add SearchCriteria that are false for the details in the detailing group", GH_ParamAccess.list);
             pManager.AddGenericParameter("NodePlaneRule", "NP","Add a NodePlaneRule to generate nodeplane according to its detail", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
