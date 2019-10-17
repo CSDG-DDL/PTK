@@ -141,7 +141,7 @@ namespace PTK.Components
                 Project.Customer = btlxInput.Customer;
                 Project.Comment = "BetaTest. THIS FILE MAY LACK PROCESSINGS OR CONTAIN ERRORS! ";
 
-                
+                Job Job = GrasshopperProject.BVSJob;
 
 
 
@@ -152,6 +152,7 @@ namespace PTK.Components
 
 
                 BTLx.Project = Project;
+                
 
                 
 
@@ -183,7 +184,12 @@ namespace PTK.Components
 
                 Stock = GrasshopperProject.GetStock();
                 Voids = GrasshopperProject.GetVoids();
+
+                
                 ProcessedStock = GrasshopperProject.GetProcessedStock();
+
+                
+
                 ProcessingSurfaces = GrasshopperProject.GetProcessSurfaces();
             }
 

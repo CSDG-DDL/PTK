@@ -12,6 +12,8 @@ namespace PTK
     public class BuildingProject
     {
         public ProjectType BTLProject{ get; private set; }
+        public Job BVSJob { get; private set; }
+
         public List<BuildingElement> BuildingElements{ get; private set; }
         //public List<BuildingNode> BuildingNodes { get; private set; }
         private bool ready = false;
@@ -66,16 +68,22 @@ namespace PTK
         public DataTree<Brep> GetProcessedStock()
         {
             DataTree<Brep> dataTree = new DataTree<Brep>();
+            
             for(int i = 0; i < BuildingElements.Count; i++)
             {
                 BuildingElement BuildingElement = BuildingElements[i];
                 for (int j = 0; j < BuildingElement.Sub3DElements.Count; j++)
                 {
+                    
+
                     ProcessedElement Sub3DElement = BuildingElement.Sub3DElements[j];
+                    
                     if (Sub3DElement.ProcessedStock != null)
                     {
                         dataTree.AddRange(Sub3DElement.ProcessedStock, new Grasshopper.Kernel.Data.GH_Path(i, j));
                     }
+                    
+
                 }
             }
             return dataTree;
@@ -148,6 +156,7 @@ namespace PTK
         public Element1D Element { get; private set; }
         public List<ProcessedElement> Sub3DElements { get; private set; }
         public List<PartType> BTLParts;
+        public List<Part> BVXParts;
         //public List<OrderedTimberProcess> OrderedTimberProcesseses { get; private set; }
         private bool ready = false;
 
@@ -179,6 +188,7 @@ namespace PTK
                     if (_mode == ManufactureMode.BTL || _mode == ManufactureMode.BOTH)
                     {
                         BTLParts.Add(subelem3D.BTLPart);
+                        BVXParts.Add(subelem3D.BVXPart);
                     }
                 }
             }
@@ -190,8 +200,10 @@ namespace PTK
     public class ProcessedElement
     {
         public PartType BTLPart { get; private set; }                                           //Needed
+        public Part BVXPart { get; private set; }
         public Brep Stock { get; private set; }  
         public List<Brep> ProcessedStock { get; private set; }
+        public bool HaveErrors { get; private set; }
         public List<Brep> VoidProcess { get; private set; }
         public List<Brep> ProcessingSurfaces { get; private set; }
         public Plane CornerPlane { get; private set; }
@@ -210,6 +222,9 @@ namespace PTK
 
             
 
+            //Creating Parts
+
+            //CREATING BTLX PART
             BTLPart = new PartType();
 
 
@@ -227,7 +242,10 @@ namespace PTK
             BTLPart.Width = width;
             BTLPart.Length = length;
 
-            
+
+            //Creating BVX PART
+
+            BVXPart = new Part(width, height, length, _subElement.Name);
 
 
 
@@ -376,6 +394,7 @@ namespace PTK
             if (ready)
             {
                 List<ProcessingType> AllProcessings = new List<ProcessingType>();
+                List<Operations> BVXAllProcessings = new List<Operations>();
                 
                 foreach (PerformTimberProcessDelegate Perform in PerformTimberProcesses)
                 {
@@ -390,6 +409,16 @@ namespace PTK
                             {
                                 AllProcessings.Add(PerformedProcess.BTLProcess);
                             }
+
+                            //ADDING BVX
+                            if (PerformedProcess.Operation!=null)
+                            {
+                                BVXAllProcessings.Add(PerformedProcess.Operation);
+                            }
+
+                            
+
+                            
 
 
                             
@@ -417,6 +446,7 @@ namespace PTK
                 if (AllProcessings.Count > 0)
                 {
                     BTLPart.Processings = new ComponentTypeProcessings();
+                    BVXPart.Operations = BVXAllProcessings;
 
 
                     BTLPart.Processings.Items = AllProcessings.ToArray();
@@ -473,6 +503,7 @@ namespace PTK
                             if (breps != null)
                             {
                                 ProcessedStock.AddRange(breps);
+                                
                                 foreach (Brep brep in breps)
                                 {
                                     Brep temp = brep.DuplicateBrep();
@@ -499,11 +530,17 @@ namespace PTK
                             }
                             if (breps == null || breps.Length==0)
                             {
+                                
+                                
+                                
+
+
                                 bool valid = true;
                                 foreach (Brep b in VoidProcess)
                                 {
                                     if (b.IsPointInside(centerPt, CommonProps.tolerances, true))
                                     {
+                                        HaveErrors = true;
                                         valid = false;
                                         break;
                                     }
@@ -511,6 +548,7 @@ namespace PTK
                                 if (valid)
                                 {
                                     ProcessedStock.Add(Stock);
+                                    
                                 }
                                 
                             }
@@ -571,12 +609,21 @@ namespace PTK
     {
         public ProcessingType BTLProcess { get; private set; }
         public Brep VoidProcess { get; private set; }
+        public Operations Operation { get; private set; }
 
         public PerformedProcess(ProcessingType _BTLProcess, Brep _VoidProcess)
         {
             BTLProcess = _BTLProcess;
             VoidProcess = _VoidProcess; 
         }
+
+        public PerformedProcess(ProcessingType _BTLProcess, Brep _VoidProcess, Operations _Operation)
+        {
+            BTLProcess = _BTLProcess;
+            VoidProcess = _VoidProcess;
+            Operation = _Operation;
+        }
+
 
         public PerformedProcess()
         {

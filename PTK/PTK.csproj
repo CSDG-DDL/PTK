@@ -80,6 +80,7 @@
     <Compile Include="Classes\Assembly.cs" />
     <Compile Include="Classes\BTLProcesssClasses.cs" />
     <Compile Include="Classes\btlx_10.cs" />
+    <Compile Include="Classes\BVXClass.cs" />
     <Compile Include="Classes\CompositeClass.cs" />
     <Compile Include="Classes\Detail.cs" />
     <Compile Include="Classes\DetailingGroup.cs" />

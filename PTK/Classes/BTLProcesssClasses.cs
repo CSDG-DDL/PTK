@@ -557,6 +557,8 @@ namespace PTK
 
         }
 
+        
+
         public static List<Point3d> GetCutPoints(Plane _CutPlane, List<Refside> _refsides)
         {
 
@@ -634,7 +636,10 @@ namespace PTK
     {
         // --- field ---
         public uint RefSideID { get; private set; }
+        public uint BVXRefSideID { get; private set; }
         public Plane RefPlane { get; private set; }
+        public Plane BVXRefPlane { get; private set; }
+        
         public Line RefEdge { get; private set; }
         public Point3d RefPoint { get; private set; }
         public double RefSideXLength { get; private set; }
@@ -651,6 +656,17 @@ namespace PTK
             RefSideXLength = _refSideXLength;
             RefSideYLength = _refSideYLength;
             RefSideZLength = _refSideZLength;
+
+            BVXRefSideID = RefSideID - 1;
+            if(BVXRefSideID == 0){BVXRefSideID = 4;}
+
+
+            Point3d BVXPoint = RefPlane.Origin + RefPlane.XAxis * RefSideXLength;
+            BVXRefPlane = new Plane(BVXPoint, -RefPlane.XAxis, RefPlane.YAxis);
+
+
+
+
         }
     }
 
@@ -959,21 +975,27 @@ namespace PTK
 
             Curve basecurve = _thiselement.BaseCurve;
 
+            Plane crossSectionPlane = _thiselement.CroSecLocalPlane;
+
             double startPointDistance;
             double endPointDistance;
             if(basecurve.ClosestPoint(_elemOther.BaseCurve.PointAtStart, out startPointDistance));
-
             if (basecurve.ClosestPoint(_elemOther.BaseCurve.PointAtEnd, out endPointDistance)) ;
 
             Plane plane = _elemOther.CroSecLocalPlane;
+
             if (startPointDistance < endPointDistance)
             {
                 
                 ShapePlaneX = new Plane(plane.Origin, -plane.ZAxis);
+                Flip = true;
             }
             else
             {
-                plane.Origin = _elemOther.PointAtEnd;
+                Point tempPoint = new Point(plane.Origin);
+                Vector3d test = basecurve.TangentAtStart * basecurve.GetLength();
+                tempPoint.Translate(test);
+
                 ShapePlaneX = plane;
             }
 
@@ -999,7 +1021,7 @@ namespace PTK
             Tilts.Add(Math.PI / 2);
             Tilts.Add(Math.PI / 2);
             Tilts.Add(Math.PI / 2);
-            Flip = true;
+            
 
         }
 
@@ -1211,8 +1233,15 @@ namespace PTK
 
             }
 
+            Plane BVXRefPlane = Refside.BVXRefPlane;
+
             Point3d localPt = new Point3d();
+            Point3d BVXLocalPt = new Point3d();
+
+
+
             RefPlane.RemapToPlaneSpace(startPoint, out localPt);
+            BVXRefPlane.RemapToPlaneSpace(startPoint, out BVXLocalPt);
 
             double InternalAngle = Vector3d.VectorAngle(Xvector, Yvector);
             double smallAngle = InternalAngle % Math.PI;
@@ -1281,7 +1310,26 @@ namespace PTK
             Pocket.TiltStartSide = 180- Rhino.RhinoMath.ToDegrees(AdjustedTilts[3]);
             Pocket.MachiningLimits = type;
 
+
+
             
+
+
+
+            Lap Lap = new Lap();
+            Lap.LengthMeas = BVXLocalPt.X;
+            Lap.CrossMeas1 = BVXLocalPt.Y;
+            Lap.CrossMeas2 = BVXLocalPt.Z;
+            Lap.Angle = AngleFix(Angle);
+            Lap.Bevel = 0;
+            Lap.Rotation = 0;
+            Lap.ReferenceSide = Convert.ToString(Refside.BVXRefSideID);
+            Lap.LengthOrientation = Orientation.Left;
+            
+
+
+
+
             double vectorangle = Vector3d.VectorAngle(RefPlane.ZAxis, ShapePlane.ZAxis);
             Point3d localpt = new Point3d();
             ShapePlane.RemapToPlaneSpace(RefPlane.Origin, out localPt);
@@ -1405,7 +1453,7 @@ namespace PTK
 
 
 
-            return new PerformedProcess(Pocket, shape);
+            return new PerformedProcess(Pocket, shape, Lap);
 
         }
         
