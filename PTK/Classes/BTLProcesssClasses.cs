@@ -1325,6 +1325,8 @@ namespace PTK
             Lap.Rotation = 0;
             Lap.ReferenceSide = Convert.ToString(Refside.BVXRefSideID);
             Lap.LengthOrientation = Orientation.Left;
+            Lap.Length = Length;
+            
             
 
 

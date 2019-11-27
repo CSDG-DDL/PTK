@@ -99,6 +99,7 @@ namespace PTK.Components
                 string Name = "";
                 int priorityKey = 0;
                 string filepath = "";
+                string BVXfilepath = "";
 
 
                 // --- input --- 
@@ -141,7 +142,7 @@ namespace PTK.Components
                 Project.Customer = btlxInput.Customer;
                 Project.Comment = "BetaTest. THIS FILE MAY LACK PROCESSINGS OR CONTAIN ERRORS! ";
 
-                Job Job = GrasshopperProject.BVSJob;
+                
 
 
 
@@ -152,35 +153,48 @@ namespace PTK.Components
 
 
                 BTLx.Project = Project;
-                
 
-                
+                //Job Job = GrasshopperProject.BVXJob;
+
+
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+
+                //Add an empty namespace and empty value
+                ns.Add("", "");
+
 
 
                 // Create a new XmlSerializer instance with the type of the test class
 
 
                 XmlSerializer SerializerObj = new XmlSerializer(typeof(BTLx));
+                //XmlSerializer SerializeBVX = new XmlSerializer(typeof(Job));
 
                 if (btlxInput.Comment[btlxInput.Comment.Length-1].Equals(@"/"))
                 {
                     filepath = btlxInput.Comment + BTLx.Project.Name + ".btlx";
+                    //BVXfilepath = btlxInput.Comment + BTLx.Project.Name + ".bvx";
                 }
                 else
                 {
                     filepath = btlxInput.Comment + @"\" + BTLx.Project.Name + ".btlx";
+                    //BVXfilepath = btlxInput.Comment + @"\" + BTLx.Project.Name + ".bvx";
+
                 }
 
-                
+
 
                 // Create a new file stream to write the serialized object to a file
                 TextWriter WriteFileStream = new StreamWriter(@filepath);
+                //TextWriter BVXWriteFileStream = new StreamWriter(@BVXfilepath);
 
 
 
                 SerializerObj.Serialize(WriteFileStream, BTLx);
+                //SerializeBVX.Serialize(BVXWriteFileStream, Job,ns);
 
                 WriteFileStream.Dispose();
+                //BVXWriteFileStream.Dispose();
 
                 Stock = GrasshopperProject.GetStock();
                 Voids = GrasshopperProject.GetVoids();

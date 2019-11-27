@@ -28,7 +28,7 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddParameter(new Param_Force(),"MaximumCompression", "FXC", "Maximum compression force in the element", GH_ParamAccess.item);
+            pManager.AddParameter(new Param_Force(), "MaximumCompression", "FXC", "Maximum compression force in the element", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Force(), "MaximumTension", "FXT", "Maximum tension force in the element", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Force(), "MaximumShear1", "FY", "Maximum shear force in the element", GH_ParamAccess.item);
             pManager.AddParameter(new Param_Force(), "MaximumShear2", "FZ", "Maximum shear force in the element", GH_ParamAccess.item);
@@ -48,28 +48,28 @@ namespace PTK
             StructuralData sd = gSD.Value;
 
             // --- solve ---
-            Force FXC = sd.StructuralForces.maxCompressionForce ;
+            Force FXC = sd.StructuralForces.maxCompressionForce;
             Force FXT = sd.StructuralForces.maxTensionForce;
             Force FY = sd.StructuralForces.maxShearDir1;
             Force FZ = sd.StructuralForces.maxShearDir2;
             Force MX = sd.StructuralForces.maxTorsion;
             Force MY = sd.StructuralForces.maxBendingDir1;
-            Force MZ = sd.StructuralForces.maxBendingDir2 ;
+            Force MZ = sd.StructuralForces.maxBendingDir2;
             List<GH_Force> listGHForces = new List<GH_Force>();
             foreach (var ghF in sd.StructuralForces.forces)
             {
-                listGHForces.Add(new GH_Force(ghF) );
+                listGHForces.Add(new GH_Force(ghF));
             }
-            
+
 
             // --- output ---
-            DA.SetData(0, new GH_Force(FXC) );
-            DA.SetData(1, new GH_Force(FXT) );
-            DA.SetData(2, new GH_Force(FY) );
-            DA.SetData(3, new GH_Force(FZ) );
-            DA.SetData(4, new GH_Force(MX) );
-            DA.SetData(5, new GH_Force(MY) );
-            DA.SetData(6, new GH_Force(MZ) );
+            DA.SetData(0, new GH_Force(FXC));
+            DA.SetData(1, new GH_Force(FXT));
+            DA.SetData(2, new GH_Force(FY));
+            DA.SetData(3, new GH_Force(FZ));
+            DA.SetData(4, new GH_Force(MX));
+            DA.SetData(5, new GH_Force(MY));
+            DA.SetData(6, new GH_Force(MZ));
             DA.SetDataList(7, listGHForces);
 
         }

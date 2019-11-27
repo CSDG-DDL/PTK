@@ -51,7 +51,7 @@ namespace PTK
 
             // --- solve ---
 
-            
+
             // --- output ---
             DA.SetData(0, force.loadcase);
             DA.SetData(1, force.karambaElementID);

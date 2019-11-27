@@ -17,10 +17,10 @@ namespace PTK
 
     public class PTK_Support : GH_Component
     {
-        
+
         private string boolSupString = "";
         private bool[] boolSupArray = { false, false, false, false, false, false }; // six degrees of freedom
-        
+
         public PTK_Support()
           : base("Support", "Support",
               "Add Supports Conditions here",
@@ -39,8 +39,8 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item,"Not Named Support");
-            pManager.AddIntegerParameter("Load Case", "LC", "Load case", GH_ParamAccess.item, 0); 
+            pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item, "Not Named Support");
+            pManager.AddIntegerParameter("Load Case", "LC", "Load case", GH_ParamAccess.item, 0);
             pManager.AddPlaneParameter("Fix Plane", "P", "", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -88,7 +88,7 @@ namespace PTK
             {
                 _comp.boolSupString = frm.BoolSupString;
                 _comp.boolSupArray = Support.ConditionsStringToArray(_comp.boolSupString);
-                
+
                 _comp.ExpireSolution(true);
             }
         }
@@ -110,10 +110,10 @@ namespace PTK
                 rec1.Y = rec1.Bottom - 26;
                 rec1.Height = 26;
                 rec1.Inflate(-4, -4);
-                
+
                 Bounds = rec0;
                 ButtonBounds = rec1;
-                
+
             }
 
             protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
@@ -142,7 +142,7 @@ namespace PTK
                 return base.RespondToMouseDown(sender, e);
             }
         }
-        
+
         // Data saving function
         public override bool Write(GH_IWriter writer)
         {
@@ -172,5 +172,5 @@ namespace PTK
             get { return new Guid("965bef7b-feea-46d1-abe9-f686d28c4c41"); }
         }
     }
-    
+
 }

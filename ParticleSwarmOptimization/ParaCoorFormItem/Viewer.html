@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>D3 Test</title>
+    <link rel="stylesheet" type="text/css" href="d3.parcoords.css">
+    <link rel="stylesheet" type="text/css" href="Viewer.css">
+</head>
+<body>
+    <script src="d3/d3.min.js"></script>
+    <script src="d3.parcoords.js"></script>
+    <script src="divgrid.js"></script>
+
+
+    <div id="example" class="parcoords" style="width:100%;height:450px"></div>
+    <div id="grid" style="width:100%"></div>
+
+
+    <script>
+
+        var pc = d3.parcoords()("#example");
+        var fields = 1;
+
+        (function () {
+            var timer = 0;
+            window.onresize = function () {
+                if (timer > 0) {
+                    clearTimeout(timer);
+                }
+                timer = setTimeout(function () {
+                    pc
+                        .brushReset()
+                        .width(document.getElementById("example").getBoundingClientRect().width)
+                        .render()
+                        .updateAxes()
+                        .brushMode("1D-axes");
+                    d3.selectAll(".cell")
+                        .attr("style", "width:"+(document.getElementById("grid").getBoundingClientRect().width / fields)+"px")
+                }, 200);
+            };
+        }());
+
+        function updateData(arg1) {
+            var data = JSON.parse(arg1);
+            //fields = data[0].length;
+            fields = Object.keys(data[0]).length
+            //alert(Object.keys(data[0]).length);
+
+            pc //表作成
+                .data(data)             //データセット
+                .render()               //描画
+                .createAxes()           //次元名、ラベルを含む静的軸を作成
+                .brushMode("1D-axes");  // enable brushing;
+
+            // create data table, row hover highlighting
+            var grid = d3.divgrid();
+            d3.select("#grid")
+                .datum(data.slice(0, 10))
+                .call(grid)
+                .selectAll(".row")
+                .on({
+                    "mouseover": function (d) { pc.highlight([d]) },
+                    "mouseout": pc.unhighlight,
+                    "click": function (d) { returnPick(JSON.stringify(d)) }
+                });
+            
+            // update data table on brush event
+            pc.on("brush", function (d) {
+                d3.select("#grid")
+                    .datum(d.slice(0, 10))
+                    .call(grid)
+                    .selectAll(".row")
+                    .on({
+                        "mouseover": function (d) { pc.highlight([d]) },
+                        "mouseout": pc.unhighlight,
+                        "click": function (d) { returnPick(JSON.stringify(d)) }
+                    });
+                d3.selectAll(".cell")
+                    .attr("style", "width:" + (document.getElementById("grid").getBoundingClientRect().width / fields) + "px")
+            });
+
+            d3.selectAll(".cell")
+                .attr("style", "width:" + (document.getElementById("grid").getBoundingClientRect().width / fields) + "px")
+
+        }
+
+        //選択されたデータをC#プログラムに返す
+        function returnPick(d) {
+            window.external.ReceiveChoiceDataFunction(d);
+        }
+
+    </script>
+</body>
+</html>

@@ -66,7 +66,7 @@ namespace PTK.Components
                 else
                 {
                     Brep[] breps = Brep.CreateFromSweep(c, s, true, CommonProps.tolerances);
-                    foreach(var brep in breps)
+                    foreach (var brep in breps)
                     {
                         tmpModels[brep] = sectionCurves[s];
                     }
@@ -74,7 +74,7 @@ namespace PTK.Components
             }
 
             // --- output ---
-            foreach(var m in tmpModels)
+            foreach (var m in tmpModels)
             {
                 models[m.Key] = m.Value;
             }
@@ -103,7 +103,7 @@ namespace PTK.Components
         //public override BoundingBox ClippingBox => models.Keys.ToList()[0].GetBoundingBox(false);
         public override void DrawViewportMeshes(IGH_PreviewArgs args)
         {
-            foreach(var m in models)
+            foreach (var m in models)
             {
                 //args.Display.DrawObject(m.Key, new Rhino.Display.DisplayMaterial(m.Value, 0.5));
                 args.Display.DrawBrepShaded(m.Key, new Rhino.Display.DisplayMaterial(m.Value));

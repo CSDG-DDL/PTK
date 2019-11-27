@@ -67,8 +67,8 @@ namespace PTK.Components
             //CHANGE
 
             //Solve 
-            
-            Rules.ElementForce Rule = new Rules.ElementForce(Mode, minAmount, maxAmount,all);
+
+            Rules.ElementForce Rule = new Rules.ElementForce(Mode, minAmount, maxAmount, all);
 
 
             //Output

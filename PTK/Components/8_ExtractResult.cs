@@ -21,7 +21,7 @@ namespace PTK
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter( "Result", "R", "Result", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Result", "R", "Result", GH_ParamAccess.item);
             pManager[0].Optional = true;
         }
 
@@ -44,7 +44,7 @@ namespace PTK
 
             // --- input --- 
             if (!DA.GetData(0, ref result)) { return; }
-            
+
 
             // --- solve ---
 

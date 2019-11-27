@@ -32,7 +32,7 @@ namespace PTK.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Region(s)", "R", "Region(s) to test ", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Max Dist","D","Optional. Maximum distance between the node and regions plane. Set to 0 for strict evaluation",GH_ParamAccess.item, 9999999);
+            pManager.AddNumberParameter("Max Dist", "D", "Optional. Maximum distance between the node and regions plane. Set to 0 for strict evaluation", GH_ParamAccess.item, 9999999);
 
         }
 
@@ -60,7 +60,7 @@ namespace PTK.Components
             DA.GetData(1, ref MaxDist);
 
             //Solve
-            Rules.NodeHitRegion Rule = new Rules.NodeHitRegion(InputCurves,MaxDist);
+            Rules.NodeHitRegion Rule = new Rules.NodeHitRegion(InputCurves, MaxDist);
 
             //Output
             DA.SetData(0, new Rules.Rule(new CheckGroupDelegate(Rule.check)));   //Sending a new checkgroupDelegate through a new rule object

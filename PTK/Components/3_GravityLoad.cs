@@ -29,7 +29,7 @@ namespace PTK.Components
         {
             pManager.AddTextParameter("Tag", "T", "Tag", GH_ParamAccess.item, "GravityLoad");
             pManager.AddIntegerParameter("Load Case", "LC", "Load case", GH_ParamAccess.item, 0);
-            pManager.AddVectorParameter("Gravity Vector", "G", "in [kN]. Vector which describe the diretion and value in kN", GH_ParamAccess.item,new Vector3d(0,0,-1));
+            pManager.AddVectorParameter("Gravity Vector", "G", "in [kN]. Vector which describe the diretion and value in kN", GH_ParamAccess.item, new Vector3d(0, 0, -1));
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;

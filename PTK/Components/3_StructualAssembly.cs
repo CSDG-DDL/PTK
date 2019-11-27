@@ -89,28 +89,28 @@ namespace PTK
             // --- solve ---
             StructuralAssembly strAssembly = new StructuralAssembly();
 
-            foreach(Element1D e in assembly.Elements)
+            foreach (Element1D e in assembly.Elements)
             {
-                if(e.BaseCurve.IsLinear())
+                if (e.BaseCurve.IsLinear())
                 {
                     var paramList = strAssembly.SearchNodeParamsAtElement(e);
 
                     for (int i = 0; i < paramList.Count - 1; i++)
                     {
-                       Point3d spt = e.BaseCurve.PointAt(paramList[i]);
-                       Point3d ept = e.BaseCurve.PointAt(paramList[i + 1]);
-                       tempLines.Add(new Line(spt, ept));
+                        Point3d spt = e.BaseCurve.PointAt(paramList[i]);
+                        Point3d ept = e.BaseCurve.PointAt(paramList[i + 1]);
+                        tempLines.Add(new Line(spt, ept));
                     }
                     strAssembly.AddElement(e);
                 }
                 else
                 {
                     int precision = 10;
-                    for (int i = 0; i < precision-1; i++)
+                    for (int i = 0; i < precision - 1; i++)
                     {
                         ///the curve is not linear 
-                        
-                        
+
+
                         strAssembly.AddElement(e);
                         /*
                          * Line tmpLine = new Line(e.BaseCurve.PointAtNormalizedLength(i/ precision), e.BaseCurve.PointAtNormalizedLength((i+1)/precision));
@@ -122,7 +122,7 @@ namespace PTK
                     }
 
                 }
-                
+
             }
 
             foreach (Support s in sups)

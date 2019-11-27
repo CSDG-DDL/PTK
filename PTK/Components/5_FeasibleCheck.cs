@@ -25,7 +25,7 @@
 //        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
 //        {
 //            pManager.AddBooleanParameter("FEASIBLE?", "FEASIBLE?", "FEASIBILITY CHECK RESULT", GH_ParamAccess.item);
-            
+
 //        }
 
 //        protected override void SolveInstance(IGH_DataAccess DA)

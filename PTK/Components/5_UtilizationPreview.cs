@@ -48,8 +48,8 @@ namespace PTK.Components
         {
             pManager.AddParameter(new Param_StructuralAssembly(), "Structural Assembly", "SA", "Structural Assembly", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Show the legend", "R (PTK)", "Highlight the utilization level", GH_ParamAccess.item, false);
-            pManager.AddNumberParameter("Range of utilization", "R (PTK)", "Range of utilization", GH_ParamAccess.list, new List<double>() {0,0.5,1 });
-            pManager.AddTextParameter("Colors of utilization", "R (PTK)", "Colors of utilization", GH_ParamAccess.list, new List<string>() {"green","yellow","red" });
+            pManager.AddNumberParameter("Range of utilization", "R (PTK)", "Range of utilization", GH_ParamAccess.list, new List<double>() { 0, 0.5, 1 });
+            pManager.AddTextParameter("Colors of utilization", "R (PTK)", "Colors of utilization", GH_ParamAccess.list, new List<string>() { "green", "yellow", "red" });
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace PTK.Components
             pManager.AddTextParameter("OUT information", "info", "temporary information from analysis", GH_ParamAccess.list);
             pManager.AddGenericParameter("Model", "M", "3d model", GH_ParamAccess.list);
         }
-        
+
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
@@ -91,9 +91,9 @@ namespace PTK.Components
             if (!DA.GetDataList(2, utilList)) { return; }
             if (!DA.GetDataList(3, colorList)) { return; }
 
-            structuralAssembly = gStrAssembly.Value ;
+            structuralAssembly = gStrAssembly.Value;
 
-            List<Element1D> elements = structuralAssembly.Elements ;
+            List<Element1D> elements = structuralAssembly.Elements;
             List<Color> cList = new List<Color>();
 
             foreach (var c1 in colorList)
@@ -101,7 +101,7 @@ namespace PTK.Components
                 cList.Add(Color.FromName(c1));
             }
             #endregion
-            
+
             #region creating report of calculation
             // Creat
             List<double> tmpUtilList = new List<double>();
@@ -110,7 +110,7 @@ namespace PTK.Components
             Dictionary<Element1D, double> utiliziationDictionary = new Dictionary<Element1D, double>();
             Dictionary<double, double> utilizationColor = new Dictionary<double, double>();
 
-            
+
 
             if (boolstart == true)
             {
@@ -132,11 +132,11 @@ namespace PTK.Components
                         e1.StructuralData.StructuralResults.CombinedBendingAndAxial,
                         e1.StructuralData.StructuralResults.BendingUtilization
                         };
-                   
+
                     utiliziationDictionary.Add(e1, tmpUtilList.Max());
                     infolist.Add("for element=" + i1 + " maximum utilization is=" + tmpUtilList.Max());
                     i1++;
-                    
+
                 }
             }
 
@@ -148,7 +148,7 @@ namespace PTK.Components
 
             foreach (var element in elements)
             {
-                BrepElements.Add( element.GenerateSimplifiedGeometry());
+                BrepElements.Add(element.GenerateSimplifiedGeometry());
 
                 Color tmpColor = Color.White;
                 double tmpUtil = utiliziationDictionary[element];
@@ -169,12 +169,12 @@ namespace PTK.Components
                     }
                 };
                 Colors.Add(tmpColor);
-                
+
             }
             #endregion 
 
             infolist.Add("The preview of the structural analysis version 0.5");
-            
+
             DA.SetDataList(1, BrepElements);
             DA.SetDataList(0, infolist);
 
@@ -212,7 +212,7 @@ namespace PTK.Components
         //public override BoundingBox ClippingBox => models.Keys.ToList()[0].GetBoundingBox(false);
         public override void DrawViewportMeshes(IGH_PreviewArgs args)
         {
-            for(int i =0;i<PublicColors.Count;i++)
+            for (int i = 0; i < PublicColors.Count; i++)
             {
                 //args.Display.DrawObject(m.Key, new Rhino.Display.DisplayMaterial(m.Value, 0.5));
                 args.Display.DrawBrepShaded(PublicElements[i], new Rhino.Display.DisplayMaterial(PublicColors[i]));

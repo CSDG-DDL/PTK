@@ -12,7 +12,7 @@ namespace PTK
     public class BuildingProject
     {
         public ProjectType BTLProject{ get; private set; }
-        public Job BVSJob { get; private set; }
+        public Job BVXJob { get; private set; }
 
         public List<BuildingElement> BuildingElements{ get; private set; }
         //public List<BuildingNode> BuildingNodes { get; private set; }
@@ -22,6 +22,7 @@ namespace PTK
         {
             BTLProject = _btlProject;
             BuildingElements = new List<BuildingElement>();
+            BVXJob = new Job();
         }
 
         //Extract machining process to be adapted for each element
@@ -46,6 +47,7 @@ namespace PTK
         public void ManufactureProject(ManufactureMode _mode)
         {
             List<PartType> AllParts = new List<PartType>();
+            List<Part> BVXAllParts = new List<Part>();
             
             foreach (BuildingElement buildingElement in BuildingElements)
             {
@@ -53,14 +55,17 @@ namespace PTK
                 if (_mode == ManufactureMode.BTL || _mode == ManufactureMode.BOTH)
                 {
                     AllParts.AddRange(buildingElement.BTLParts);
+                    BVXAllParts.AddRange(buildingElement.BVXParts);
                     
  
                 }
             }
 
             BTLProject.Parts = new ProjectTypeParts();
+            BVXJob.Parts = new List<Part>();
 
             BTLProject.Parts.Part = AllParts.ToArray();
+            BVXJob.Parts = BVXAllParts;
             
         }
 
@@ -165,6 +170,7 @@ namespace PTK
             Element = _element;
             Sub3DElements = new List<ProcessedElement>();
             BTLParts = new List<PartType>();
+            BVXParts = new List<Part>();
             ready = true;
             
             //if Element has CompositCrossSection => Branch?
@@ -226,6 +232,7 @@ namespace PTK
 
             //CREATING BTLX PART
             BTLPart = new PartType();
+            
 
 
 
@@ -247,7 +254,7 @@ namespace PTK
 
             BVXPart = new Part(width, height, length, _subElement.Name);
 
-
+            
 
 
             CoordinateSystemType CoordinateSystem = new CoordinateSystemType();
@@ -446,7 +453,8 @@ namespace PTK
                 if (AllProcessings.Count > 0)
                 {
                     BTLPart.Processings = new ComponentTypeProcessings();
-                    BVXPart.Operations = BVXAllProcessings;
+                    BVXPart.Operations.AddRange(BVXAllProcessings);
+
 
 
                     BTLPart.Processings.Items = AllProcessings.ToArray();

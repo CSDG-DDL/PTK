@@ -75,6 +75,7 @@ namespace PTK
         public string Grade { get; set; }
 
         [System.Xml.Serialization.XmlArrayItemAttribute("SawCut", typeof(SawCut), IsNullable = false)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("Lap", typeof(Lap), IsNullable = false)]
         public List<Operations> Operations { get; set; }
 
 
@@ -120,6 +121,7 @@ namespace PTK
     }
 
     [XmlInclude(typeof(SawCut))]
+    [XmlInclude(typeof(Lap))]
 
     public class Operations
     {

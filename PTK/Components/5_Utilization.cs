@@ -85,10 +85,10 @@ namespace PTK
                 PTK_StructuralAnalysis element_report = new PTK_StructuralAnalysis(indexReport);
                 indexReport = indexReport + 1;
                 infolist.Add("indexreport=" + indexReport);
-                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("report for element number=" + indexReport),new Grasshopper.Kernel.Data.GH_Path(indexReport));
+                infoTree.Append(new Grasshopper.Kernel.Types.GH_String("report for element number=" + indexReport), new Grasshopper.Kernel.Data.GH_Path(indexReport));
 
                 element_report.elementLength = e1.BaseCurve.GetLength() * 1000;
-                
+
                 element_report.elementWidth = e1.Composite.WidthSimplified;
                 element_report.elementHeight = e1.Composite.HeightSimplified;
 
@@ -160,11 +160,11 @@ namespace PTK
                     element_report.elementBendingUtilization,
                     element_report.elementCombinedBendingAndAxial
                 };
-                
+
                 report_list.Add(element_report);
-                
+
             }
-            
+
             // --- output ---
             DA.SetData(0, report_list);
             DA.SetDataTree(1, infoTree);

@@ -34,7 +34,7 @@ namespace PTK
         {
             pManager.AddGenericParameter("KarambaLoad", "KL", "Karamba load to be changed to reindeer load", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Load Case", "LC", "Load case", GH_ParamAccess.item, 0);
-            
+
             pManager[0].Optional = true;
             pManager[1].Optional = true;
 

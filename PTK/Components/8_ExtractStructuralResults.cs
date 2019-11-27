@@ -28,7 +28,7 @@ namespace PTK
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Utilization Compression","UC","Maximum compression utilization for the element",GH_ParamAccess.item);
+            pManager.AddNumberParameter("Utilization Compression", "UC", "Maximum compression utilization for the element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Utilization Tension", "UT", "Maximum tension utilization for the element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Utilization Bending", "UB", "Maximum bedning utilization for the element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Utilization Combined", "UCB", "Maximum combined compression/bending utilization for the element", GH_ParamAccess.item);
@@ -50,7 +50,7 @@ namespace PTK
 
             // --- solve ---
 
-            
+
             // --- output ---
             DA.SetData(0, sd.StructuralResults.CompressionUtilization);
             DA.SetData(1, sd.StructuralResults.TensionUtilization);

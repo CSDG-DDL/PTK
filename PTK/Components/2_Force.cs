@@ -17,9 +17,9 @@ namespace PTK
         {
             Message = CommonProps.initialMessage;
         }
-        /// <summary>
-        /// Overrides the exposure level in the components category 
-        /// </summary>
+        / <summary>
+        / Overrides the exposure level in the components category 
+        / </summary>
         public override GH_Exposure Exposure
         {
             get
@@ -45,7 +45,7 @@ namespace PTK
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            // --- variables ---
+             --- variables ---
             int loadCase = 0;
             double fxc = 0;
             double fxt = 0;
@@ -55,7 +55,7 @@ namespace PTK
             double my = 0;
             double mz = 0;
 
-            // --- input --- 
+             --- input --- 
             if (!DA.GetData(0, ref loadCase)) { return; }
             if (!DA.GetData(1, ref fxc)) { return; }
             if (!DA.GetData(2, ref fxt)) { return; }
@@ -65,7 +65,7 @@ namespace PTK
             if (!DA.GetData(6, ref my)) { return; }
             if (!DA.GetData(7, ref mz)) { return; }
 
-            // --- solve ---
+             --- solve ---
             StructuralData structuralData = new StructuralData();
             structuralData.maxCompressionForce.FX = fxc;
             structuralData.maxTensionForce.FX = fxt;
@@ -75,7 +75,7 @@ namespace PTK
             structuralData.maxBendingDir2.MZ = mz;
             structuralData.maxTorsion.MX = mx;
 
-            // --- output ---
+             --- output ---
             DA.SetData(0, new GH_StructuralData(structuralData) );
         }
 
