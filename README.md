@@ -28,8 +28,3 @@ All rights reserved.
 
 Copyright (c) 2012, Kai Chang
 All rights reserved.
-
-# Credit
-
-- Karamba3D
-- BTLx ?
