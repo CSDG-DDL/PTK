@@ -13,7 +13,7 @@ namespace PTK.Components
         /// </summary>
         public _11_BTL_PocketFromElement()
             : base("PocketElement", "P",
-              "Define the Pocket process from other element",
+              "Define the Pocket process from other element. NBNB!!! The component only works for rectangular composites! ",
               CommonProps.category, CommonProps.subcate11)
         {
             Message = CommonProps.initialMessage;
@@ -66,7 +66,7 @@ namespace PTK.Components
 
 
 
-            BTLPocket BTLPocket = new BTLPocket(elementOther,Tolerance);
+            BTLPocket BTLPocket = new BTLPocket(elementOther, element,Tolerance);
 
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(BTLPocket.DelegateProcess));
 

@@ -22,7 +22,7 @@ namespace PTK.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddParameter(new Param_Element1D(), "Element", "E", "Element", GH_ParamAccess.item);
-            pManager.AddCurveParameter("Paralellogram", "", "", GH_ParamAccess.item);
+            pManager.AddCurveParameter("P", "Parallellogram", "Add the paralllellogram that defines the pocketshape (PocketBottom)", GH_ParamAccess.item);
             pManager.AddNumberParameter("FirstAngle", "1", "Angle(Between 0.1 and 179.9 degrees) of first side. Corresponding to segment number", GH_ParamAccess.item, Math.PI / 2);
             pManager.AddNumberParameter("SecondAngle", "2", "Angle(Between 0.1 and 179.9 degrees) of second side", GH_ParamAccess.item, Math.PI / 2);
             pManager.AddNumberParameter("ThirdAngle", "3", "Angle(Between 0.1 and 179.9 degrees) of third side", GH_ParamAccess.item, Math.PI / 2);
@@ -33,6 +33,7 @@ namespace PTK.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("BTL-Pocket", "P", "", GH_ParamAccess.item);
+            pManager.AddPlaneParameter("Test", "", "", GH_ParamAccess.item);
 
         }
 
@@ -77,10 +78,15 @@ namespace PTK.Components
 
             BTLPocket BTLPocket = new BTLPocket(Parallellogram, Flip, tilts);
 
+            
+
+            
+
+
             OrderedTimberProcess Order = new OrderedTimberProcess(element, new PerformTimberProcessDelegate(BTLPocket.DelegateProcess));
 
 
-            /*
+            
             ////////////////////////////////////////////////////////////////
             ///THIS IS A TEMPORARY GENERATION OF AN ASSEMBLY! START
             List<Element1D> elems = new List<Element1D>();
@@ -94,18 +100,11 @@ namespace PTK.Components
             GrasshopperProject.PrepairElements(elems, Orders);
             GrasshopperProject.ManufactureProject(ManufactureMode.BOTH);
 
-
-
+            DA.SetData(1, BTLPocket.tempplane);
             
-
-            
-            DA.SetData(2, BTLPocket.X);
-            DA.SetData(3, BTLPocket.Y);
-            DA.SetData(4, BTLPocket.pt);
-            DA.SetData(5, BTLPocket.refPlanepublic);
             ///THIS IS A TEMPORARY GENERATION OF AN ASSEMBLY! END
             ////////////////////////////////////////////////////////////////
-            */
+           
 
 
 
