@@ -497,29 +497,36 @@ namespace PTK.Rules
 
             if (mode == 6) //Orthogonal
             {
-                for (int i = 0; i < centerPts.Count; i++)
+                for (int i = 0; i < elements.Count; i++)
                 {
-                    Vector3d FirstVector = new Line(node.Point, centerPts[i]).Direction;
+                    Vector3d FirstVector = elements[i].BaseCurve.TangentAtStart;
 
-                    for (int j = 0; j < centerPts.Count; j++)
+                    for (int j = 0; j < elements.Count; j++)
                     {
                         if (j != i)
                         {
-                            Vector3d SecondVector = new Line(node.Point, centerPts[j]).Direction;
-                            double angle = Vector3d.VectorAngle(elements[j].BaseCurve.TangentAtStart, elements[i].BaseCurve.TangentAtStart);
+                            Vector3d SecondVector = elements[j].BaseCurve.TangentAtStart;
 
-                            angle = angle - Math.PI / 2;
-                            double rest = angle % (Math.PI / 2);
-                            rest = Math.Abs(rest);
-                            if (rest < Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians) { return true; }
+                            double angle = Vector3d.VectorAngle(FirstVector, SecondVector);
+                            angle = angle % (Math.PI / 2);
+
+                            if (angle < Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians || (Math.Abs(angle-Math.PI/2)< Rhino.RhinoDoc.ActiveDoc.ModelAngleToleranceRadians))
+                            {
+
+                            }
+                            else
+                            {
+                                return false;
+
+                                
+                            }
 
 
 
-                            else { return false; }
                         }
                     }
-
                 }
+                return true;
             }
             return false;
 
